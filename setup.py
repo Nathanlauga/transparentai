@@ -12,8 +12,11 @@ setup(
     author='Nathan LAUGA',
     author_email='nathan.lauga@protonmail.com',
     url='https://github.com/Nathanlauga/transparentai',
-    packages=['transparentai'],
-    install_requires=[],
+    packages=['transparentai','transparentai/app'],
+    include_package_data=True,
+    install_requires=[
+        "flask",
+    ],
     long_description=long_description,
     python_requires='>=3.5',
     classifiers=[
@@ -22,4 +25,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
     ],
+    entry_points = {
+        'console_scripts': ['transparentai=transparentai.cmd:main'],
+    },
 )

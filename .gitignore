@@ -119,4 +119,6 @@ venv.bak/
 
 # End of https://www.gitignore.io/api/visualstudiocode
 
-!transparentai/web/.env
+!transparentai/.env
+run_flask.sh
+run.sh

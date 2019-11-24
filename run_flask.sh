@@ -1,2 +1,2 @@
-cd transparentai/web/
+cd transparentai/
 flask run

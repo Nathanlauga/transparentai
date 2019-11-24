@@ -1,2 +1,2 @@
-cd transparentai/web/
+cd transparentai/
 gunicorn app:app
