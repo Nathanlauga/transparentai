@@ -6,7 +6,7 @@ Python tool to create an ethic AI from defining users's need to monitoring the m
 
 setup(
     name='transparentai',
-    version='0.0.1',
+    version='0.0.2',
     description="Python tool to create an ethic AI.",
     license='MIT',
     author='Nathan LAUGA',
@@ -16,6 +16,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "flask",
+        "gunicorn"
     ],
     long_description=long_description,
     python_requires='>=3.5',
