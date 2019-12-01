@@ -1,6 +1,8 @@
 from flask import render_template
 from app import app
 
+from data import questions
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
