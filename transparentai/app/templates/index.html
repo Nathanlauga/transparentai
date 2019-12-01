@@ -1,1 +1,24 @@
-Build in progress...
+{% from 'common/header.html' import header %}
+{% from 'common/head.html' import head %}
+
+<html>
+  <head>
+    {{ head(title='Home') }}
+
+    <link rel="stylesheet" href="/static/style.css" type="text/css" />
+  </head>
+  <body class="font-mono">
+
+    {{ header() }}
+
+    Build in progress
+
+    <script>
+    const toggleNavBar = function(){
+        const content = document.getElementById('navbar-content');
+        content.classList.toggle('hidden');
+    }
+    </script>
+
+  </body>
+</html>
