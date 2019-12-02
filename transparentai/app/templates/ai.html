@@ -12,7 +12,15 @@
     {{ header() }}
     <h1>{{ title }}</h1>
 
-    Build in progress
+    {% for section in sections %}
+        <hr>
+        <h2>{{ section }}</h2>
+        {% for idx, question in questions[questions['section'] == section].iterrows() %}
+
+        <div>{{ question.questions}}</div>
+
+        {% endfor %}
+    {% endfor %}
 
     {% include 'common/footer.html' %}
 

@@ -13,7 +13,8 @@ def index():
 @app.route('/ai/', methods=['GET', 'POST'])
 def ai():
     title = 'Create a new AI'
-    return render_template("ai.html", title=title)
+    sections = questions['section'].unique()
+    return render_template("ai.html", title=title, sections=sections, questions=questions)
 
 
 @app.route('/glossary/', methods=['GET', 'POST'])
