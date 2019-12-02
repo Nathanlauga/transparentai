@@ -1,20 +1,19 @@
-{% from 'common/header.html' import header %}
+{% from 'common/header.html' import header %} 
 {% from 'common/head.html' import head %}
 
 <html>
   <head>
     {{ head(title=title) }}
-
-    <link rel="stylesheet" href="/static/style.css" type="text/css" />
   </head>
   <body>
-
     {{ header() }}
-    <h1>{{ title }}</h1>
 
-    Build in progress
+    <div class="container m-auto">
+        <h1 class="my-6 text-3xl uppercase w-full m-auto">{{ title }}</h1>
+
+      Build in progress
+    </div>
 
     {% include 'common/footer.html' %}
-
   </body>
 </html>
