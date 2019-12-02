@@ -1,0 +1,12 @@
+{% macro item(id, title) -%}
+<li class="flex-1">
+  <a href="/ai/{{id}}">
+    <div class="flex items-center h-auto my-2">
+      <div class="inline-block">
+        <img src="/static/img/{{id}}.svg" class="h-8 mx-2" />
+      </div>
+      <span>{{title}}</span>
+    </div>
+  </a>
+</li>
+{%- endmacro %}

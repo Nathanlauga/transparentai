@@ -9,3 +9,7 @@
 .h-7 {
     height: 1.75rem;
 }
+
+.filter-invert {
+    filter: invert(1);
+}
