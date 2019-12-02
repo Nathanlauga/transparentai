@@ -10,18 +10,43 @@
   <body>
 
     {{ header() }}
-    <h1>{{ title }}</h1>
 
+    <div class="container m-auto">  
+        <div class="ml-1/12">
+          <h1 class="my-6 text-3xl uppercase max-w-5xl w-full m-auto">{{ title }}</h1>
+        </div>
     {% for section in sections %}
-        <hr>
-        <h2>{{ section }}</h2>
+        <div class="flex w-full">
+        <div class="w-1/12">
+          <h2>{{ section }}</h2>
+        </div>
+        <div class="w-11/12">
         {% for idx, question in questions[questions['section'] == section].iterrows() %}
-
-        <div>{{ question.questions}}</div>
-
+        <div class="max-w-5xl w-full m-auto h-auto relative">
+          <div class="absolute w-auto right-full pr-3 h-7">
+            <div class="flex items-center h-full">
+              {{ idx }} 
+              <span class="ml-2">
+              <svg height="10" width="11">
+                <path d="M7.586 5L4.293 1.707 5.707.293 10.414 5 5.707 9.707 4.293 8.293z"></path><path d="M8 4v2H0V4z"></path>
+              </svg>
+            </span>
+            </div>
+          </div>
+        <div class="text-xl">
+          <div class="h-12">
+            <label for="{{idx}}">{{ question.questions}}</label>
+          </div>
+          <div class="mt-4 mb-16">
+            <input name="{{idx}}" class="w-full  whitespace-pre-wrap" placeholder="Your answer here...">
+          </div>
+        </div>
+        </div>
         {% endfor %}
+      </div>
+    </div>
     {% endfor %}
-
+    </div>
     {% include 'common/footer.html' %}
 
   </body>
