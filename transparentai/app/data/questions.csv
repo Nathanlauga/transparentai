@@ -1,4 +1,5 @@
 section,actors,questions,example1,example2,ressource
+Detail,Business,Project name,,,
 Goal,Business,What is the main goal of this AI ?,Detect anomalies,Recommand a movie to users.,
 Goal,Business,What this AI will improve ? Who will benefit this ?,It will improve ,It will improve users experience on a website.,
 Goal,Business & tech,Who is participating during the AI creation ?,"Elliot Alderson, risks.","Angela Moss, marketing.",
@@ -17,4 +18,3 @@ Metrics,Business,Define negative metrics : how will you say your AI is failing 
 Data,Business & tech,What are the data that you’ll need to build this AI ? (precise source type if possible and if you have it or you need to collect it),,,
 Data,Business & tech,Do you know if your data is reliable ? If no how will you say it can be reliable (see data quality section),,,
 Data,Business & tech,What feature will be used from this data ?,,,
-Help,Business,"if you were helping to train a new coworker for a similar role, what would be the most important tasks you would teach them first?",,,

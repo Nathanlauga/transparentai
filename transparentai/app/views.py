@@ -16,11 +16,11 @@ def ai():
     sections = questions['section'].unique()
     return render_template("ai.html", title=title, sections=sections, questions=questions)
 
-@app.route('/ai/user-needs/', methods=['GET', 'POST'])
+@app.route('/ai/define-ai/', methods=['GET', 'POST'])
 def user_needs():
-    title = '1. User needs'
+    title = '1. Define the AI'
     sections = questions['section'].unique()
-    return render_template("ai/user-needs.html", title=title, sections=sections, questions=questions)
+    return render_template("ai/define-ai.html", title=title, sections=sections, questions=questions)
 
 @app.route('/ai/data-collect/', methods=['GET', 'POST'])
 def data_collect():
