@@ -14,6 +14,8 @@
         <div class="ml-1/12">
           <h1 class="my-6 text-3xl uppercase max-w-5xl w-full m-auto">{{ title }}</h1>
         </div>
+
+        <form>
     {% for section in sections %}
         <div class="flex w-full">
         <div class="w-1/12">
@@ -36,15 +38,176 @@
           <div class="h-12">
             <label for="{{idx}}">{{ question.questions}}</label>
           </div>
-          <div class="mt-4 mb-16">
-            <input name="{{idx}}" class="w-full  whitespace-pre-wrap" placeholder="Your answer here...">
+
+          <div class="mt-4 mb-32">
+          {% if question.question_type == 'text' %}
+            <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here...">
+          {% elif question.question_type == 'who' %}
+          
+          <div id="person">
+          <div class="flex my-2">
+              <div class="w-1/2 p-3">
+                <span class="uppercase">Job title</span>
+              </div>
+              <div class="w-1/2 p-3">
+                <span class="uppercase">Name</span>
+              </div>
           </div>
+          <div class="mb-4 ml-3">
+            <span class="text-xs uppercase w-auto absolute">person 1</span>
+          </div>
+          <div class="flex my-2 person">
+              <div class="w-1/2 p-3">
+                <input name="{{idx}}-job" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title">
+              </div>
+              <div class="w-1/2 p-3">
+                <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
+              </div>
+          </div>
+          </div>
+          <button onclick="addPerson()" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+            Add a person
+          </button>
+
+          <script>
+          const addPerson = function(){
+            const nbPersons = document.getElementsByClassName('person').length;
+            const divPerson = document.getElementById('person');
+            const personHTML = ' \
+            <div class="mb-4 ml-3 relative"> \
+              <span class="text-xs uppercase w-auto absolute">person '+(nbPersons+1)+'</span> \
+            </div> \
+            <div class="flex my-2 person"> \
+              <div class="w-1/2 p-3"><input name="{{idx}}-job-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title"></div> \
+              <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
+              </div>';
+              divPerson.innerHTML += personHTML;
+          }
+          </script>
+          {% elif question.question_type == 'text_list' %}
+          <div id="question">
+            <div class="my-6">
+            <div class="h-2">
+              <span class="text-xs uppercase w-auto absolute">question 1</span>
+            </div>
+            <div class="flex my-2 question">
+              <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question">
+            </div>
+          </div>
+          </div>
+          <button onclick="addQuestion()" class="bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+            Add a question
+          </button>
+
+          <script>
+          const addQuestion = function(){
+            const nbQuestions = document.getElementsByClassName('question').length;
+            const divQuestion = document.getElementById('question');
+            const questionHTML = '<div class="my-6">\
+            <div class="h-2"><span class="text-xs uppercase w-auto absolute">question '+(nbQuestions+1)+'</span></div>\
+            <div class="flex my-2 question"><input name="{{idx}}-'+(nbQuestions+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question"></div>\
+            </div>';
+            divQuestion.innerHTML += questionHTML;
+          }
+          </script>
+          {% elif question.question_type == 'yes_text' %}
+          <div>
+            <button id="yes" onclick="changeYesNoButton(this)" class="w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+                Yes
+            </button>
+            <button id="no" onclick="changeYesNoButton(this)" class="w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+                No
+            </button>
+            <div id="training-regularity" class="hidden">
+              <select class="block my-2 appearance-none w-1/2 bg-white border border-gray-400 text-gray-600 py-3 px-4 pr-8 rounded leading-tight">
+                  <option>Daily</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                  <option>Yearly</option>
+                </select>
+            </div>
+          </div>
+
+          <script>
+            const setBtnActivate = function(btn){
+              btn.classList.add("bg-gray-500");
+              btn.classList.add("text-white");
+              btn.classList.remove("text-gray-500");
+            }
+
+            const setBtnDeactivate = function(btn){
+              btn.classList.remove("bg-gray-500");
+              btn.classList.remove("text-white");
+              btn.classList.add("text-gray-500");
+            }
+
+          const changeYesNoButton = function(btn){
+            setBtnActivate(btn);
+            regularity = document.getElementById('training-regularity');
+
+            if (btn.id === 'yes'){
+              otherBtn = document.getElementById('no');
+              regularity.classList.remove("hidden");
+            } else {
+              otherBtn = document.getElementById('yes');
+              regularity.classList.add("hidden");
+            }
+            setBtnDeactivate(otherBtn);
+          }
+          </script>
+          {% elif question.question_type == 'data' %}
+          <div id="data-source">
+              <div class="flex my-2">
+                  <div class="w-1/2 p-3">
+                    <span class="uppercase">Name</span>
+                  </div>
+                  <div class="w-1/2 p-3">
+                    <span class="uppercase">Source type</span>
+                  </div>
+              </div>
+              <div class="mb-4 ml-3">
+                <span class="text-xs uppercase w-auto absolute">data source 1</span>
+              </div>
+              <div class="flex my-2 data-source">
+                  <div class="w-1/2 p-3">
+                    <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
+                  </div>
+                  <div class="w-1/2 p-3">
+                    <input name="{{idx}}-type" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type">
+                  </div>
+              </div>
+              </div>
+              <button onclick="addDataSource()" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+                Add a data source
+              </button>
+    
+              <script>
+              const addDataSource = function(){
+                const nbDataSource = document.getElementsByClassName('data-source').length;
+                const divDataSource = document.getElementById('data-source');
+                const dataSourceHTML = ' \
+                <div class="mb-4 ml-3 relative"> \
+                  <span class="text-xs uppercase w-auto absolute">data source '+(nbDataSource+1)+'</span> \
+                </div> \
+                <div class="flex my-2 data-source"> \
+                  <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
+                  <div class="w-1/2 p-3"><input name="{{idx}}-type-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type"></div> \
+                  </div>';
+                  divDataSource.innerHTML += dataSourceHTML;
+              }
+              </script>
+          {% endif %}
+        </div>
         </div>
         </div>
         {% endfor %}
       </div>
     </div>
     {% endfor %}
+    <button type="submit" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+      Submit
+    </button>
+  </form>
     </div>
     {% include 'common/footer.html' %}
 
