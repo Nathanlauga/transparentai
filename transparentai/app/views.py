@@ -1,7 +1,7 @@
 from flask import render_template
 from app import app
 
-from data import questions
+from db import questions
 
 
 @app.route('/', methods=['GET', 'POST'])

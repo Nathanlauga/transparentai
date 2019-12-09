@@ -1,7 +1,8 @@
 import pandas as pd
-
 import sys
-sys.path.append("..")
+import os
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')+'/transparentai/app'))
 import utils
 
 def load_questions(path: str):
