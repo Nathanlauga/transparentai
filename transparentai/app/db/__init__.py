@@ -1,3 +1,5 @@
-from .db import load_questions_from_db
+from .db import DB
 
-questions = load_questions_from_db()
+
+db = DB()
+questions = db.get_questions()

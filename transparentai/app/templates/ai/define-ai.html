@@ -15,7 +15,7 @@
           <h1 class="my-6 text-3xl uppercase max-w-5xl w-full m-auto">{{ title }}</h1>
         </div>
 
-        <form>
+        <form action="." method="POST">
     {% for section in sections %}
         <div class="flex w-full">
         <div class="w-1/12">
@@ -41,7 +41,9 @@
 
           <div class="mt-4 mb-32">
           {% if question.question_type == 'text' %}
-            <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here...">
+            {% set answer =  answers[idx|string] %}
+            <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here..." value="{{answer}}">
+
           {% elif question.question_type == 'who' %}
           
           <div id="person">
@@ -58,10 +60,12 @@
           </div>
           <div class="flex my-2 person">
               <div class="w-1/2 p-3">
-                <input name="{{idx}}-job" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title">
+                {% set answer =  answers[idx|string+'-job'] %}
+                <input name="{{idx}}-job" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title" value="{{answer}}">
               </div>
               <div class="w-1/2 p-3">
-                <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
+                {% set answer =  answers[idx|string+'-name'] %}
+                <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
               </div>
           </div>
           </div>
@@ -74,7 +78,7 @@
             const nbPersons = document.getElementsByClassName('person').length;
             const divPerson = document.getElementById('person');
             const personHTML = ' \
-            <div class="mb-4 ml-3 relative"> \
+            <div class="mb-4 ml-3"> \
               <span class="text-xs uppercase w-auto absolute">person '+(nbPersons+1)+'</span> \
             </div> \
             <div class="flex my-2 person"> \
@@ -91,7 +95,8 @@
               <span class="text-xs uppercase w-auto absolute">question 1</span>
             </div>
             <div class="flex my-2 question">
-              <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question">
+                {% set answer =  answers[idx|string] %}
+              <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer}}">
             </div>
           </div>
           </div>
@@ -119,7 +124,9 @@
                 No
             </button>
             <div id="training-regularity" class="hidden">
-              <select class="block my-2 appearance-none w-1/2 bg-white border border-gray-400 text-gray-600 py-3 px-4 pr-8 rounded leading-tight">
+
+              {% set answer =  answers[idx|string] %}
+              <select name={{idx}} class="block my-2 appearance-none w-1/2 bg-white border border-gray-400 text-gray-600 py-3 px-4 pr-8 rounded leading-tight">
                   <option>Daily</option>
                   <option>Weekly</option>
                   <option>Monthly</option>
@@ -170,10 +177,12 @@
               </div>
               <div class="flex my-2 data-source">
                   <div class="w-1/2 p-3">
-                    <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
+                    {% set answer =  answers[idx|string+'-name'] %}
+                    <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
                   </div>
                   <div class="w-1/2 p-3">
-                    <input name="{{idx}}-type" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type">
+                    {% set answer =  answers[idx|string+'-type'] %}
+                    <input name="{{idx}}-type" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer}}">
                   </div>
               </div>
               </div>

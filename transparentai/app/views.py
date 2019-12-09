@@ -1,7 +1,7 @@
-from flask import render_template
+from flask import render_template, request, redirect, url_for
 from app import app
 
-from db import questions
+from db import questions, db
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -16,11 +16,32 @@ def ai():
     sections = questions['section'].unique()
     return render_template("ai.html", title=title, sections=sections, questions=questions)
 
+
 @app.route('/ai/define-ai/', methods=['GET', 'POST'])
-def user_needs():
+def define_ai():
+    if not db.is_ai_in_creation():
+        db.init_ai()
+    
+    current_ai = db.get_ai_in_creation()[0]
+    ai_id = current_ai.doc_id
+
+    return define_ai_id(id=ai_id)
+
+@app.route('/ai/define-ai/<id>', methods=['GET', 'POST'])
+def define_ai_id(id):
+    if not db.ai_exists(ai_id=int(id)):
+        return redirect(url_for('ai'))
+
     title = '1. Define the AI'
     sections = questions['section'].unique()
-    return render_template("ai/define-ai.html", title=title, sections=sections, questions=questions)
+
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        db.add_answer_ai(ai_id=id, answer=data)
+
+    answers = db.get_answers_ai(ai_id=int(id))
+
+    return render_template("ai/define-ai.html", title=title, sections=sections, questions=questions, answers=answers)
 
 @app.route('/ai/data-collect/', methods=['GET', 'POST'])
 def data_collect():
