@@ -181,8 +181,9 @@ def format_anwser_for_db(answers: dict):
 
     answers = utils.remove_empty_from_dict(d=answers)
     idx = answers.keys()
+    print(idx)
     idx = [i.split('-')[0] for i in idx]
-    dup = [item[0] for item, count in collections.Counter(idx).items() if count > 1]
+    print(idx)
     
     for key in idx:
         answers_formated[key] = dict()
@@ -191,7 +192,7 @@ def format_anwser_for_db(answers: dict):
         split_key = key.split('-')
         question_key = split_key[0]
 
-        if (question_key in dup) & (len(split_key) > 2):
+        if len(split_key) > 2:
             detail, num = split_key[1], split_key[2]
 
             if num not in answers_formated[question_key]:
@@ -203,5 +204,7 @@ def format_anwser_for_db(answers: dict):
             answers_formated[question_key][num] = answers[key]
         else:
             answers_formated[question_key]['1'] = answers[key]
-
+    
+    print(answers)
+    print(answers_formated)
     return answers_formated

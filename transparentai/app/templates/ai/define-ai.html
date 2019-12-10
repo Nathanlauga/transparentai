@@ -40,6 +40,7 @@
           </div>
 
           <div class="mt-4 mb-32">
+
           {% if question.question_type == 'text' %}
             {% if answers[idx|string] is defined %}
             {% set answer = answers[idx|string] %}
@@ -49,9 +50,8 @@
             {% else %}
             <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here...">
             {% endif %}
+
           {% elif question.question_type == 'who' %}
-          
-          <div id="person">
           <div class="flex my-2">
               <div class="w-1/2 p-3">
                 <span class="uppercase">Job title</span>
@@ -60,28 +60,41 @@
                 <span class="uppercase">Name</span>
               </div>
           </div>
+          {% if answers[idx|string] is defined %}
+          {% set answer = answers[idx|string] %}
+            {% for key in answer %}
+            <div class="mb-4 ml-3">
+              <span class="text-xs uppercase w-auto absolute">person {{key}}</span>
+            </div>
+            <div class="flex my-2 person">
+                <div class="w-1/2 p-3">
+                  <input name="{{idx}}-job-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title" value="{{answer[key]['job']}}">
+                </div>
+                <div class="w-1/2 p-3">
+                  <input name="{{idx}}-name-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer[key]['name']}}">
+                </div>
+            </div>
+            {% endfor %}
+          {% else %}
           <div class="mb-4 ml-3">
             <span class="text-xs uppercase w-auto absolute">person 1</span>
           </div>
           <div class="flex my-2 person">
               <div class="w-1/2 p-3">
-                {% set answer =  answers[idx|string+'-job'] %}
-                <input name="{{idx}}-job-1x" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title" value="{{answer}}">
+                <input name="{{idx}}-job-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title">
               </div>
               <div class="w-1/2 p-3">
-                {% set answer =  answers[idx|string+'-name'] %}
-                <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
+                <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
               </div>
           </div>
-          </div>
-          <button type="button" onclick="addPerson()" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+          {% endif %}
+          <button type="button" onclick="addPerson(this)" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
             Add a person
           </button>
 
           <script>
-          const addPerson = function(){
+          const addPerson = function(btn){
             const nbPersons = document.getElementsByClassName('person').length;
-            const divPerson = document.getElementById('person');
             const personHTML = ' \
             <div class="mb-4 ml-3"> \
               <span class="text-xs uppercase w-auto absolute">person '+(nbPersons+1)+'</span> \
@@ -90,36 +103,56 @@
               <div class="w-1/2 p-3"><input name="{{idx}}-job-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title"></div> \
               <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
               </div>';
-              divPerson.innerHTML += personHTML;
+              const div = document.createElement('div');
+              div.className = 'pt-1'; 
+              div.innerHTML = personHTML;
+              btn.parentNode.insertBefore(div, btn);
           }
           </script>
+
           {% elif question.question_type == 'text_list' %}
-          <div id="question">
-            <div class="my-6">
-            <div class="h-2">
-              <span class="text-xs uppercase w-auto absolute">question 1</span>
-            </div>
-            <div class="flex my-2 question">
-                {% set answer =  answers[idx|string] %}
-              <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer}}">
-            </div>
+          <div>
+            {% if answers[idx|string] is defined %}
+              {% set answer = answers[idx|string] %}
+                {% for key in answer %}
+                  <div class="my-6">
+                    <div class="h-2">
+                      <span class="text-xs uppercase w-auto absolute">question {{key}}</span>
+                    </div>
+                    <div class="flex my-2 question">
+                      <input name="{{idx}}-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer[key]}}">
+                    </div>
+                  </div> 
+                {% endfor %}
+              {% else %}
+              <div class="my-6">
+                <div class="h-2">
+                  <span class="text-xs uppercase w-auto absolute">question 1</span>
+                </div>
+                <div class="flex my-2 question">
+                  <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question">
+                </div>
+              </div>
+            {% endif %}
           </div>
-          </div>
-          <button type="button" onclick="addQuestion()" class="bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+          <button type="button" onclick="addQuestion(this)" class="bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
             Add a question
           </button>
 
           <script>
-          const addQuestion = function(){
+          const addQuestion = function(btn){
             const nbQuestions = document.getElementsByClassName('question').length;
-            const divQuestion = document.getElementById('question');
             const questionHTML = '<div class="my-6">\
             <div class="h-2"><span class="text-xs uppercase w-auto absolute">question '+(nbQuestions+1)+'</span></div>\
             <div class="flex my-2 question"><input name="{{idx}}-'+(nbQuestions+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question"></div>\
             </div>';
-            divQuestion.innerHTML += questionHTML;
+            const div = document.createElement('div');
+            div.className = 'pt-1'; 
+            div.innerHTML = questionHTML;
+            btn.parentNode.insertBefore(div, btn);
           }
           </script>
+          
           {% elif question.question_type == 'yes_text' %}
           <div>
             <button type="button" id="yes" onclick="changeYesNoButton(this)" class="w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
@@ -168,7 +201,7 @@
           }
           </script>
           {% elif question.question_type == 'data' %}
-          <div id="data-source">
+              <div>
               <div class="flex my-2">
                   <div class="w-1/2 p-3">
                     <span class="uppercase">Name</span>
@@ -177,37 +210,54 @@
                     <span class="uppercase">Source type</span>
                   </div>
               </div>
+              {% if answers[idx|string] is defined %}
+              {% set answer = answers[idx|string] %}
+                {% for key in answer %}
+                <div class="mb-4 ml-3">
+                    <span class="text-xs uppercase w-auto absolute">data source {{key}}</span>
+                  </div>
+                  <div class="flex my-2 data-source">
+                      <div class="w-1/2 p-3">
+                        <input name="{{idx}}-name-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer[key]['name']}}">
+                      </div>
+                      <div class="w-1/2 p-3">
+                        <input name="{{idx}}-type-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer[key]['type']}}">
+                      </div>
+                  </div>
+                {% endfor %}
+              {% else %}
               <div class="mb-4 ml-3">
-                <span class="text-xs uppercase w-auto absolute">data source 1</span>
+                  <span class="text-xs uppercase w-auto absolute">data source 1</span>
+                </div>
+                <div class="flex my-2 data-source">
+                    <div class="w-1/2 p-3">
+                      <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
+                    </div>
+                    <div class="w-1/2 p-3">
+                      <input name="{{idx}}-type-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type">
+                    </div>
+                </div>
+              {% endif %}
               </div>
-              <div class="flex my-2 data-source">
-                  <div class="w-1/2 p-3">
-                    {% set answer =  answers[idx|string+'-name'] %}
-                    <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
-                  </div>
-                  <div class="w-1/2 p-3">
-                    {% set answer =  answers[idx|string+'-type'] %}
-                    <input name="{{idx}}-type-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer}}">
-                  </div>
-              </div>
-              </div>
-              <button type="button" onclick="addDataSource()" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+              <button type="button" onclick="addDataSource(this)" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
                 Add a data source
               </button>
     
               <script>
-              const addDataSource = function(){
+              const addDataSource = function(btn){
                 const nbDataSource = document.getElementsByClassName('data-source').length;
-                const divDataSource = document.getElementById('data-source');
                 const dataSourceHTML = ' \
-                <div class="mb-4 ml-3 relative"> \
+                <div class="mb-4 ml-3"> \
                   <span class="text-xs uppercase w-auto absolute">data source '+(nbDataSource+1)+'</span> \
                 </div> \
                 <div class="flex my-2 data-source"> \
                   <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
                   <div class="w-1/2 p-3"><input name="{{idx}}-type-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type"></div> \
                   </div>';
-                  divDataSource.innerHTML += dataSourceHTML;
+                const div = document.createElement('div');
+                div.className = 'pt-1'; 
+                div.innerHTML = dataSourceHTML;
+                btn.parentNode.insertBefore(div, btn);
               }
               </script>
           {% endif %}
