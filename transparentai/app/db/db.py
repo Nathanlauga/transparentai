@@ -1,8 +1,11 @@
 from tinydb import TinyDB, Query
 import os
 import sys
+import collections
 import pandas as pd
 
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import utils
 
 class DB():
     """
@@ -38,7 +41,8 @@ class DB():
         """
         questions_db = self.db.table('questions')
         questions = questions_db.all()
-        return pd.DataFrame(questions)
+        index = [q.doc_id for q in questions]
+        return pd.DataFrame(questions, index=index)
 
     def get_ai(self):
         """
@@ -54,14 +58,20 @@ class DB():
 
     def init_ai(self):
         """
-
+        Initialize an ai.
+        Create a new ai into the TinyDB json file with state set to init
         """
         ai_db = self.db.table('ai')
         ai_db.insert({'state': 'init'})
 
     def get_ai_in_creation(self):
         """
+        Get the ai with init state created by `init_ai()` function
 
+        Returns
+        -------
+        list:
+            list of ai with init state (normally it supposed to have only one element)
         """
         ai_db = self.db.table('ai')
         AI = Query()
@@ -69,21 +79,46 @@ class DB():
 
     def is_ai_in_creation(self):
         """
+        Test if there is an ai with init state so in creation
 
+        Returns
+        -------
+        bool:
+            True if there is an ai with init state else False
         """
         ai_in_creation = self.get_ai_in_creation()
         return len(ai_in_creation) > 0
 
     def ai_exists(self, ai_id: int):
         """
+        Given an id return if this ai exists into the TinyDB
 
+        Parameters
+        ----------
+        ai_id: int
+            ai id to look into TinyDB
+        
+        Returns
+        -------
+        bool:
+            True if the ai exists else False
         """
         ai_db = self.db.table('ai')
         return ai_db.contains(doc_ids=[ai_id])
 
     def get_answers_ai(self, ai_id: int):
         """
+        Given an ai id find the answer if stored into the TinyDB
 
+        Parameters
+        ----------
+        ai_id: int
+            ai id to look into TinyDB
+        
+        Returns
+        -------
+        dict:
+            dictionnary of answers for the define AI section 
         """
         ai_db = self.db.table('ai')
         ai = ai_db.get(doc_id=ai_id)
@@ -96,16 +131,24 @@ class DB():
         return ai['answers']
 
 
-    def add_answer_ai(self, ai_id, answer):
+    def add_answer_ai(self, ai_id: int, answers: dict):
         """
+        Given an ai id and answers add them to the TinyDB
+        answers are stored this way {"index answer" : "answer wrote by user"}
 
+        Parameters
+        ----------
+        ai_id: int
+            ai id to look into TinyDB
+        answers: dict
+            answer extract from the form into define AI section and formated
         """
         ai_db = self.db.table('ai')
-        answer_dict = dict()
-        for answer_id in answer:
-            answer_dict[answer_id] = answer[answer_id]
+        answers_dict = dict()
+        for answer_id in answers:
+            answers_dict[answer_id] = answers[answer_id]
 
-        ai_db.update({'answers': answer_dict}, doc_ids=[ai_id])
+        ai_db.update({'answers': answers_dict}, doc_ids=[ai_id])
 
     def close(self):
         """
@@ -114,17 +157,51 @@ class DB():
         self.db.close()
 
 
-def load_questions_from_db():
+def format_anwser_for_db(answers: dict):
     """
-    Load questions from db.json
+    Format answer before storage into TinyDB. Mostly used for questions that have 
+    multiple answers like "Who is participating during the AI creation ?"
 
+    there are two possibles possible answer formats:
+    1. For answers that contains only one input for one answer 
+        {'question_key': {'num_answer': 'answer'}, ... }
+    2. For answers that contains at least two input for one answer 
+        {'question_key': {'num_answer': {'col1': 'answer1'}, {'col2': 'answer2'}, ... }, ... }
+
+    Parameters
+    ----------
+    answers: dict
+        answers extract from the form into define AI section
     Returns
     -------
-    pandas.DataFrame:
-        dataframe containing all questions for define ai section
+    dict:
+        formated answers
     """
-    db = DB()
-    questions = db.get_questions()
-    db.close()
+    answers_formated = dict()
 
-    return questions
+    answers = utils.remove_empty_from_dict(d=answers)
+    idx = answers.keys()
+    idx = [i.split('-')[0] for i in idx]
+    dup = [item[0] for item, count in collections.Counter(idx).items() if count > 1]
+    
+    for key in idx:
+        answers_formated[key] = dict()
+
+    for key in answers:
+        split_key = key.split('-')
+        question_key = split_key[0]
+
+        if (question_key in dup) & (len(split_key) > 2):
+            detail, num = split_key[1], split_key[2]
+
+            if num not in answers_formated[question_key]:
+                answers_formated[question_key][num] = dict()                    
+
+            answers_formated[question_key][num][detail] = answers[key]
+        elif len(split_key) == 2:
+            num = split_key[1]
+            answers_formated[question_key][num] = answers[key]
+        else:
+            answers_formated[question_key]['1'] = answers[key]
+
+    return answers_formated

@@ -41,9 +41,14 @@
 
           <div class="mt-4 mb-32">
           {% if question.question_type == 'text' %}
-            {% set answer =  answers[idx|string] %}
-            <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here..." value="{{answer}}">
-
+            {% if answers[idx|string] is defined %}
+            {% set answer = answers[idx|string] %}
+              {% for key in answer %}
+                <input name="{{idx}}-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here..." value="{{ answer[key] }}">
+              {% endfor %}
+            {% else %}
+            <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Your answer here...">
+            {% endif %}
           {% elif question.question_type == 'who' %}
           
           <div id="person">
@@ -61,11 +66,11 @@
           <div class="flex my-2 person">
               <div class="w-1/2 p-3">
                 {% set answer =  answers[idx|string+'-job'] %}
-                <input name="{{idx}}-job" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title" value="{{answer}}">
+                <input name="{{idx}}-job-1x" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title" value="{{answer}}">
               </div>
               <div class="w-1/2 p-3">
                 {% set answer =  answers[idx|string+'-name'] %}
-                <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
+                <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
               </div>
           </div>
           </div>
@@ -96,7 +101,7 @@
             </div>
             <div class="flex my-2 question">
                 {% set answer =  answers[idx|string] %}
-              <input name="{{idx}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer}}">
+              <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer}}">
             </div>
           </div>
           </div>
@@ -178,11 +183,11 @@
               <div class="flex my-2 data-source">
                   <div class="w-1/2 p-3">
                     {% set answer =  answers[idx|string+'-name'] %}
-                    <input name="{{idx}}-name" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
+                    <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer}}">
                   </div>
                   <div class="w-1/2 p-3">
                     {% set answer =  answers[idx|string+'-type'] %}
-                    <input name="{{idx}}-type" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer}}">
+                    <input name="{{idx}}-type-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer}}">
                   </div>
               </div>
               </div>
