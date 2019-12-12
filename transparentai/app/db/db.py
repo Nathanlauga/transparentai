@@ -212,5 +212,5 @@ def format_anwser_for_db(answers: dict):
 
         for i in range(0,length):
             answers_formated[question_key][str(i+1)] = current_answer.pop(keys[i])
-
+            
     return answers_formated

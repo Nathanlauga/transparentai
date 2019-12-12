@@ -63,8 +63,9 @@
           {% if answers[idx|string] is defined %}
           {% set answer = answers[idx|string] %}
             {% for key in answer %}
-            <div class="mb-4 ml-3">
-              <span class="text-xs uppercase w-auto absolute">person {{key}}</span>
+            <div>
+            <div class="mb-4 ml-3 relative">
+              <span class="text-xs uppercase w-auto absolute top-minus-5">person {{key}}</span>
             </div>
             <div class="flex my-2 person">
                 <div class="w-1/2 p-3">
@@ -74,10 +75,12 @@
                   <input name="{{idx}}-name-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name" value="{{answer[key]['name']}}">
                 </div>
             </div>
+            </div>
             {% endfor %}
           {% else %}
-          <div class="mb-4 ml-3">
-            <span class="text-xs uppercase w-auto absolute">person 1</span>
+          <div>
+          <div class="mb-4 ml-3 relative">
+            <span class="text-xs uppercase w-auto absolute top-minus-5">person 1</span>
           </div>
           <div class="flex my-2 person">
               <div class="w-1/2 p-3">
@@ -86,6 +89,7 @@
               <div class="w-1/2 p-3">
                 <input name="{{idx}}-name-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name">
               </div>
+          </div>
           </div>
           {% endif %}
           <button type="button" onclick="addPerson(this)" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
@@ -96,15 +100,14 @@
           const addPerson = function(btn){
             const nbPersons = document.getElementsByClassName('person').length;
             const personHTML = ' \
-            <div class="mb-4 ml-3"> \
-              <span class="text-xs uppercase w-auto absolute">person '+(nbPersons+1)+'</span> \
+            <div class="mb-4 ml-3 relative"> \
+              <span class="text-xs uppercase w-auto absolute top-minus-5">person '+(nbPersons+1)+'</span> \
             </div> \
             <div class="flex my-2 person"> \
               <div class="w-1/2 p-3"><input name="{{idx}}-job-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Job title"></div> \
               <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbPersons+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
               </div>';
               const div = document.createElement('div');
-              div.className = 'pt-1'; 
               div.innerHTML = personHTML;
               btn.parentNode.insertBefore(div, btn);
           }
@@ -115,23 +118,27 @@
             {% if answers[idx|string] is defined %}
               {% set answer = answers[idx|string] %}
                 {% for key in answer %}
+                <div>
                   <div class="my-6">
-                    <div class="h-2">
-                      <span class="text-xs uppercase w-auto absolute">question {{key}}</span>
+                    <div class="h-2 relative">
+                      <span class="text-xs uppercase w-auto absolute top-minus-5">question {{key}}</span>
                     </div>
                     <div class="flex my-2 question">
                       <input name="{{idx}}-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question" value="{{answer[key]}}">
                     </div>
                   </div> 
+                </div>
                 {% endfor %}
               {% else %}
+              <div>
               <div class="my-6">
-                <div class="h-2">
-                  <span class="text-xs uppercase w-auto absolute">question 1</span>
+                <div class="h-2 relative">
+                  <span class="text-xs uppercase w-auto absolute top-minus-5">question 1</span>
                 </div>
                 <div class="flex my-2 question">
                   <input name="{{idx}}-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question">
                 </div>
+              </div>
               </div>
             {% endif %}
           </div>
@@ -142,12 +149,11 @@
           <script>
           const addQuestion = function(btn){
             const nbQuestions = document.getElementsByClassName('question').length;
-            const questionHTML = '<div class="my-6">\
-            <div class="h-2"><span class="text-xs uppercase w-auto absolute">question '+(nbQuestions+1)+'</span></div>\
+            const questionHTML = '<div class="my-6 relative">\
+            <div class="h-2"><span class="text-xs uppercase w-auto absolute top-minus-5">question '+(nbQuestions+1)+'</span></div>\
             <div class="flex my-2 question"><input name="{{idx}}-'+(nbQuestions+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Question"></div>\
             </div>';
             const div = document.createElement('div');
-            div.className = 'pt-1'; 
             div.innerHTML = questionHTML;
             btn.parentNode.insertBefore(div, btn);
           }
@@ -155,20 +161,34 @@
           
           {% elif question.question_type == 'yes_text' %}
           <div>
-            <button type="button" id="yes" onclick="changeYesNoButton(this)" class="w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
-                Yes
-            </button>
-            <button type="button" id="no" onclick="changeYesNoButton(this)" class="w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
-                No
-            </button>
-            <div id="training-regularity" class="hidden">
-
-              {% set answer =  answers[idx|string] %}
-              <select name={{idx}} class="block my-2 appearance-none w-1/2 bg-white border border-gray-400 text-gray-600 py-3 px-4 pr-8 rounded leading-tight">
-                  <option>Daily</option>
-                  <option>Weekly</option>
-                  <option>Monthly</option>
-                  <option>Yearly</option>
+            {% if answers[idx|string]['1']['yes'] is defined %}
+            <input id="yes-input" name="{{idx}}-yes-1" type="radio" class="hidden" checked>
+            <label for="yes-input" id="yes" onclick="changeYesNoButton(this)" 
+            class="inline-block cursor-pointer text-center w-32 bg-transparent bg-gray-500 text-white font-semibold py-2 px-4 border border-gray-500 rounded">
+            {% else %}
+            <input id="yes-input" name="{{idx}}-yes-1" type="radio" class="hidden">
+            <label for="yes-input" id="yes" onclick="changeYesNoButton(this)" 
+            class="inline-block cursor-pointer text-center w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+            {% endif %}
+            Yes
+            </label>
+            {% if answers[idx|string]['1']['no'] is defined %}
+            <input id="no-input" name="{{idx}}-no-1" type="radio" class="hidden" checked>
+            <label for="no-input" id="no" onclick="changeYesNoButton(this)" 
+            class="inline-block cursor-pointer text-center w-32 bg-transparent bg-gray-500 text-white font-semibold py-2 px-4 border border-gray-500 rounded">
+            {% else %}
+            <input id="no-input" name="{{idx}}-no-1" type="radio" class="hidden">
+            <label for="no-input" id="no" onclick="changeYesNoButton(this)" 
+            class="inline-block cursor-pointer text-center w-32 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
+            {% endif %}No
+            </label>
+          
+            <div id="training-regularity" {% if answers[idx|string]['1']['yes'] is not defined %}class="hidden"{% endif %}>
+              <select name="{{idx}}-freq-1" class="block my-2 appearance-none w-1/2 bg-white border border-gray-400 text-gray-600 py-3 px-4 pr-8 rounded leading-tight">
+                  <option {%if answers[idx|string]['1']['freq'] == 'Daily' %}selected="selected"{%endif%}>Daily</option>
+                  <option {%if answers[idx|string]['1']['freq'] == 'Weekly' %}selected="selected"{%endif%}>Weekly</option>
+                  <option {%if answers[idx|string]['1']['freq'] == 'Monthly' %}selected="selected"{%endif%}>Monthly</option>
+                  <option {%if answers[idx|string]['1']['freq'] == 'Yearly' %}selected="selected"{%endif%}>Yearly</option>
                 </select>
             </div>
           </div>
@@ -178,12 +198,16 @@
               btn.classList.add("bg-gray-500");
               btn.classList.add("text-white");
               btn.classList.remove("text-gray-500");
+              btn.classList.remove("hover:bg-gray-500");
+              btn.classList.remove("hover:text-white");
             }
 
             const setBtnDeactivate = function(btn){
               btn.classList.remove("bg-gray-500");
               btn.classList.remove("text-white");
               btn.classList.add("text-gray-500");
+              btn.classList.add("hover:bg-gray-500");
+              btn.classList.add("hover:text-white");
             }
 
           const changeYesNoButton = function(btn){
@@ -191,9 +215,11 @@
             regularity = document.getElementById('training-regularity');
 
             if (btn.id === 'yes'){
+              document.getElementById('no-input').checked = false;
               otherBtn = document.getElementById('no');
               regularity.classList.remove("hidden");
             } else {
+              document.getElementById('yes-input').checked = false;
               otherBtn = document.getElementById('yes');
               regularity.classList.add("hidden");
             }
@@ -213,8 +239,9 @@
               {% if answers[idx|string] is defined %}
               {% set answer = answers[idx|string] %}
                 {% for key in answer %}
-                <div class="mb-4 ml-3">
-                    <span class="text-xs uppercase w-auto absolute">data source {{key}}</span>
+                <div>
+                <div class="mb-4 ml-3 relative">
+                    <span class="text-xs uppercase w-auto absolute top-minus-5">data source {{key}}</span>
                   </div>
                   <div class="flex my-2 data-source">
                       <div class="w-1/2 p-3">
@@ -224,10 +251,12 @@
                         <input name="{{idx}}-type-{{key}}" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type" value="{{answer[key]['type']}}">
                       </div>
                   </div>
+                </div>
                 {% endfor %}
               {% else %}
-              <div class="mb-4 ml-3">
-                  <span class="text-xs uppercase w-auto absolute">data source 1</span>
+              <div>
+                <div class="mb-4 ml-3 relative">
+                  <span class="text-xs uppercase w-auto absolute top-minus-5">data source 1</span>
                 </div>
                 <div class="flex my-2 data-source">
                     <div class="w-1/2 p-3">
@@ -237,6 +266,7 @@
                       <input name="{{idx}}-type-1" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type">
                     </div>
                 </div>
+              </div>
               {% endif %}
               </div>
               <button type="button" onclick="addDataSource(this)" class="ml-3 bg-transparent hover:bg-gray-500 text-gray-500 font-semibold hover:text-white py-2 px-4 border border-gray-500 hover:border-transparent rounded">
@@ -247,15 +277,14 @@
               const addDataSource = function(btn){
                 const nbDataSource = document.getElementsByClassName('data-source').length;
                 const dataSourceHTML = ' \
-                <div class="mb-4 ml-3"> \
-                  <span class="text-xs uppercase w-auto absolute">data source '+(nbDataSource+1)+'</span> \
+                <div class="mb-4 ml-3 relative"> \
+                  <span class="text-xs uppercase w-auto absolute top-minus-5">data source '+(nbDataSource+1)+'</span> \
                 </div> \
                 <div class="flex my-2 data-source"> \
                   <div class="w-1/2 p-3"><input name="{{idx}}-name-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Name"></div> \
                   <div class="w-1/2 p-3"><input name="{{idx}}-type-'+(nbDataSource+1)+'" class="w-full p-3 rounded border whitespace-pre-wrap" placeholder="Source type"></div> \
                   </div>';
                 const div = document.createElement('div');
-                div.className = 'pt-1'; 
                 div.innerHTML = dataSourceHTML;
                 btn.parentNode.insertBefore(div, btn);
               }

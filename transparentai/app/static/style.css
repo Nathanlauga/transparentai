@@ -13,3 +13,7 @@
 .filter-invert {
     filter: invert(1);
 }
+
+.top-minus-5 {
+    top: -5px;
+}
