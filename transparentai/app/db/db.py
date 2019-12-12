@@ -205,6 +205,12 @@ def format_anwser_for_db(answers: dict):
         else:
             answers_formated[question_key]['1'] = answers[key]
     
-    print(answers)
-    print(answers_formated)
+    for question_key in answers_formated:
+        current_answer = answers_formated[question_key]
+        length = len(current_answer)
+        keys = list(current_answer.keys())
+
+        for i in range(0,length):
+            answers_formated[question_key][str(i+1)] = current_answer.pop(keys[i])
+
     return answers_formated
