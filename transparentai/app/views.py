@@ -1,13 +1,17 @@
 from flask import render_template, request, redirect, url_for
 from app import app
+import pandas as pd
+
+from flask_babel import _
 
 from db import questions, DB
 import db
+import utils
 
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    title = 'Home'
+    title = _('Home')
     return render_template("index.html", title=title)
 
 

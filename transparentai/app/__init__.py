@@ -2,13 +2,18 @@ import sys
 import os 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__))))
 
-from flask import Flask
+from flask import Flask, request
+from flask_babel import Babel
 
-# Initialize the app
 app = Flask(__name__, instance_relative_config=True)
+babel = Babel(app)
 
-# Load the config file
 app.config.from_object("config")
 
-# Load the views
+@babel.localeselector
+def get_locale():
+    print(request.accept_languages.best_match(app.config['LANGUAGES']))
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
 from app import views
