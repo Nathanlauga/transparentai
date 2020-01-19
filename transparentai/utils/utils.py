@@ -28,6 +28,21 @@ class OpenFile:
         self.file.close()
 
 
+def str_to_file(string: str, fpath: str):
+    """
+    Create a file based on a string.
+    Parameters
+    ----------
+    string: str
+        string to write into the file
+    fname: str
+        file name
+    """
+    with OpenFile(fpath, 'w') as file:
+        file.write(string)
+    file.close()
+
+
 def remove_var_with_one_value(df):
     """
     Remove dataset's columns that only contains one unique value.

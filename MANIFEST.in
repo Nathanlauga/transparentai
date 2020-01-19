@@ -1,0 +1,2 @@
+recursive-include transparentai/src *
+recursive-include transparentai/src/img *

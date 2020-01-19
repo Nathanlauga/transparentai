@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import os
 
 import matplotlib.ticker as ticker
 
@@ -28,8 +29,9 @@ def plot_percentage_bar_man_img(ax, freq, spacing=0):
     """
     heights = [70 for i in range(0,10)]
 
-    for i, height in enumerate(heights):
-        img_path = '_man_blue.png' if i < round(freq,1)*10 else '_man_grey.png'    
+    for i, height in enumerate(heights):  
+        img_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/img/'))
+        img_path += '/_man_blue.png' if i < round(freq,1)*10 else '/_man_grey.png'  
         img = mpimg.imread(img_path)
         # AR = img.shape[1] / img.shape[0]
         AR = 135 / 256
