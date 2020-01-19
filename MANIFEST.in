@@ -1,4 +1,0 @@
-recursive-include transparentai/app/templates *
-recursive-include transparentai/app/static *
-recursive-include transparentai/app/data *
-recursive-include transparentai/app/utils *
