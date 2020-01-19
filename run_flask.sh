@@ -1,2 +1,0 @@
-cd transparentai/
-flask run

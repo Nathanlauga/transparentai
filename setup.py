@@ -12,11 +12,21 @@ setup(
     author='Nathan LAUGA',
     author_email='nathan.lauga@protonmail.com',
     url='https://github.com/Nathanlauga/transparentai',
-    packages=['transparentai','transparentai/app'],
+    packages=[
+        'transparentai',
+        'transparentai/datasets',
+        'transparentai/explore',
+        'transparentai/visuals',
+        'transparentai/utils',
+        ],
     include_package_data=True,
     install_requires=[
-        "flask",
-        "gunicorn"
+        'pandas',
+        'numpy',
+        'matplotlib',
+        'seaborn',
+        'scipy',
+        'scikit-learn'
     ],
     long_description=long_description,
     python_requires='>=3.5',
@@ -27,6 +37,6 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     entry_points = {
-        'console_scripts': ['transparentai=transparentai.cmd:main'],
+
     },
 )
