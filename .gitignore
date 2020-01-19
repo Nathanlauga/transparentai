@@ -118,3 +118,4 @@ venv.bak/
 !transparentai/.env
 run_flask.sh
 run.sh
+archive/
