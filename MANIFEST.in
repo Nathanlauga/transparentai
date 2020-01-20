@@ -1,2 +1,3 @@
 recursive-include transparentai/src *
 recursive-include transparentai/src/img *
+recursive-include transparentai/datasets/data *
