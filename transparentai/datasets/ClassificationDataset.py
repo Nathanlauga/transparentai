@@ -3,7 +3,7 @@ import numpy as np
 from IPython.display import display, Markdown
 
 from .ProtectedAttribute import ProtectedAttribute
-from ..visuals import plot_dataset_metrics
+from ..plots import plot_dataset_metrics
 
 
 class ClassificationDataset():

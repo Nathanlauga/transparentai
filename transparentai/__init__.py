@@ -7,4 +7,4 @@ __author__ = ["Nathan Lauga"]
 __license__ = "MIT"
 
 from .datasets import *
-from .visuals import *
+from .plots import *
