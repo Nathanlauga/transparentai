@@ -82,7 +82,7 @@ def encode_categorical_vars(df):
     pd.DataFrame
         Encoded dataframe
     """
-    cat_vars = df.select_dtypes('object').columns
+    cat_vars = df.select_dtypes(['object','category']).columns
     data_encoded = df.copy()
 
     # Use Label Encoder for categorical columns (including target column)

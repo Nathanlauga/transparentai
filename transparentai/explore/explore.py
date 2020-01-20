@@ -215,7 +215,7 @@ def show_df_vars(df, target=None):
     target: str (optional)
         Target column for classifier 
     """
-    cat_vars = df.select_dtypes('object')
+    cat_vars = df.select_dtypes(['object','category'])
     num_vars = df.select_dtypes('number')
     dat_vars = df.select_dtypes('datetime')
 
@@ -290,10 +290,17 @@ def show_df_num_cat_relations(df, target=None):
     df = utils.remove_var_with_one_value(df)
 
     num_vars = df.select_dtypes('number')
-    cat_vars = df.select_dtypes('object')
+    cat_vars = df.select_dtypes(['object','category'])
 
     var_combi = [(v1, v2) for v1 in num_vars.columns for v2 in cat_vars.columns if (
         v1 != v2) & (v2 != target)]
+
+    for num_var in num_vars.columns:
+        display(Markdown(''))
+        display(Markdown(f'Box plot for **{target}** & **{num_var}**'))
+        visuals.plot_barplot_cat_num_var(
+            df=df, cat_var=target, num_var=num_var, target=None)
+
 
     for num_var, cat_var in var_combi:
         display(Markdown(''))
@@ -318,7 +325,7 @@ def show_df_correlations(df):
     df = utils.remove_var_with_one_value(df)
 
     num_df = df.select_dtypes('number')
-    cat_df = df.select_dtypes('object')
+    cat_df = df.select_dtypes(['object','category'])
     num_vars = num_df.columns
     cat_vars = cat_df.columns
 
@@ -341,15 +348,15 @@ def show_df_correlations(df):
     visuals.plot_correlation_matrix(cramers_v_corr)
 
     data_encoded = utils.encode_categorical_vars(df)
-#     pearson_corr = data_encoded.corr()
-#     display(Markdown('#### Pearson correlation matrix for categorical variables'))
-#     plot_correlation_matrix(pearson_corr)
+    # pearson_corr = data_encoded.corr()
+    # display(Markdown('#### Pearson correlation matrix for categorical variables'))
+    # visuals.plot_correlation_matrix(pearson_corr)
 
     var_combi = [(v1, v2) for v1 in cat_vars for v2 in num_vars if v1 != v2]
 
     pbs_corr = utils.init_corr_matrix(
         columns=num_vars, index=cat_vars, fill_diag=0.)
-
+    
     for cat_var, num_var in var_combi:
         corr, p_value = ss.pointbiserialr(
             data_encoded[cat_var], data_encoded[num_var])
