@@ -26,7 +26,8 @@ setup(
         'matplotlib',
         'seaborn',
         'scipy',
-        'scikit-learn'
+        'scikit-learn',
+        'ipython'
     ],
     long_description=long_description,
     python_requires='>=3.5',

@@ -4,10 +4,27 @@ import numpy as np
 
 class ProtectedAttribute():
     """
+    This class retrieves all informations on a protected attribute on a specific dataset.
+    It computes automatically the `Disparate impact` and the `Statistical parity difference` to
+    get some insight about bias in the dataset.
+
+    This class is inspired by the BinaryLabelDatasetMetric_ class from aif360 module.
+
+    .. _BinaryLabelDatasetMetric: https://aif360.readthedocs.io/en/latest/modules/metrics.html#binary-label-dataset-metric
     """
 
     def __init__(self, df, attr, label_name, privileged_values):
         """
+        Parameters
+        ----------
+        df: pd.DataFrame
+            Dataframe to inspect
+        attr: str
+            Name of the attribute to analyse (it has to be into df columns)
+        label_name: str
+            Name of the label (or target) column
+        privileged_values: list
+            List with privileged values inside the column (e.g. ['Male'] for 'gender' attribute)  
         """
         self.name = attr
         self.label_name = label_name
@@ -120,7 +137,7 @@ class ProtectedAttribute():
 
     def statistical_parity_difference(self, label_value):
         r"""
-        Compute the disparate impact for a specific label value
+        Compute the statistical parity difference for a specific label value
 
         .. math::
            Pr(Y = v | D = \text{unprivileged})
