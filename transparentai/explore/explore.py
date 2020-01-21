@@ -329,6 +329,14 @@ def show_df_correlations(df):
     num_vars = num_df.columns
     cat_vars = cat_df.columns
 
+    ignore_cat_vars = list()
+    for var in cat_vars:
+        if cat_df[var].nunique() > 100:
+            ignore_cat_vars.append(var)
+    cat_vars = [v for v in cat_vars if v not in ignore_cat_vars]
+
+    print('Ignored categorical variables because there are more than 100 values :', ', '.join(ignore_cat_vars))
+
     pearson_corr = num_df.corr()
     display(Markdown('#### Pearson correlation matrix for numerical variables'))
     visuals.plot_correlation_matrix(pearson_corr)

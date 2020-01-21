@@ -318,13 +318,14 @@ def plot_correlation_matrix(corr_df):
     corr_df: pd.DataFrame
         Correlation dataframe
     """
-    fig, ax = plt.subplots(figsize=(10, 9))
+    fig, ax = plt.subplots(figsize=(11, 12))
     ax = sns.heatmap(
         corr_df,
         vmin=-1, vmax=1, center=0,
-        cmap=sns.diverging_palette(220, 20, n=200),
+        cmap=sns.color_palette("RdBu_r", 100),
         square=True,
-        annot=True
+        annot=True,
+        fmt='.2f'
     )
     ax.set_xticklabels(
         ax.get_xticklabels(),
