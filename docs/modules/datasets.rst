@@ -3,10 +3,10 @@
 
 .. automodule:: transparentai.datasets
 
-Classification Dataset
+Structured Dataset
 ----------------------
 
-.. autoclass:: ClassificationDataset
+.. autoclass:: StructuredDataset
     :members:
 
 Protected Attribute
@@ -14,3 +14,11 @@ Protected Attribute
 
 .. autoclass:: ProtectedAttribute
     :members:
+
+
+Preformated datasets
+--------------------
+
+.. automodule:: transparentai.datasets.datasets
+    :members:
+

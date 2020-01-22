@@ -5,8 +5,9 @@ Welcome to TransparentAI's documentation!
    :maxdepth: 3
    :caption: Modules
 
-   modules/explore
    modules/datasets
+   modules/plots
+   modules/utils
 
 Indices and tables
 ==================

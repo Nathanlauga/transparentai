@@ -60,11 +60,11 @@ def remove_var_with_one_value(df):
     if len(df) <= 1:
         return df
 
+    drop_cols = list()
     for var in df:
         if df[var].nunique() <= 1:
-            del df[var]
-
-    return df
+            drop_cols.appen(var)
+    return df.drop(columns=drop_cols)
 
 
 def encode_categorical_vars(df):
