@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display, Markdown
 
-from .. import utils
-from .. import visuals
+from transparentai import utils
+from transparentai import plots
 
 
 def show_missing_values(df):
@@ -80,12 +80,12 @@ def show_numerical_var(df, var, target=None):
         tab = pd.crosstab(df[var], df[target])
 
         ax = plt.subplot(121)
-        visuals.plot_stack(ax=ax, tab=tab, labels=labels)
+        plots.plot_stack(ax=ax, tab=tab, labels=labels)
 
         tab.div(tab.sum(axis=1), axis=0)
 
         ax = plt.subplot(122)
-        visuals.plot_stack(ax=ax, tab=tab, labels=labels)
+        plots.plot_stack(ax=ax, tab=tab, labels=labels)
 
     plt.show()
 
@@ -132,7 +132,7 @@ def show_categorical_var(df, var, target=None):
         legend_labels = sorted(df[target].unique())
         tab = pd.crosstab(df[var], df[target])
         tab = tab.loc[labels]
-        visuals.plot_stack_bar(ax=ax, tab=tab, labels=labels,
+        plots.plot_stack_bar(ax=ax, tab=tab, labels=labels,
                                legend_labels=legend_labels)
 
     plt.show()
@@ -176,7 +176,7 @@ def show_datetime_var(df, var, target=None):
         tab.div(tab.sum(axis=1), axis=0)
 
         ax = plt.subplot(122)
-        visuals.plot_stack(ax=ax, tab=tab, labels=legend_labels)
+        plots.plot_stack(ax=ax, tab=tab, labels=legend_labels)
 
     plt.show()
 
@@ -270,7 +270,7 @@ def show_df_numerical_relations(df, target=None):
     for var1, var2 in var_combi:
         display(Markdown(''))
         display(Markdown(f'Joint plot for **{var1}** & **{var2}**'))
-        visuals.plot_numerical_jointplot(
+        plots.plot_numerical_jointplot(
             df=df, var1=var1, var2=var2, target=target)
 
 
@@ -298,14 +298,14 @@ def show_df_num_cat_relations(df, target=None):
     for num_var in num_vars.columns:
         display(Markdown(''))
         display(Markdown(f'Box plot for **{target}** & **{num_var}**'))
-        visuals.plot_barplot_cat_num_var(
+        plots.plot_barplot_cat_num_var(
             df=df, cat_var=target, num_var=num_var, target=None)
 
 
     for num_var, cat_var in var_combi:
         display(Markdown(''))
         display(Markdown(f'Box plot for **{cat_var}** & **{num_var}**'))
-        visuals.plot_barplot_cat_num_var(
+        plots.plot_barplot_cat_num_var(
             df=df, cat_var=cat_var, num_var=num_var, target=target)
 
 
@@ -339,7 +339,7 @@ def show_df_correlations(df):
 
     pearson_corr = num_df.corr()
     display(Markdown('#### Pearson correlation matrix for numerical variables'))
-    visuals.plot_correlation_matrix(pearson_corr)
+    plots.plot_correlation_matrix(pearson_corr)
 
     var_combi = [tuple(sorted([v1, v2]))
                  for v1 in cat_vars for v2 in cat_vars if v1 != v2]
@@ -353,12 +353,12 @@ def show_df_correlations(df):
         cramers_v_corr.loc[var2, var1] = corr
 
     display(Markdown('#### Cramers V correlation matrix for categorical variables'))
-    visuals.plot_correlation_matrix(cramers_v_corr)
+    plots.plot_correlation_matrix(cramers_v_corr)
 
     data_encoded = utils.encode_categorical_vars(df)
     # pearson_corr = data_encoded.corr()
     # display(Markdown('#### Pearson correlation matrix for categorical variables'))
-    # visuals.plot_correlation_matrix(pearson_corr)
+    # plots.plot_correlation_matrix(pearson_corr)
 
     var_combi = [(v1, v2) for v1 in cat_vars for v2 in num_vars if v1 != v2]
 
@@ -372,4 +372,4 @@ def show_df_correlations(df):
 
     display(Markdown(
         '#### Point Biserial correlation matrix for numerical & categorical variables'))
-    visuals.plot_correlation_matrix(pbs_corr)
+    plots.plot_correlation_matrix(pbs_corr)

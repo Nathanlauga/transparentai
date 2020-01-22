@@ -13,7 +13,7 @@ class ProtectedAttribute():
     .. _BinaryLabelDatasetMetric: https://aif360.readthedocs.io/en/latest/modules/metrics.html#binary-label-dataset-metric
     """
 
-    def __init__(self, df, attr, label_name, privileged_values):
+    def __init__(self, df, attr, target, privileged_values):
         """
         Parameters
         ----------
@@ -21,20 +21,20 @@ class ProtectedAttribute():
             Dataframe to inspect
         attr: str
             Name of the attribute to analyse (it has to be into df columns)
-        label_name: str
+        target: str
             Name of the label (or target) column
         privileged_values: list
             List with privileged values inside the column (e.g. ['Male'] for 'gender' attribute)  
         """
         self.name = attr
-        self.label_name = label_name
+        self.target = target
         self.privileged_values = privileged_values
         self.unprivileged_values = [
             v for v in df[attr].unique() if v not in privileged_values]
 
         self.values = pd.Series(
             np.where(df[attr].isin(privileged_values), 1, 0), name=attr)
-        self.labels = df[label_name]
+        self.labels = df[target]
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
         self._compute_metrics()
 

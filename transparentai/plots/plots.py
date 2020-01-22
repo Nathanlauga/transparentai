@@ -4,13 +4,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import os
 
 import matplotlib.ticker as ticker
 
-from ..datasets.ProtectedAttribute import ProtectedAttribute
+from transparentai.datasets.protected_attribute import ProtectedAttribute
 
 
 def plot_text_center(ax, text, fontsize=18):
@@ -103,10 +102,10 @@ def setup_bottom_line(ax):
 def set_legend_protected_attr(fig, axes, protected_attr, label_value):
     """
     """
-    label_name = protected_attr.label_name
+    target = protected_attr.target
     attr_name = protected_attr.name
 
-    text = f'Focus on {attr_name} for {label_name} is {label_value}'
+    text = f'Focus on {attr_name} for {target} is {label_value}'
     unp_text = r'$\bf{Unprivileged}$' + \
         f' means {protected_attr.get_unprivileged_values()}'
     pri_text = r'$\bf{Privileged}$' + \
@@ -120,8 +119,8 @@ def set_legend_protected_attr(fig, axes, protected_attr, label_value):
     axes[0].text(0.0, 0.1, pri_text, fontsize=16,
                  transform=axes[0].transAxes, fontweight='normal')
 
-    text_blue = f'{label_name} is {label_value}'
-    text_grey = f'{label_name} is not {label_value}'
+    text_blue = f'{target} is {label_value}'
+    text_grey = f'{target} is not {label_value}'
     fig.legend(labels=[text_blue, text_grey], fontsize=18)
 
 
@@ -318,13 +317,15 @@ def plot_correlation_matrix(corr_df):
     corr_df: pd.DataFrame
         Correlation dataframe
     """
+    annot = False if max(corr_df.shape) > 20 else True
+
     fig, ax = plt.subplots(figsize=(11, 12))
     ax = sns.heatmap(
         corr_df,
         vmin=-1, vmax=1, center=0,
         cmap=sns.color_palette("RdBu_r", 100),
-        square=True,
-        annot=True,
+        square=(corr_df.shape[0] == corr_df.shape[1]),
+        annot=annot,
         fmt='.2f'
     )
     ax.set_xticklabels(

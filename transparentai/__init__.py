@@ -6,5 +6,5 @@ __version__ = "0.0.2"
 __author__ = ["Nathan Lauga"]
 __license__ = "MIT"
 
-from .datasets import *
-from .plots import *
+from transparentai.datasets import *
+from transparentai.plots import *

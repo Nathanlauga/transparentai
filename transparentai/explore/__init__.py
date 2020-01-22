@@ -10,4 +10,4 @@ __all__ = [
     'show_df_correlations',
     ]
 
-from .explore import * 
+from transparentai.explore.explore import * 

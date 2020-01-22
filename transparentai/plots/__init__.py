@@ -1,1 +1,1 @@
-from .plots import *
+from transparentai.plots.plots import *
