@@ -35,10 +35,13 @@ class StructuredDataset():
         if df is None:
             raise TypeError("Must provide a pandas DataFrame representing "
                             "the data (features, labels, protected attributes)")
-        if target not in df.columns:
+        if (target is not None) and (target not in df.columns):
             print('error : label not in dataframe')
-        if any([v not in df.columns for v in privileged_values]):
+        if (privileged_values is not None) and (any([v not in df.columns for v in privileged_values])):
             print('error : privileged variables not in dataframe')
+
+        if target is not None:
+            df[target] = df[target].astype('category')
 
         self.df = df.copy()
         self.target = target
@@ -91,7 +94,7 @@ class StructuredDataset():
         ----------
         attr: str (optional)
             Protected attribute to inspect (if None display bias for all attributes)
-            
+
         Returns
         -------
         pd.DataFrame
@@ -305,11 +308,12 @@ class StructuredDataset():
         var_combi = [(v1, v2) for v1 in num_vars.columns for v2 in cat_vars.columns if (
             v1 != v2) & (v2 != self.target)]
 
-        for num_var in num_vars.columns:
-            display(Markdown(''))
-            display(
-                Markdown(f'Box plot for **{self.target}** & **{num_var}**'))
-            self.plot_boxplot_two_variables(var1=self.target, var2=num_var)
+        if self.target is not None:
+            for num_var in num_vars.columns:
+                display(Markdown(''))
+                display(
+                    Markdown(f'Box plot for **{self.target}** & **{num_var}**'))
+                self.plot_boxplot_two_variables(var1=self.target, var2=num_var)
 
         for num_var, cat_var in var_combi:
             display(Markdown(''))
@@ -340,49 +344,55 @@ class StructuredDataset():
             print('Ignored categorical variables because there are more than 100 values :', ', '.join(
                 ignore_cat_vars))
 
-        pearson_corr = num_df.corr()
-        display(Markdown('#### Pearson correlation matrix for numerical variables'))
-        plots.plot_correlation_matrix(pearson_corr)
+        if len(num_df) > 0:
+            pearson_corr = num_df.corr()
+            display(Markdown('#### Pearson correlation matrix for numerical variables'))
+            plots.plot_correlation_matrix(pearson_corr)
 
-        var_combi = [tuple(sorted([v1, v2]))
-                     for v1 in cat_vars for v2 in cat_vars if v1 != v2]
-        var_combi = list(set(var_combi))
+        if len(cat_vars) > 0:
+            var_combi = [tuple(sorted([v1, v2]))
+                        for v1 in cat_vars for v2 in cat_vars if v1 != v2]
+            var_combi = list(set(var_combi))
 
-        cramers_v_corr = utils.init_corr_matrix(
-            columns=cat_vars, index=cat_vars)
+            cramers_v_corr = utils.init_corr_matrix(
+                columns=cat_vars, index=cat_vars)
 
-        for var1, var2 in var_combi:
-            corr = utils.cramers_v(cat_df[var1], cat_df[var2])
-            cramers_v_corr.loc[var1, var2] = corr
-            cramers_v_corr.loc[var2, var1] = corr
+            for var1, var2 in var_combi:
+                corr = utils.cramers_v(cat_df[var1], cat_df[var2])
+                cramers_v_corr.loc[var1, var2] = corr
+                cramers_v_corr.loc[var2, var1] = corr
 
-        display(Markdown('#### Cramers V correlation matrix for categorical variables'))
-        plots.plot_correlation_matrix(cramers_v_corr)
+            display(Markdown('#### Cramers V correlation matrix for categorical variables'))
+            plots.plot_correlation_matrix(cramers_v_corr)
 
-        data_encoded = utils.encode_categorical_vars(df)
-        # pearson_corr = data_encoded.corr()
-        # display(Markdown('#### Pearson correlation matrix for categorical variables'))
-        # plots.plot_correlation_matrix(pearson_corr)
+        if (len(cat_vars) > 0) and (len(num_df) > 0):
+            data_encoded = utils.encode_categorical_vars(df)
+            # pearson_corr = data_encoded.corr()
+            # display(Markdown('#### Pearson correlation matrix for categorical variables'))
+            # plots.plot_correlation_matrix(pearson_corr)
 
-        var_combi = [(v1, v2)
-                     for v1 in cat_vars for v2 in num_vars if v1 != v2]
+            var_combi = [(v1, v2)
+                        for v1 in cat_vars for v2 in num_vars if v1 != v2]
 
-        pbs_corr = utils.init_corr_matrix(
-            columns=num_vars, index=cat_vars, fill_diag=0.)
+            pbs_corr = utils.init_corr_matrix(
+                columns=num_vars, index=cat_vars, fill_diag=0.)
 
-        for cat_var, num_var in var_combi:
-            corr, p_value = ss.pointbiserialr(
-                data_encoded[cat_var], data_encoded[num_var])
-            pbs_corr.loc[cat_var, num_var] = corr
+            for cat_var, num_var in var_combi:
+                tmp_df = data_encoded[[cat_var,num_var]].dropna()
+                if len(tmp_df) == 0:
+                    continue
+                corr, p_value = ss.pointbiserialr(
+                    tmp_df[cat_var], tmp_df[num_var])
+                pbs_corr.loc[cat_var, num_var] = corr
 
-        display(Markdown(
-            '#### Point Biserial correlation matrix for numerical & categorical variables'))
-        plots.plot_correlation_matrix(pbs_corr)
+            display(Markdown(
+                '#### Point Biserial correlation matrix for numerical & categorical variables'))
+            plots.plot_correlation_matrix(pbs_corr)
 
     def plot_bias(self, attr=None, target_value=None):
         """
         Display a custom matplotlib graphic to show if a protected attribute is biased or not
-        
+
         Current dataset bias metrics : 
         - Disparate impact 
         - Statistical parity difference
@@ -397,9 +407,9 @@ class StructuredDataset():
         """
         if attr != None:
             plots.plot_dataset_metrics(
-                    protected_attr=self.protected_attributes[attr], target_value=target_value)
+                protected_attr=self.protected_attributes[attr], target_value=target_value)
         else:
             for attr in self.protected_attributes:
                 display(Markdown(''))
                 plots.plot_dataset_metrics(
-                        protected_attr=self.protected_attributes[attr], target_value=target_value)
+                    protected_attr=self.protected_attributes[attr], target_value=target_value)

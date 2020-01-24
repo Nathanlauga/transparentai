@@ -10,7 +10,7 @@ def plot_stack(ax, tab, labels):
     """
     colors = sns.color_palette("colorblind", len(labels))
     x = tab.index.values
-    y = [list(tab[str(l)].values) for l in labels]
+    y = [list(tab[l].values) for l in labels]
 
     ax.stackplot(x, y, labels=labels, colors=colors)
     ax.legend(loc=0, frameon=True)

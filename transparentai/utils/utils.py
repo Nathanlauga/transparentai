@@ -63,7 +63,7 @@ def remove_var_with_one_value(df):
     drop_cols = list()
     for var in df:
         if df[var].nunique() <= 1:
-            drop_cols.appen(var)
+            drop_cols.append(var)
     return df.drop(columns=drop_cols)
 
 
@@ -84,11 +84,12 @@ def encode_categorical_vars(df):
     """
     cat_vars = df.select_dtypes(['object','category']).columns
     data_encoded = df.copy()
+    data_encoded[cat_vars] = data_encoded[cat_vars].fillna('missing value')
 
     # Use Label Encoder for categorical columns (including target column)
     for feature in cat_vars:
         le = LabelEncoder()
-        le.fit(data_encoded[feature])
+        le.fit(data_encoded[feature].dropna())
 
         data_encoded[feature] = le.transform(data_encoded[feature])
 
@@ -123,6 +124,8 @@ def cramers_v(x, y):
     phi2corr = max(0, phi2-((k-1)*(r-1))/(n-1))
     rcorr = r-((r-1)**2)/(n-1)
     kcorr = k-((k-1)**2)/(n-1)
+    if min((kcorr-1), (rcorr-1)) == 0:
+        return 0
     return np.sqrt(phi2corr/min((kcorr-1), (rcorr-1)))
 
 

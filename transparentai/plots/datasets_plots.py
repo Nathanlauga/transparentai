@@ -247,8 +247,10 @@ def plot_numerical_jointplot(df, var1, var2, target=None):
         g = sns.jointplot(var1, var2, data=df, kind="hex", space=0, height=8)
     else:
         legend_labels = sorted(df[target].unique())
+        cols = [var1, var2, target] if target is not None else [var1, var2]
+        df = df[cols].dropna()
         grid = sns.JointGrid(x=var1, y=var2, data=df, height=7)
-
+        
         g = grid.plot_joint(sns.scatterplot, hue=target, data=df, alpha=0.3)
         for l in legend_labels:
             sns.distplot(df.loc[df[target] == l, var1], ax=g.ax_marg_x)
