@@ -8,6 +8,13 @@ Datasets plots functions
     :members:
 
 
+Models plots functions
+------------------------
+
+.. automodule:: transparentai.plots.models_plots
+    :members:
+
+
 Common plots functions
 ------------------------
 

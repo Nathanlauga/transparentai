@@ -62,7 +62,7 @@ class ClassificationModel():
     
     def scores(self):
         """
-        Compute classification metrics scores based on skearn Model evaluation_
+        Compute classification metrics scores based on `skearn Model evaluation`_
         Current metrics : accuracy, confusion_matrix, f1_score, precision, recall & roc_auc
         
         .. _skearn Model evaluation: https://scikit-learn.org/0.15/modules/model_evaluation.html
