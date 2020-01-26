@@ -1,1 +1,2 @@
 from transparentai.models.classification_model import ClassificationModel
+from transparentai.models.models_plots import *

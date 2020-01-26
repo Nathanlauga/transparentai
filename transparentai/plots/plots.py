@@ -63,7 +63,6 @@ def plot_stack_bar(ax, tab, labels, legend_labels):
     ax.legend(loc=0, frameon=True)
 
 
-
 def plot_barplot_cat_num_var(df, cat_var, num_var, target=None):
     """
     Show boxplots for a specific pair of categorical and numerical variables
@@ -103,7 +102,7 @@ def plot_correlation_matrix(corr_df):
     corr_df: pd.DataFrame
         Correlation dataframe
     """
-    annot = max(corr_df.shape) <= 20 
+    annot = max(corr_df.shape) <= 20
 
     fig, ax = plt.subplots(figsize=(11, 12))
     ax = sns.heatmap(

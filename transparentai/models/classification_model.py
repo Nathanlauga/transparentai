@@ -10,7 +10,7 @@ from sklearn.metrics import roc_auc_score
 from sklearn.metrics import roc_curve
 from sklearn.preprocessing import label_binarize
 
-import transparentai.plots.models_plots as plots
+import transparentai.models.models_plots as plots
 
 class ClassificationModel():
     """    
