@@ -9,24 +9,6 @@ from IPython.display import display, Markdown
 from transparentai import plots
 
 
-__SAVEPLOT__ = False
-
-
-def plot_or_save(fname=None):
-    """
-
-    Parameters
-    ----------
-    fname: str
-        file name where to save the plot
-    """
-    if not __SAVEPLOT__:
-        plt.show()
-    else:
-        fname = 'plot.png' if fname is None else fname
-        plt.savefig(fname)
-
-
 def plot_missing_values(df):
     """
     Show a bar plot that display percentage of missing values on columns that have some.
@@ -56,7 +38,7 @@ def plot_missing_values(df):
     plt.ylabel('Percentage')
     plt.title('Percentage of missing values in columns')
 
-    plot_or_save(fname='missing_values.png')
+    plots.plot_or_save(fname='missing_values.png')
 
 
 def plot_numerical_var(df, var, target=None):
@@ -106,7 +88,7 @@ def plot_numerical_var(df, var, target=None):
         ax = plt.subplot(224)
         plots.plot_stack(ax=ax, tab=tab, labels=labels)
 
-    plot_or_save(fname=f'{var}_variable_plot.png')
+    plots.plot_or_save(fname=f'{var}_variable_plot.png')
 
 
 def plot_categorical_var(df, var, target=None):
@@ -155,7 +137,7 @@ def plot_categorical_var(df, var, target=None):
         plots.plot_stack_bar(ax=ax, tab=tab, labels=labels,
                              legend_labels=legend_labels)
 
-    plot_or_save(fname=f'{var}_variable_plot.png')
+    plots.plot_or_save(fname=f'{var}_variable_plot.png')
 
 
 def plot_datetime_var(df, var, target=None):
@@ -199,7 +181,7 @@ def plot_datetime_var(df, var, target=None):
         ax = plt.subplot(122)
         plots.plot_stack(ax=ax, tab=tab, labels=legend_labels)
 
-    plot_or_save(fname=f'{var}_variable_plot.png')
+    plots.plot_or_save(fname=f'{var}_variable_plot.png')
 
 
 def display_meta_var(df, var):
@@ -252,7 +234,7 @@ def plot_numerical_jointplot(df, var1, var2, target=None):
             sns.distplot(df.loc[df[target] == l, var2],
                          ax=g.ax_marg_y, vertical=True)
 
-    plot_or_save(fname=f'{var1}_{var2}_variable_jointplot.png')
+    plots.plot_or_save(fname=f'{var1}_{var2}_variable_jointplot.png')
 
 
 def plot_boxplot_two_variables(df, var1, var2, target=None):
@@ -283,7 +265,7 @@ def plot_boxplot_two_variables(df, var1, var2, target=None):
                 data=df_plot, palette=palette)
     plt.xticks(rotation=40)
 
-    plot_or_save(fname=f'{var1}_{var2}_variable_boxplot.png')
+    plots.plot_or_save(fname=f'{var1}_{var2}_variable_boxplot.png')
 
 
 def plot_correlation_matrix(corr_df):
