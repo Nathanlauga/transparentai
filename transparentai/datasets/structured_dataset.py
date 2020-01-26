@@ -15,7 +15,7 @@ class StructuredDataset():
     And you can also find out dataset bias with `plot_bias` function.
     """
 
-    def __init__(self, df, target=None, privileged_values=None):
+    def __init__(self, df, target=None):
         """
         Parameters
         ----------
@@ -24,10 +24,6 @@ class StructuredDataset():
         target: str
             target column, if None then this StructuredDataset will not
             be abble to use bias insight
-        privileged_values: dict
-            Dictionnary with all protected attributes (category dtype) as key
-            and a list of privileged value for the variable
-            e.g. { 'gender' : ['Male'] }
 
         Raises
         ------
@@ -37,25 +33,13 @@ class StructuredDataset():
                             "the data (features, labels, protected attributes)")
         if (target is not None) and (target not in df.columns):
             print('error : label not in dataframe')
-        if (privileged_values is not None) and (any([v not in df.columns for v in privileged_values])):
-            print('error : privileged variables not in dataframe')
 
         if target is not None:
             df[target] = df[target].astype('category')
 
         self.df = df.copy()
         self.target = target
-        self.protected_attributes = {}
 
-        if privileged_values != None:
-            for attr in privileged_values:
-                values = privileged_values[attr]
-                protected_attr = ProtectedAttribute(df=df,
-                                                    attr=attr,
-                                                    target=target,
-                                                    privileged_values=values
-                                                    )
-                self.protected_attributes[attr] = protected_attr
 
     def __ne__(self, other):
         return not self == other
@@ -65,51 +49,6 @@ class StructuredDataset():
 
     def __str__(self):
         return str(self.df)
-
-    def split_train_test(self, freq, validation=False):
-        """
-        Parameters
-        ----------
-        freq: tuple
-            tuple containing train freq, test freq and validation freq
-            if validation is True
-        validation: bool
-            split dataset in 3 : train, test and validation
-        """
-        if sum(freq) != 1:
-            print('error should sum to 1')
-        if validation & (len(freq) != 3):
-            print('error for validation split 3 value in freq')
-
-    def get_bias_metrics(self, attr=None):
-        """
-        Retrieve all bias metrics of protected attributes and format
-        them to a DataFrame.
-
-        Current dataset bias metrics : 
-        - Disparate impact 
-        - Statistical parity difference
-
-        Parameters
-        ----------
-        attr: str (optional)
-            Protected attribute to inspect (if None display bias for all attributes)
-
-        Returns
-        -------
-        pd.DataFrame
-            formated bias metrics dataframe
-        """
-        if attr == None:
-            metrics = list()
-            for attr in self.protected_attributes:
-                metrics.append(self.protected_attributes[attr].metrics)
-            metrics = pd.DataFrame(metrics)
-            metrics.index = list(self.protected_attributes.keys())
-            metrics.columns = ['Metrics dataframe']
-        else:
-            metrics = self.protected_attributes[attr].metrics
-        return metrics
 
     # Plot functions
     # --------------
@@ -388,28 +327,3 @@ class StructuredDataset():
             display(Markdown(
                 '#### Point Biserial correlation matrix for numerical & categorical variables'))
             plots.plot_correlation_matrix(pbs_corr)
-
-    def plot_bias(self, attr=None, target_value=None):
-        """
-        Display a custom matplotlib graphic to show if a protected attribute is biased or not
-
-        Current dataset bias metrics : 
-        - Disparate impact 
-        - Statistical parity difference
-
-        Parameters
-        ----------
-        attr: str (optional)
-            Protected attribute to inspect (if None display bias for all attributes)
-        target_value: str (optional)
-            Specific value of the target (if None display bias for all target values)
-            It's usefull to avoid repetition in case of a binary classifier
-        """
-        if attr != None:
-            plots.plot_dataset_metrics(
-                protected_attr=self.protected_attributes[attr], target_value=target_value)
-        else:
-            for attr in self.protected_attributes:
-                display(Markdown(''))
-                plots.plot_dataset_metrics(
-                    protected_attr=self.protected_attributes[attr], target_value=target_value)

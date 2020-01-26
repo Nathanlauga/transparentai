@@ -9,4 +9,5 @@ __license__ = "MIT"
 __SAVEPLOT__ = False
 
 from transparentai.datasets import *
+from transparentai.fairness import *
 from transparentai.plots import *

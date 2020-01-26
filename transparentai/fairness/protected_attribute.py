@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 
+import transparentai.plots.datasets_plots as plots
 
 class ProtectedAttribute():
     """
@@ -13,28 +14,28 @@ class ProtectedAttribute():
     .. _BinaryLabelDatasetMetric: https://aif360.readthedocs.io/en/latest/modules/metrics.html#binary-label-dataset-metric
     """
 
-    def __init__(self, df, attr, target, privileged_values):
+    def __init__(self, dataset, attr, privileged_values):
         """
         Parameters
         ----------
-        df: pd.DataFrame
+        dataset: pd.DataFrame
             Dataframe to inspect
         attr: str
-            Name of the attribute to analyse (it has to be into df columns)
+            Name of the attribute to analyse (it has to be into dataset columns)
         target: str
             Name of the label (or target) column
         privileged_values: list
             List with privileged values inside the column (e.g. ['Male'] for 'gender' attribute)  
         """
         self.name = attr
-        self.target = target
+        self.target = dataset.target
         self.privileged_values = privileged_values
         self.unprivileged_values = [
-            v for v in df[attr].unique() if v not in privileged_values]
+            v for v in dataset.df[attr].unique() if v not in privileged_values]
 
         self.values = pd.Series(
-            np.where(df[attr].isin(privileged_values), 1, 0), name=attr)
-        self.labels = df[target]
+            np.where(dataset.df[attr].isin(privileged_values), 1, 0), name=attr)
+        self.labels = dataset.df[dataset.target]
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
         self.compute_dataset_bias_metrics()
 
@@ -166,3 +167,28 @@ class ProtectedAttribute():
                 self.statistical_parity_difference(target_value=target_value)
 
         self.metrics = metrics
+
+    def plot_bias(self, attr=None, target_value=None):
+        """
+        Display a custom matplotlib graphic to show if a protected attribute is biased or not
+
+        Current dataset bias metrics : 
+        - Disparate impact 
+        - Statistical parity difference
+
+        Parameters
+        ----------
+        attr: str (optional)
+            Protected attribute to inspect (if None display bias for all attributes)
+        target_value: str (optional)
+            Specific value of the target (if None display bias for all target values)
+            It's usefull to avoid repetition in case of a binary classifier
+        """
+        if attr != None:
+            plots.plot_dataset_metrics(
+                protected_attr=self.protected_attributes[attr], target_value=target_value)
+        else:
+            for attr in self.protected_attributes:
+                display(Markdown(''))
+                plots.plot_dataset_metrics(
+                    protected_attr=self.protected_attributes[attr], target_value=target_value)
