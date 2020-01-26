@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 
 from transparentai.datasets.structured_dataset import StructuredDataset
-from transparentai.fairness.protected_attribute import ProtectedAttribute
-import transparentai.plots.fairness_plots as plots
+from transparentai.fairness.dataset_protected_attribute import DatasetProtectedAttribute
+import transparentai.fairness.fairness_plots as plots
 
 
 class DatasetBiasMetric():
@@ -12,7 +12,7 @@ class DatasetBiasMetric():
 
     def __init__(self, dataset, privileged_groups):
         """
-        
+
         privileged_values: dict
             Dictionnary with all protected attributes (category dtype) as key
             and a list of privileged value for the variable
@@ -35,10 +35,10 @@ class DatasetBiasMetric():
 
         for attr in privileged_groups:
             values = privileged_groups[attr]
-            protected_attr = ProtectedAttribute(dataset=dataset,
-                                                attr=attr,
-                                                privileged_values=values
-                                                )
+            protected_attr = DatasetProtectedAttribute(dataset=dataset,
+                                                       attr=attr,
+                                                       privileged_values=values
+                                                       )
             protected_attributes[attr] = protected_attr
 
         self.protected_attributes = protected_attributes

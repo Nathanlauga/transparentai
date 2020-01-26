@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-import transparentai.plots.datasets_plots as plots
-
 class ProtectedAttribute():
     """
     This class retrieves all informations on a protected attribute on a specific dataset.
@@ -37,7 +35,6 @@ class ProtectedAttribute():
             np.where(dataset.df[attr].isin(privileged_values), 1, 0), name=attr)
         self.labels = dataset.df[dataset.target]
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
-        self.compute_dataset_bias_metrics()
 
     def get_privileged_values(self):
         return f'{self.name} = '+' or '.join([str(v) for v in self.privileged_values])
@@ -119,76 +116,3 @@ class ProtectedAttribute():
         """
         return (metric_fun(target_value=target_value, privileged=False)
                 / metric_fun(target_value=target_value, privileged=True))
-
-    def disparate_impact(self, target_value):
-        r"""
-        Compute the disparate impact for a specific label value
-
-        .. math::
-           \frac{Pr(Y = v | D = \text{unprivileged})}
-           {Pr(Y = v | D = \text{privileged})}
-
-        Parameters
-        ----------
-        target_value:
-            Specific label value for which it will compute
-            the metric
-        """
-        return self.ratio(self.base_rate, target_value=target_value)
-
-    def statistical_parity_difference(self, target_value):
-        r"""
-        Compute the statistical parity difference for a specific label value
-
-        .. math::
-           Pr(Y = v | D = \text{unprivileged})
-           - Pr(Y = v | D = \text{privileged})
-
-        Parameters
-        ----------
-        target_value:
-            Specific label value for which it will compute
-            the metric
-        """
-        return self.difference(self.base_rate, target_value=target_value)
-
-    def compute_dataset_bias_metrics(self):
-        """
-        Compute automaticaly all dataset bias metrics for this
-        protected attribute.
-        """
-        metrics = pd.DataFrame()
-        metrics.name = self.name
-
-        for target_value in self.labels.unique():
-            metrics.loc[target_value, 'Disparate impact'] = self.disparate_impact(
-                target_value=target_value)
-            metrics.loc[target_value, 'Statistical parity difference'] = \
-                self.statistical_parity_difference(target_value=target_value)
-
-        self.metrics = metrics
-
-    def plot_bias(self, attr=None, target_value=None):
-        """
-        Display a custom matplotlib graphic to show if a protected attribute is biased or not
-
-        Current dataset bias metrics : 
-        - Disparate impact 
-        - Statistical parity difference
-
-        Parameters
-        ----------
-        attr: str (optional)
-            Protected attribute to inspect (if None display bias for all attributes)
-        target_value: str (optional)
-            Specific value of the target (if None display bias for all target values)
-            It's usefull to avoid repetition in case of a binary classifier
-        """
-        if attr != None:
-            plots.plot_dataset_metrics(
-                protected_attr=self.protected_attributes[attr], target_value=target_value)
-        else:
-            for attr in self.protected_attributes:
-                display(Markdown(''))
-                plots.plot_dataset_metrics(
-                    protected_attr=self.protected_attributes[attr], target_value=target_value)

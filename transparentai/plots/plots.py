@@ -4,6 +4,24 @@ import seaborn as sns
 import numpy as np
 
 
+__SAVEPLOT__ = False
+
+
+def plot_or_save(fname=None):
+    """
+
+    Parameters
+    ----------
+    fname: str
+        file name where to save the plot
+    """
+    if not __SAVEPLOT__:
+        plt.show()
+    else:
+        fname = 'plot.png' if fname is None else fname
+        plt.savefig(fname)
+
+
 def plot_stack(ax, tab, labels):
     """
     Add a stack plot into the current ax plot

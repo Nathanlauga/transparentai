@@ -4,7 +4,7 @@ import scipy.stats as ss
 from IPython.display import display, Markdown
 
 from transparentai.datasets.protected_attribute import ProtectedAttribute
-import transparentai.plots.datasets_plots as plots
+import transparentai.datasets.datasets_plots as plots
 import transparentai.utils as utils
 
 
