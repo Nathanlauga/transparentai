@@ -84,7 +84,10 @@ def encode_categorical_vars(df):
     """
     cat_vars = df.select_dtypes(['object','category']).columns
     data_encoded = df.copy()
-    data_encoded[cat_vars] = data_encoded[cat_vars].fillna('missing value')
+    for var in df.select_dtypes('category').columns:
+        data_encoded[var] = data_encoded[var].cat.add_categories('Unknown')
+
+    data_encoded[cat_vars] = data_encoded[cat_vars].fillna('Unknown')
 
     # Use Label Encoder for categorical columns (including target column)
     for feature in cat_vars:
