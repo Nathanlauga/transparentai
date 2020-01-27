@@ -35,11 +35,14 @@ class ModelProtectedAttribute(ProtectedAttribute):
         """
         other_values = [v for v in list(set(self.preds)) if v != target_value]
         matrix = self.confusion_matrix(privileged=privileged)
+
         TP = matrix.loc[target_value, target_value]
         FP = sum(matrix.loc[other_values, target_value].values)
         TN = sum(sum(matrix.loc[other_values, other_values].values))
-        FN = sum(matrix.loc[target_value, other_values].values)
-
+        if type(target_value) == type(int()):
+            FN = sum(matrix.iloc[target_value, other_values].values)
+        else:
+            FN = sum(matrix.loc[target_value, other_values].values)
         return dict(
             TP=TP, FP=FP, TN=TN, FN=FN
         )
