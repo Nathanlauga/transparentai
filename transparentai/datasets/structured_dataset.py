@@ -305,7 +305,7 @@ class StructuredDataset():
             plots.plot_correlation_matrix(cramers_v_corr)
 
         if (len(cat_vars) > 0) and (len(num_df) > 0):
-            data_encoded = utils.encode_categorical_vars(df)
+            data_encoded, _ = utils.encode_categorical_vars(df)
             # pearson_corr = data_encoded.corr()
             # display(Markdown('#### Pearson correlation matrix for categorical variables'))
             # plots.plot_correlation_matrix(pearson_corr)

@@ -79,8 +79,11 @@ def encode_categorical_vars(df):
 
     Returns
     -------
-    pd.DataFrame
+    pd.DataFrame:
         Encoded dataframe
+    dict:
+        Encoders with feature name on keys and
+        encoder as value
     """
     cat_vars = df.select_dtypes(['object','category']).columns
     data_encoded = df.copy()
@@ -90,13 +93,15 @@ def encode_categorical_vars(df):
     data_encoded[cat_vars] = data_encoded[cat_vars].fillna('Unknown')
 
     # Use Label Encoder for categorical columns (including target column)
+    encoders = {}
     for feature in cat_vars:
         le = LabelEncoder()
         le.fit(data_encoded[feature].dropna())
 
         data_encoded[feature] = le.transform(data_encoded[feature])
+        encoders[feature] = le
 
-    return data_encoded
+    return data_encoded, encoders
 
 
 def cramers_v(x, y):

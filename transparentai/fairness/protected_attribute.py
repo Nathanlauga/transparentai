@@ -1,18 +1,12 @@
 import pandas as pd
 import numpy as np
 
+
 class ProtectedAttribute():
     """
-    This class retrieves all informations on a protected attribute on a specific dataset.
-    It computes automatically the `Disparate impact` and the `Statistical parity difference` to
-    get some insight about bias in the dataset.
-
-    This class is inspired by the BinaryLabelDatasetMetric_ class from aif360 module.
-
-    .. _BinaryLabelDatasetMetric: https://aif360.readthedocs.io/en/latest/modules/metrics.html#binary-label-dataset-metric
     """
 
-    def __init__(self, dataset, attr, privileged_values):
+    def __init__(self, dataset, attr, privileged_values, favorable_label=None):
         """
         Parameters
         ----------
@@ -27,6 +21,7 @@ class ProtectedAttribute():
         """
         self.name = attr
         self.target = dataset.target
+        self.favorable_label = favorable_label
         self.privileged_values = privileged_values
         self.unprivileged_values = [
             v for v in dataset.df[attr].unique() if v not in privileged_values]
@@ -35,6 +30,14 @@ class ProtectedAttribute():
             np.where(dataset.df[attr].isin(privileged_values), 1, 0), name=attr)
         self.labels = dataset.df[dataset.target]
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
+
+    def to_frame(self):
+        """
+        """
+        df = pd.DataFrame()
+        df[self.name] = self.values
+        df[self.target] = self.labels
+        return df
 
     def get_privileged_values(self):
         return f'{self.name} = '+' or '.join([str(v) for v in self.privileged_values])
@@ -62,47 +65,6 @@ class ProtectedAttribute():
         else:
             return self.crosstab.loc[0, 'All']
 
-    def num_spec_value(self, target_value, privileged=None):
-        r"""
-        Compute the number of a particular value,
-        :math:`P = \sum_{i=1}^n \mathbb{1}[y_i = v]`,
-        optionally conditioned on protected attributes.
-
-        Parameters
-        ----------
-        privileged (bool, optional): 
-            Boolean prescribing whether to
-            condition this metric on the `privileged_groups`, if `True`, or
-            the `unprivileged_groups`, if `False`. Defaults to `None`
-            meaning this metric is computed over the entire dataset.
-        """
-        if privileged == None:
-            return self.crosstab.loc['All', target_value]
-        elif privileged:
-            return self.crosstab.loc[1, target_value]
-        else:
-            return self.crosstab.loc[0, target_value]
-
-    def base_rate(self, target_value, privileged=None):
-        """
-        Compute the base rate, :math:`Pr(Y = 1) = P/(P+N)`, optionally
-        conditioned on protected attributes.
-
-        Parameters
-        ----------
-        privileged (bool, optional): 
-                Boolean prescribing whether to
-                condition this metric on the `privileged_groups`, if `True`, or
-                the `unprivileged_groups`, if `False`. Defaults to `None`
-                meaning this metric is computed over the entire dataset.
-        Returns
-        -------
-        float: 
-            Base rate (optionally conditioned).
-        """
-        return (self.num_spec_value(target_value=target_value, privileged=privileged)
-                / self.num_instances(privileged=privileged))
-
     def difference(self, metric_fun, target_value):
         """
         Compute difference of the metric for unprivileged and privileged groups.
@@ -116,3 +78,22 @@ class ProtectedAttribute():
         """
         return (metric_fun(target_value=target_value, privileged=False)
                 / metric_fun(target_value=target_value, privileged=True))
+
+    def compute_bias_metrics(self, metrics_dict):
+        """
+
+        Parameters
+        ----------
+        metrics_dict: dict
+            Dictionnary with metric name on keys and 
+            metric function as value
+        """
+        metrics = pd.DataFrame()
+        metrics.name = self.name
+
+        for target_value in self.labels.unique():
+            for metric, func in metrics_dict.items():
+                val = func(target_value=target_value)
+                metrics.loc[target_value, metric] = val
+
+        self.metrics = metrics

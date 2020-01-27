@@ -1,3 +1,3 @@
 from transparentai.fairness.dataset_bias_metric import DatasetBiasMetric
-from transparentai.fairness.protected_attribute import ProtectedAttribute
+from transparentai.fairness.model_bias_metric import ModelBiasMetric
 from transparentai.fairness.fairness_plots import *
