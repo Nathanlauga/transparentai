@@ -22,10 +22,12 @@ class BiasMetric():
                 'dataset attribute must be a StructuredDataset object!')
         if dataset.target is None:
             raise ValueError('target from StructuredDataset has to be set')
+        if (favorable_label is not None) and (favorable_label not in dataset.df[dataset.target].unique()):
+            raise ValueError('favorable_label has to be a value of dataset target columns.')
         if privileged_groups is None:
             raise ValueError('privileged_groups has to be set')
         if (privileged_groups is not None) and (any([v not in dataset.df.columns for v in privileged_groups])):
-            print('error : privileged variables not in dataset')
+            raise ValueError('privileged variables not in dataset')
 
         self.dataset = dataset
         self.favorable_label = favorable_label

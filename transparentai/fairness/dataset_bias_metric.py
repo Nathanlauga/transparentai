@@ -41,6 +41,8 @@ class DatasetBiasMetric(BiasMetric):
             Specific value of the target (if None display bias for all target values)
             It's usefull to avoid repetition in case of a binary classifier
         """
+        if (target_value is None) and (self.favorable_label is not None):
+            target_value = self.favorable_label
         if attr != None:
             plots.plot_dataset_metrics(
                 protected_attr=self.protected_attributes[attr], target_value=target_value)

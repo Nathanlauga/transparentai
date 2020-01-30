@@ -88,10 +88,15 @@ class ProtectedAttribute():
             Dictionnary with metric name on keys and 
             metric function as value
         """
+        if self.favorable_label is not None:
+            target_values = [self.favorable_label]
+        else:
+            target_values = self.labels.unique()
+
         metrics = pd.DataFrame()
         metrics.name = self.name
 
-        for target_value in self.labels.unique():
+        for target_value in target_values:
             for metric, func in metrics_dict.items():
                 val = func(target_value=target_value)
                 metrics.loc[target_value, metric] = val
