@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from IPython.display import display, Markdown
 
 from transparentai.fairness.dataset_protected_attribute import DatasetProtectedAttribute
 from transparentai.fairness.bias_metric import BiasMetric
@@ -44,10 +45,14 @@ class DatasetBiasMetric(BiasMetric):
         if (target_value is None) and (self.favorable_label is not None):
             target_value = self.favorable_label
         if attr != None:
-            plots.plot_dataset_metrics(
-                protected_attr=self.protected_attributes[attr], target_value=target_value)
+            plots.plot_bias_metrics(
+                protected_attr=self.protected_attributes[attr], 
+                bias_type='dataset',
+                target_value=target_value)
         else:
             for attr in self.protected_attributes:
                 display(Markdown(''))
-                plots.plot_dataset_metrics(
-                    protected_attr=self.protected_attributes[attr], target_value=target_value)
+                plots.plot_bias_metrics(
+                    protected_attr=self.protected_attributes[attr], 
+                    bias_type='dataset',
+                    target_value=target_value)

@@ -203,7 +203,7 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
         .. math::
 
-           \tfrac{1}{2}\left[|FPR_{D = \text{unprivileged}} - FPR_{D = \text{privileged}}|
+           \frac{1}{2}\left[|FPR_{D = \text{unprivileged}} - FPR_{D = \text{privileged}}|
            + |TPR_{D = \text{unprivileged}} - TPR_{D = \text{privileged}}|\right]
 
         A value of 0 indicates equality of odds.

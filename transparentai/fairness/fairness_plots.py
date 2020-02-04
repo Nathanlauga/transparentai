@@ -36,6 +36,33 @@ def plot_text_center(ax, text, fontsize=18):
 
     ax.axis('off')
 
+# TODO : refactor text center & left
+def plot_text_left(ax, text, fontsize=18):
+    """
+    Display text at the left of an ax from a matplotlib figure.
+
+    Parameters
+    ----------
+    ax: plt.axes.Axes
+        ax where to set centered text
+    text: str
+        text to display
+    fontsize: int (optionnal)
+        font size of the text
+    """
+    left, width = 0, 0
+    bottom, height = .25, .5
+    right = left + width
+    top = bottom + height
+
+    ax.text(0.5 * (left + right), 0.5 * (bottom + top), text,
+            horizontalalignment='center',
+            verticalalignment='center',
+            fontsize=fontsize, ha='left', multialignment='left',
+            transform=ax.transAxes)
+
+    ax.axis('off')
+
 
 def plot_percentage_bar_man_img(ax, freq, spacing=0):
     """
@@ -192,7 +219,7 @@ def set_legend_protected_attr(fig, axes, protected_attr, target_value):
     fig.legend(labels=[text_blue, text_grey], fontsize=18)
 
 
-def get_protected_attr_freq(protected_attr, target_value, privileged=None):
+def get_protected_attr_freq(protected_attr, target_value, privileged=None, predictions=False):
     """
     Put into protected attributes class
     
@@ -205,12 +232,16 @@ def get_protected_attr_freq(protected_attr, target_value, privileged=None):
         Frequency
     """
     n_total = protected_attr.num_instances(privileged=privileged)
-    n = protected_attr.num_spec_value(
-        target_value=target_value, privileged=privileged)
+    if predictions:
+        n = protected_attr.num_spec_value(
+            target_value=target_value, privileged=privileged)
+    else:
+        n = protected_attr.num_spec_value(
+            target_value=target_value, privileged=privileged, predictions=True)
     return n / n_total
 
         
-def get_metric_text(protected_attr, target_value, metric_name):
+def get_metric_text(protected_attr, target_value, metric_name, bias_type='dataset'):
     """
     Return a text value for a specific metric
     
@@ -228,18 +259,58 @@ def get_metric_text(protected_attr, target_value, metric_name):
     str
         String of the metric calculus
     """
-    metrics = protected_attr.metrics
-    freq_unpr = get_protected_attr_freq(protected_attr, target_value, privileged=False)
-    freq_priv = get_protected_attr_freq(protected_attr, target_value, privileged=True)
+    metrics = protected_attr.metrics    
     value = metrics.loc[target_value,metric_name]
+    freq_unpr = get_protected_attr_freq(protected_attr, target_value, privileged=False, predictions=True)
+    freq_priv = get_protected_attr_freq(protected_attr, target_value, privileged=True, predictions=True)
     
-    if metric_name == 'Disparate impact':
-        return r'$\frac{%.2f}{%.2f}$ = %.2f' % (
-                freq_unpr, freq_priv, value)
-    elif metric_name == 'Statistical parity difference':
-        return r'$%.2f - %.2f$ = %.2f' % (freq_unpr*100, freq_priv*100, value*100)
-    else:
-        return 'no metric selected'
+    if bias_type == 'dataset':                                            
+        if metric_name == 'Disparate impact':
+            formula = r'$\frac{Pr(Y = %s\ |\ D = unprivileged)}{Pr(Y = %s\ |\ D = privileged)}$' % (
+                    target_value, target_value) 
+            return formula +'\n'+r'$ = \frac{%.2f}{%.2f}$ = %.2f' % (freq_unpr, freq_priv, value)
+                                            
+        elif metric_name == 'Statistical parity difference':
+            formula = r'$Pr(Y = %s\ |\ _{D = unprivileged}) - Pr(Y = %s\ |\ _{D = privileged})$' % (
+                    target_value, target_value)
+
+            return formula + '\n' + r'= %.2f - %.2f = %.2f' % (freq_unpr, freq_priv, value)
+    
+    elif bias_type == 'model':
+        if metric_name == 'Disparate impact':
+            formula = r'$\frac{Pr(\hat{Y} = %s\ |\ D = unprivileged)}{Pr(\hat{Y} = %s\ |\ D = privileged)}$' % (
+                    target_value, target_value) 
+            return formula +'\n'+r'$ = \frac{%.2f}{%.2f}$ = %.2f' % (freq_unpr, freq_priv, value)
+
+        elif metric_name == 'Statistical parity difference':
+            formula = r'$Pr(\hat{Y} = %s\ |\ _{D = unprivileged}) - Pr(\hat{Y} = %s\ |\ _{D = privileged})$' % (
+                    target_value, target_value)
+
+            return formula + '\n' + r'= %.2f - %.2f = %.2f' % (freq_unpr, freq_priv, value)
+
+        elif metric_name == 'Equal opportunity difference':
+            TPR_unpriv = protected_attr.true_positive_rate(target_value, privileged=False)
+            TPR_priv = protected_attr.true_positive_rate(target_value, privileged=True)
+
+            formula = '$TPR_{unprivileged} - TPR_{privileged}$'
+            return formula + '\n = %.2f - %.2f = %.2f' % (
+                TPR_unpriv, TPR_priv, value)
+
+        elif metric_name == 'Average abs odds difference':        
+            TPR_unpriv = protected_attr.true_positive_rate(target_value, privileged=False)
+            TPR_priv = protected_attr.true_positive_rate(target_value, privileged=True)
+            FPR_unpriv = protected_attr.false_positive_rate(target_value, privileged=False)
+            FPR_priv = protected_attr.false_positive_rate(target_value, privileged=True)
+
+            formula =  r'$\frac{1}{2}\left[|FPR_{unprivileged} - FPR_{privileged}| + |TPR_{unprivileged} - TPR_{privileged}|\right]$'
+            return formula + '\n' + r'= $\frac{1}{2}\left[|%.2f - %.2f| + |%.2f - %.2f|\right]$ = %.2f' % (
+                    FPR_unpriv, FPR_priv, TPR_unpriv, TPR_priv, value)
+        
+        elif metric_name == 'Theil index':
+            formula =  r'$\frac{1}{n}\sum_{i=1}^n\frac{b_{i}}{\mu}\ln\frac{b_{i}}{\mu}$'
+            return formula + ' = %.2f' % (value)
+    
+    return 'no metric selected'
     
     
 def get_metric_goal(metric):
@@ -258,8 +329,6 @@ def get_metric_goal(metric):
     """
     if metric == 'Disparate impact':
         return 1
-    elif metric == 'Statistical parity difference':
-        return 0
     else:
         return 0
     
@@ -288,7 +357,7 @@ def plot_gauge(ax, value, goal, bar_color='r', gap=1):
     ax.axvline(linewidth=4, color=bar_color, x=value)
     
     
-def plot_bias_metric(axes, protected_attr, target_value, metric):
+def plot_bias_metric(axes, protected_attr, target_value, metric, bias_type='dataset'):
     """
     Display a row of graphics for a specific bias metric.
     
@@ -306,15 +375,14 @@ def plot_bias_metric(axes, protected_attr, target_value, metric):
     value = protected_attr.metrics.loc[target_value,metric]
     goal = get_metric_goal(metric=metric)
     
-    text = get_metric_text(protected_attr, target_value, metric_name=metric)
-    plot_text_center(ax=axes[0], text=text, fontsize=26)
-    axes[0].set_title(metric, loc='left', fontsize=22)
+    text = get_metric_text(protected_attr, target_value, metric_name=metric, bias_type=bias_type)
+    plot_text_left(ax=axes[0], text=text, fontsize=19)
+    axes[0].set_title(metric, loc='left', fontsize=22, fontweight='bold')
     axes[0].axis('off')
     
     color = 'r' if (value < goal-0.2) or (value > goal+0.2) else 'g'
     plot_gauge(ax=axes[1], value=value, goal=goal, bar_color=color)
     axes[1].set_title(f'Considered not biased between {goal-0.2} and {goal+0.2}', loc='left', fontsize=17)
-
 
 def set_metric_title(axes):
     """
@@ -367,7 +435,7 @@ def generate_gridspec_row(fig, gs, rstart, rsize=1, n_blocks=1, b_sizes=[10]):
 
 
 
-def plot_bias_metrics(protected_attr, target_value):
+def plot_dataset_bias_metrics(protected_attr, target_value):
     """
     Display a matplotlib graphics with differents informations about
     bias inside a dataset.
@@ -402,12 +470,11 @@ def plot_bias_metrics(protected_attr, target_value):
     metrics = ['Disparate impact', 'Statistical parity difference']
     for idx, metric in enumerate(metrics):
         axes = generate_gridspec_row(fig, gs, rstart=6+idx, rsize=1, n_blocks=2, b_sizes=[4,6])
-        plot_bias_metric(axes, protected_attr, target_value, metric=metric)
+        plot_bias_metric(axes, protected_attr, target_value, metric=metric, bias_type='dataset')
         
     plt.show()
 
-
-def plot_dataset_metrics(protected_attr, target_value=None):
+def plot_model_bias_metrics(protected_attr, target_value):
     """
     Display a matplotlib graphics with differents informations about
     bias inside a dataset.
@@ -419,10 +486,44 @@ def plot_dataset_metrics(protected_attr, target_value=None):
     target_value: str
         Specific value of the target        
     """
+    fig = plt.figure(constrained_layout=True, figsize=(16, 8))
+    gs = fig.add_gridspec(5, 10)
+    
+    # Metrics plots
+    metrics = ['Disparate impact', 'Statistical parity difference',
+       'Equal opportunity difference', 'Average abs odds difference',
+       'Theil index']
+    for idx, metric in enumerate(metrics):
+        axes = generate_gridspec_row(fig, gs, rstart=idx, rsize=1, n_blocks=2, b_sizes=[4,6])
+        plot_bias_metric(axes, protected_attr, target_value, metric=metric, bias_type='model')
+        
+    plt.show()
+
+def plot_bias_metrics(protected_attr, bias_type='dataset', target_value=None):
+    """
+    Display a matplotlib graphics with differents informations about
+    bias inside a dataset.
+    
+    Parameters
+    ----------
+    protected_attr:
+        Protected attribute to inspect
+    bias_type: str (default: dataset)
+        type of bias to plot ('dataset' or 'model')
+    target_value: str
+        Specific value of the target        
+    """
+    if bias_type not in ['dataset', 'model']:
+        raise ValueError("bias_type should be 'dataset' or 'model'")
+
+    func = plot_dataset_bias_metrics if bias_type == 'dataset' else plot_model_bias_metrics
+    attr = protected_attr.name
+    target = protected_attr.target
+
     if target_value is not None:
-        plot_bias_metrics(protected_attr=protected_attr,
-                           target_value=target_value)
+        display(Markdown(f'### Focus on {attr} for {target} is {target_value}'))
+        func(protected_attr=protected_attr, target_value=target_value)
     else:
         for target_value in protected_attr.labels.unique():
-            plot_bias_metrics(protected_attr=protected_attr,
-                               target_value=target_value)
+            display(Markdown(f'### Focus on {attr} for {target} is {target_value}'))
+            func(protected_attr=protected_attr, target_value=target_value)
