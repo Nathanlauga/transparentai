@@ -68,3 +68,13 @@ def load_iris():
         dtype=dtypes
     )
     return iris
+
+def load_boston():
+    """
+    Load boston dataset 
+    Source : https://archive.ics.uci.edu/ml/machine-learning-databases/housing/ 
+    """
+    boston = pd.read_csv(
+        os.path.join(os.path.dirname(__file__), 'data', 'boston.csv')
+    )
+    return boston

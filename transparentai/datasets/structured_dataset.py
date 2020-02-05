@@ -33,21 +33,30 @@ class StructuredDataset():
         if (target is not None) and (target not in df.columns):
             print('error : label not in dataframe')
 
-        if target is not None:
+        if (target is not None) and (target in df.select_dtypes('object').columns):
             df[target] = df[target].astype('category')
 
         self.df = df.copy()
         self.target = target
 
-
-    def __ne__(self, other):
-        return not self == other
-
-    def __repr__(self):
-        return str(self)
-
     def __str__(self):
         return str(self.df)
+
+    def is_target_number(self):
+        """
+        """
+        return self.target in self.df.select_dtypes('number').columns
+
+    def regression_to_classification(self):
+        """
+        """
+        if not self.is_target_number():
+            return
+
+        orig_target_val = self.df[self.target]
+        mean = np.mean(self.df[self.target])
+        self.df[self.target+'_orig'] = orig_target_val
+        self.df[self.target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
 
     # Plot functions
     # --------------
