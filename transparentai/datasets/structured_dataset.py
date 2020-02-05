@@ -34,6 +34,8 @@ class StructuredDataset():
         if (target is not None) and (target not in df.columns):
             print('error : label not in dataframe')
 
+        df = df.copy()
+
         if target is not None:
             if target in df.select_dtypes('object').columns:
                 df[target] = df[target].astype('category')
