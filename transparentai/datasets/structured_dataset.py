@@ -13,6 +13,7 @@ class StructuredDataset():
     It could help you to explore your data, understand what's in it with plot functions.
     And you can also find out dataset bias with `plot_bias` function.
     """
+    orig_target_value = None
 
     def __init__(self, df, target=None):
         """
@@ -33,8 +34,13 @@ class StructuredDataset():
         if (target is not None) and (target not in df.columns):
             print('error : label not in dataframe')
 
-        if (target is not None) and (target in df.select_dtypes('object').columns):
-            df[target] = df[target].astype('category')
+        if target is not None:
+            if target in df.select_dtypes('object').columns:
+                df[target] = df[target].astype('category')
+
+            elif target in df.select_dtypes('number').columns:
+                df, orig_val = utils.regression_to_classification(df, target)
+                self.orig_target_value = orig_val
 
         self.df = df.copy()
         self.target = target
@@ -42,24 +48,17 @@ class StructuredDataset():
     def __str__(self):
         return str(self.df)
 
-    def is_target_number(self):
-        """
-        """
-        return self.target in self.df.select_dtypes('number').columns
-
-    def regression_to_classification(self):
-        """
-        """
-        if not self.is_target_number():
-            return
-
-        orig_target_val = self.df[self.target]
-        mean = np.mean(self.df[self.target])
-        self.df[self.target+'_orig'] = orig_target_val
-        self.df[self.target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
-
     # Plot functions
     # --------------
+    def plot_dataset_overview(self):
+        """
+        """
+        # TODO
+
+    def plot_target(self):
+        """
+        """
+        # TODO (handle regression case)
 
     def plot_missing_values(self):
         """
@@ -275,6 +274,9 @@ class StructuredDataset():
         - numerical to categorical (discrete) (using Point Biserial)
         """
         df = utils.remove_var_with_one_value(self.df)
+        
+        if self.orig_target_value is not None:
+            df[self.target] = self.orig_target_value
 
         num_df = df.select_dtypes('number')
         cat_df = df.select_dtypes(['object', 'category'])
@@ -293,12 +295,13 @@ class StructuredDataset():
 
         if len(num_df) > 0:
             pearson_corr = num_df.corr()
-            display(Markdown('#### Pearson correlation matrix for numerical variables'))
+            display(
+                Markdown('#### Pearson correlation matrix for numerical variables'))
             plots.plot_correlation_matrix(pearson_corr)
 
         if len(cat_vars) > 0:
             var_combi = [tuple(sorted([v1, v2]))
-                        for v1 in cat_vars for v2 in cat_vars if v1 != v2]
+                         for v1 in cat_vars for v2 in cat_vars if v1 != v2]
             var_combi = list(set(var_combi))
 
             cramers_v_corr = utils.init_corr_matrix(
@@ -309,7 +312,8 @@ class StructuredDataset():
                 cramers_v_corr.loc[var1, var2] = corr
                 cramers_v_corr.loc[var2, var1] = corr
 
-            display(Markdown('#### Cramers V correlation matrix for categorical variables'))
+            display(
+                Markdown('#### Cramers V correlation matrix for categorical variables'))
             plots.plot_correlation_matrix(cramers_v_corr)
 
         if (len(cat_vars) > 0) and (len(num_df) > 0):
@@ -319,13 +323,13 @@ class StructuredDataset():
             # plots.plot_correlation_matrix(pearson_corr)
 
             var_combi = [(v1, v2)
-                        for v1 in cat_vars for v2 in num_vars if v1 != v2]
+                         for v1 in cat_vars for v2 in num_vars if v1 != v2]
 
             pbs_corr = utils.init_corr_matrix(
                 columns=num_vars, index=cat_vars, fill_diag=0.)
 
             for cat_var, num_var in var_combi:
-                tmp_df = data_encoded[[cat_var,num_var]].dropna()
+                tmp_df = data_encoded[[cat_var, num_var]].dropna()
                 if len(tmp_df) == 0:
                     continue
                 corr, p_value = ss.pointbiserialr(

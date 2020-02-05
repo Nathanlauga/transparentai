@@ -161,3 +161,32 @@ def init_corr_matrix(columns, index, fill_diag=1.):
         rng = np.arange(len(zeros))
         zeros[rng, rng] = fill_diag
     return pd.DataFrame(zeros, columns=columns, index=index)
+
+def regression_to_classification(df, target):
+    """
+    Convert a dataframe for regression to classification by 
+    computing if the value is above the average.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        Dataframe to update
+    target: str
+        Target column that has to be a numerical column
+
+    Returns
+    -------
+    pd.DataFrame
+        Dataframe updated with target column as a category variable
+    np.array
+        Original values of the target column
+    """
+    if target not in df.select_dtypes('number').columns:
+        raise TypeError('target column is not a number')
+
+    mean = np.mean(df[target])
+    orig_target_val = df[target].values
+    df[target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
+    df[target] = df[target].astype('category')
+
+    return df, orig_target_val
