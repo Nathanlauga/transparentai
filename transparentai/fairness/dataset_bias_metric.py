@@ -12,6 +12,8 @@ class DatasetBiasMetric(BiasMetric):
     """
 
     def __init__(self, dataset, privileged_groups, favorable_label=None):
+        """
+        """
         super().__init__(dataset, privileged_groups, favorable_label)
         protected_attributes = {}
 

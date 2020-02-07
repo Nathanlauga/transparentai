@@ -5,6 +5,7 @@ __all__ = [
     'cramers_v',
     'init_corr_matrix',
     'regression_to_classification',
-    'labelencoder_to_dict'
+    'labelencoder_to_dict',
+    'get_metric_goal'
     ]
 from transparentai.utils.utils import * 

@@ -85,7 +85,7 @@ def encode_categorical_vars(df):
         Encoders with feature name on keys and
         encoder as value
     """
-    cat_vars = df.select_dtypes(['object','category']).columns
+    cat_vars = df.select_dtypes(['object', 'category']).columns
     data_encoded = df.copy()
     for var in df.select_dtypes('category').columns:
         data_encoded[var] = data_encoded[var].cat.add_categories('Unknown')
@@ -162,6 +162,7 @@ def init_corr_matrix(columns, index, fill_diag=1.):
         zeros[rng, rng] = fill_diag
     return pd.DataFrame(zeros, columns=columns, index=index)
 
+
 def regression_to_classification(df, target):
     """
     Convert a dataframe for regression to classification by 
@@ -191,34 +192,55 @@ def regression_to_classification(df, target):
 
     return df, orig_target_val
 
+
 def labelencoder_to_dict(encoder):
     """
     Convert a LabelEncoder classes from scikit-learn 
     to a dictionnary with index as key and original value as value
-    
+
     Example:
     encoder.classes_ is ['Male', 'Female']
     returns {0:'Male', 1:'Female'}
-    
+
     Parameters
     ----------
     encoder: LabelEncoder
         encoder fitted
-    
+
     Returns
     -------
     dict:
         encoder transformed
-        
+
     Raises
     ------
     """
     if type(encoder) != LabelEncoder:
         raise TypeError('encoder has to be a LabelEncoder.')
-    
+
     feat_classes = encoder.classes_
     classes_dict = {}
     for i, val in enumerate(feat_classes):
         classes_dict[i] = val
-        
+
     return classes_dict
+
+
+def get_metric_goal(metric):
+    """
+    Return bias metric goal given metric name.
+
+    Parameters
+    ---------- 
+    metric: str
+        Metric's name 
+
+    Returns
+    -------
+    number
+        Bias metric's goal
+    """
+    if metric == 'Disparate impact':
+        return 1
+    else:
+        return 0
