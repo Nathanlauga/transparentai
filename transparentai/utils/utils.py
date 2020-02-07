@@ -190,3 +190,35 @@ def regression_to_classification(df, target):
     df[target] = df[target].astype('category')
 
     return df, orig_target_val
+
+def labelencoder_to_dict(encoder):
+    """
+    Convert a LabelEncoder classes from scikit-learn 
+    to a dictionnary with index as key and original value as value
+    
+    Example:
+    encoder.classes_ is ['Male', 'Female']
+    returns {0:'Male', 1:'Female'}
+    
+    Parameters
+    ----------
+    encoder: LabelEncoder
+        encoder fitted
+    
+    Returns
+    -------
+    dict:
+        encoder transformed
+        
+    Raises
+    ------
+    """
+    if type(encoder) != LabelEncoder:
+        raise TypeError('encoder has to be a LabelEncoder.')
+    
+    feat_classes = encoder.classes_
+    classes_dict = {}
+    for i, val in enumerate(feat_classes):
+        classes_dict[i] = val
+        
+    return classes_dict

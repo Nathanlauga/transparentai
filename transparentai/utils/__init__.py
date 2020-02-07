@@ -4,6 +4,7 @@ __all__ = [
     'encode_categorical_vars',
     'cramers_v',
     'init_corr_matrix',
-    'regression_to_classification'
+    'regression_to_classification',
+    'labelencoder_to_dict'
     ]
 from transparentai.utils.utils import * 
