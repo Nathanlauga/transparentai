@@ -22,10 +22,9 @@ class RegressionModel(BaseModel):
         """
         super().__init__(model=model)
 
-    def compute_scores(self, X, y, threshold=0.5):
+    def compute_scores(self, X, y):
         """
-        Compute all predictions, probalities and scores
-        if it's binary classifier you can custom the probability threshold
+        Compute all predictions and scores
 
         Parameters
         ----------
@@ -33,9 +32,6 @@ class RegressionModel(BaseModel):
             feature samples
         y: array-like of shape (n_samples,) or (n_samples, n_outputs)
             true labels for X.
-        threshold: float (optional) default=0.5
-            only for binary classifier, custome threshold probability 
-            for the prediction
         """
         self.X = X
         self.y_true = y
