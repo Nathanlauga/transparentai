@@ -35,9 +35,9 @@ class BaseModel():
         if self.scores is None:
             raise ValueError('Use compute_scores() function first.')
         
-        scores_to_display = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
+        # scores_to_display = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
             
-        scores = {k: v for k, v in self.scores_dict.items() if k in scores_to_display}
+        scores = {k: v for k, v in self.scores_dict.items()}
         scores = pd.Series(scores).to_frame().T
         scores.index = ['score']
         
@@ -49,11 +49,7 @@ class BaseModel():
 
     def plot_overall_scores(self, fun, preds):
         """
-        Display different charts for all the metrics : 
-        - a dataframe for accuracy, f1, precision, recall & roc_auc
-        - confusion matrix
-        - ROC curve 
-        - Probalities distribution
+        Display different charts for all the metrics.
         
         Raises
         ------
