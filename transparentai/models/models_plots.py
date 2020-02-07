@@ -59,6 +59,8 @@ def plot_confusion_matrix(matrix):
                 square=True,
                 fmt='d',
                 annot=True)
+    plt.xlabel('Predicted')
+    plt.ylabel('Real')
     plt.title('Confusion Matrix')
 
 

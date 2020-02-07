@@ -31,6 +31,7 @@ class ClassificationModel(BaseModel):
         """
         super().__init__(model=model)
         self.threshold_df = None
+        self.model_type = 'classification'
 
     def compute_scores(self, X, y, threshold=0.5):
         """
@@ -73,7 +74,7 @@ class ClassificationModel(BaseModel):
         scores['confusion_matrix'] = confusion_matrix(
             self.y_true, self.y_preds)
 
-        average = 'micro'
+        average = 'micro' if self.n_classes != 2 else 'weighted'
         scores['f1'] = f1_score(self.y_true, self.y_preds, average=average)
         scores['precision'] = precision_score(
             self.y_true, self.y_preds, average=average)
@@ -95,6 +96,50 @@ class ClassificationModel(BaseModel):
         scores['roc_curve'] = [v for k, v in roc_curves.items()]
 
         self.scores_dict = scores
+
+    def get_true_positives(self):
+        """
+        Return true positives rows in the feature sample X
+
+        Returns
+        -------
+        pd.DataFrame
+            True positives rows 
+        """
+        return self.X[(self.y_preds == 1) & (self.y_true == 1)]
+
+    def get_true_negatives(self):
+        """
+        Return true negatives rows in the feature sample X
+
+        Returns
+        -------
+        pd.DataFrame
+            True negatives rows 
+        """
+        return self.X[(self.y_preds == 0) & (self.y_true == 0)]
+
+    def get_false_positives(self):
+        """
+        Return false positives rows in the feature sample X
+
+        Returns
+        -------
+        pd.DataFrame
+            False positives rows 
+        """
+        return self.X[(self.y_preds == 1) & (self.y_true == 0)]
+
+    def get_false_negatives(self):
+        """
+        Return false negatives rows in the feature sample X
+
+        Returns
+        -------
+        pd.DataFrame
+            False negatives rows 
+        """
+        return self.X[(self.y_preds == 0) & (self.y_true == 1)]
 
     def plot_scores(self):
         """

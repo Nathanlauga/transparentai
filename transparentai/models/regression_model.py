@@ -21,6 +21,7 @@ class RegressionModel(BaseModel):
             a classifier model that have a `predict` and `predict_proba` functions
         """
         super().__init__(model=model)
+        self.model_type = 'regression'
 
     def compute_scores(self, X, y):
         """

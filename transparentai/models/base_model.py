@@ -10,6 +10,7 @@ class BaseModel():
     
     scores = None
     scores_dict = None
+    model_type = None
 
     def __init__(self, model):
         """
@@ -35,9 +36,13 @@ class BaseModel():
         if self.scores is None:
             raise ValueError('Use compute_scores() function first.')
         
-        # scores_to_display = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
-            
-        scores = {k: v for k, v in self.scores_dict.items()}
+        scores_to_display = None
+        if self.model_type == 'classification':
+            scores_to_display = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
+        elif self.model_type == 'regression':
+            scores_to_display = ['MAE','MSE','RMSE','R2']
+        
+        scores = {k: v for k, v in self.scores_dict.items() if k in scores_to_display}
         scores = pd.Series(scores).to_frame().T
         scores.index = ['score']
         
