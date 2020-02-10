@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from abc import abstractmethod
+
 
 class ProtectedAttribute():
     """
@@ -27,8 +29,8 @@ class ProtectedAttribute():
             v for v in dataset.df[attr].unique() if v not in privileged_values]
 
         self.values = pd.Series(
-            np.where(dataset.df[attr].isin(privileged_values), 1, 0), name=attr)
-        self.labels = dataset.df[dataset.target]
+            np.where(dataset.df[attr].isin(privileged_values), 1, 0), name=attr).values
+        self.labels = dataset.df[dataset.target].values
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
 
     def to_frame(self):
@@ -64,6 +66,10 @@ class ProtectedAttribute():
             return self.crosstab.loc[1, 'All']
         else:
             return self.crosstab.loc[0, 'All']
+
+    @abstractmethod
+    def get_freq(self):
+        return None
 
     def difference(self, metric_fun, target_value):
         """

@@ -41,6 +41,25 @@ class DatasetProtectedAttribute(ProtectedAttribute):
         else:
             return self.crosstab.loc[0, target_value]
 
+    
+    def get_freq(self, target_value, privileged=None):
+        """
+        
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        float
+            Frequency
+        """
+        n_total = self.num_instances(privileged=privileged)
+        n = self.num_spec_value(
+            target_value=target_value, privileged=privileged)
+
+        return n / n_total
+
     def base_rate(self, target_value, privileged=None):
         """
         Compute the base rate, :math:`Pr(Y = 1) = P/(P+N)`, optionally

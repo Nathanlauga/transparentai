@@ -71,6 +71,29 @@ class ModelProtectedAttribute(ProtectedAttribute):
         else:
             return crosstab.loc[0, target_value]
 
+    def get_freq(self, target_value, privileged=None, predictions=False):
+        """
+        
+
+        Parameters
+        ----------
+
+        Returns
+        -------
+        float
+            Frequency
+        """
+        n_total = self.num_instances(privileged=privileged)
+        
+        if not predictions:
+            n = self.num_spec_value(
+                target_value=target_value, privileged=privileged)
+        else:
+            n = self.num_spec_value(
+                target_value=target_value, privileged=privileged, predictions=True)
+
+        return n / n_total
+
     def base_rate(self, target_value, privileged=None):
         """
         Compute the base rate, :math:`Pr(Y = 1) = P/(P+N)`, optionally
