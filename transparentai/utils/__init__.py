@@ -6,6 +6,7 @@ __all__ = [
     'init_corr_matrix',
     'regression_to_classification',
     'labelencoder_to_dict',
-    'get_metric_goal'
+    'get_metric_goal',
+    'save_dict_to_json'
     ]
 from transparentai.utils.utils import * 

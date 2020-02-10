@@ -73,6 +73,43 @@ class BiasMetric():
             metrics = self.protected_attributes[attr].metrics
         return metrics
 
+    def _metrics_one_attr_to_json(self, attr, target_value=None):
+        """
+        """
+        metrics = self.get_bias_metrics(attr=attr)
+
+        if (target_value is None) and (self.favorable_label is not None):
+            target_value = self.favorable_label
+
+        attr_json = {}
+        if target_value is None:
+            for value in self.labels.unique():
+                attr_json[value] = metrics.loc[value].to_json()
+        else:
+            attr_json[target_value] = metrics.loc[target_value].to_json()
+
+        return attr_json
+
+    def metrics_to_json(self, attr=None, target_value=None):
+        """
+        """
+        if attr is None:
+            metrics_json = {}
+            for attr in self.protected_attributes:
+                metrics_json[attr] = self._metrics_one_attr_to_json(
+                    attr=attr, target_value=target_value)
+        else:
+            metrics_json = {attr: self._metrics_one_attr_to_json(
+                attr=attr, target_value=target_value)}
+
+        return metrics_json
+
+    def save_bias_metrics(self, fname):
+        """
+        """
+        metrics_json = self.metrics_to_json()
+        utils.save_dict_to_json(obj=metrics_json, fname=fname)
+
     def __metrics_is_biased(self, attr=None):
         """
         """
