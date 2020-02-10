@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import scipy.stats as ss
 from sklearn.preprocessing import LabelEncoder
+import json
 
 
 class OpenFile:
@@ -244,3 +245,10 @@ def get_metric_goal(metric):
         return 1
     else:
         return 0
+
+def save_dict_to_json(obj, fname):
+    """
+    """
+    with OpenFile(fname, mode='w') as file:
+        json.dump(obj, file)
+    file.close()

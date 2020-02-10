@@ -55,6 +55,13 @@ class RegressionModel(BaseModel):
 
         self.scores_dict = scores
 
+    
+    def scores_to_json(self):
+        """
+        """
+        scores_names = ['MAE', 'MSE', 'RMSE', 'R2']
+        return self._scores_to_json(scores_names)
+
     def plot_scores(self):
         """
         Display different charts for all the metrics.

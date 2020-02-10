@@ -3,6 +3,7 @@ from IPython.display import display, Markdown
 from abc import abstractmethod
 
 import transparentai.models.models_plots as plots
+import transparentai.utils as utils
 
 class BaseModel():
     """    
@@ -28,6 +29,25 @@ class BaseModel():
     @abstractmethod
     def scores(self):
         return None 
+
+    @abstractmethod
+    def scores_to_json(self):
+        return None 
+
+    def _scores_to_json(self, scores_names):
+        """
+        """
+        scores_json = {}
+        for k, v in self.scores_dict.items():
+            if k in scores_names:
+                scores_json[k] = v
+        return scores_json
+
+    def save_scores(self, fname):
+        """
+        """
+        scores_json = self.scores_to_json()
+        utils.save_dict_to_json(obj=scores_json, fname=fname)
         
     def display_scores(self):
         """

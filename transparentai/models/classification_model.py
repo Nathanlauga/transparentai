@@ -155,6 +155,12 @@ class ClassificationModel(BaseModel):
         fun = plots.plot_classification_scores
         self.plot_overall_scores(fun=fun, preds=self.y_proba)
 
+    def scores_to_json(self):
+        """
+        """
+        scores_names = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
+        return self._scores_to_json(scores_names)
+
     def compute_threshold(self, X, y, start=0, end=1, step=0.05):
         """
         Compute all predictions, probalities and scores
