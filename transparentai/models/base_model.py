@@ -13,7 +13,7 @@ class BaseModel():
     scores_dict = None
     model_type = None
 
-    def __init__(self, model):
+    def __init__(self, model=None, X=None, y=None, y_preds=None):
         """
         Parameters
         ----------
@@ -21,6 +21,9 @@ class BaseModel():
             a classifier model that have a `predict` and `predict_proba` functions
         """
         self.model = model
+        self.X = X
+        self.y_true = y
+        self.y_preds = y_preds
         
     @abstractmethod
     def compute_scores(self):

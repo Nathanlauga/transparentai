@@ -28,6 +28,18 @@ class ModelProtectedAttribute(ProtectedAttribute):
             perf_df = perf_df[perf_df[self.name] == 0]
 
         matrix = pd.crosstab(perf_df[self.target], perf_df['preds'])
+
+        true = perf_df[self.target].values
+        pred = perf_df['preds'].values
+
+        for val in matrix.columns.values:
+            if val not in matrix.index.values:
+                matrix.loc[val, :] = 0
+                
+        for val in matrix.index.values:
+            if val not in matrix.columns.values:
+                matrix.loc[:, val] = 0
+
         return matrix
 
     def performances(self, target_value, privileged=None):

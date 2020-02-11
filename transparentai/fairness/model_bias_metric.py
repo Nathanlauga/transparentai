@@ -16,6 +16,10 @@ class ModelBiasMetric(BiasMetric):
         self.preds = preds
         protected_attributes = {}
 
+        if (dataset.target_mean is not None):
+            preds = np.where(preds > dataset.target_mean,
+                             f'>{dataset.target_mean}', f'<={dataset.target_mean}')
+
         for attr in privileged_groups:
             values = privileged_groups[attr]
             protected_attr = ModelProtectedAttribute(dataset=dataset,

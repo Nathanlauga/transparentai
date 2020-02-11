@@ -13,17 +13,20 @@ class RegressionModel(BaseModel):
     """
     """
 
-    def __init__(self, model):
+    def __init__(self, model=None, X=None, y=None, y_preds=None):
         """
         Parameters
         ----------
         model:
             a classifier model that have a `predict` and `predict_proba` functions
         """
-        super().__init__(model=model)
+        super().__init__(model=model, X=X, y=y, y_preds=y_preds)
         self.model_type = 'regression'
 
-    def compute_scores(self, X, y):
+        if (X is not None) & (y is not None) & (y_preds is not None):
+            self.scores()
+
+    def compute_scores(self, X=None, y=None):
         """
         Compute all predictions and scores
 
@@ -34,8 +37,15 @@ class RegressionModel(BaseModel):
         y: array-like of shape (n_samples,) or (n_samples, n_outputs)
             true labels for X.
         """
-        self.X = X
-        self.y_true = y
+        if (X is None) & (self.X is None):
+            raise ValueError('X is mandatory to compute scores')
+        if (y is None) & (self.y_true is None):
+            raise ValueError('y is mandatory to compute scores')
+        if self.model is None:
+            raise ValueError('model attribute was not set at the init step')
+
+        self.X = X if X is not None else self.X
+        self.y_true = y if y is not None else self.y_true
         self.y_preds = self.model.predict(X)
 
         self.scores()

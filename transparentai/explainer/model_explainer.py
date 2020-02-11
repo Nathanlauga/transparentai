@@ -29,7 +29,7 @@ class ModelExplainer():
             mandatory for a linear model but for tree model it can improve computing time
             so it's recommanded to use it.
         feature_names: list (default, None)
-            list of feature names (lenght == lenght of X columns)
+            list of feature names (length == length of X columns)
         model_type: str (default, 'tree')
             Type of model to inspect, it can only be 'tree' or 'linear'
 

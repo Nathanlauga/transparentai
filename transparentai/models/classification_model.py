@@ -22,18 +22,23 @@ class ClassificationModel(BaseModel):
     And you can also find out model bias with `plot_bias` function.
     """
 
-    def __init__(self, model):
+    def __init__(self, model=None, X=None, y=None, y_preds=None):
         """
         Parameters
         ----------
         model:
             a classifier model that have a `predict` and `predict_proba` functions
         """
-        super().__init__(model=model)
+        super().__init__(model=model, X=X, y=y, y_preds=y_preds)
         self.threshold_df = None
+        self.y_proba = None
         self.model_type = 'classification'
 
-    def compute_scores(self, X, y, threshold=0.5):
+        if (X is not None) & (y is not None) & (y_preds is not None):
+            self.n_classes = len(list(set(y)))
+            self.scores()
+
+    def compute_scores(self, X=None, y=None, threshold=0.5):
         """
         Compute all predictions, probalities and scores
         if it's binary classifier you can custom the probability threshold
@@ -48,8 +53,15 @@ class ClassificationModel(BaseModel):
             only for binary classifier, custome threshold probability 
             for the prediction
         """
-        self.X = X
-        self.y_true = y
+        if (X is None) & (self.X is None):
+            raise ValueError('X is mandatory to compute scores')
+        if (y is None) & (self.y_true is None):
+            raise ValueError('y is mandatory to compute scores')
+        if self.model is None:
+            raise ValueError('model attribute was not set at the init step')
+
+        self.X = X if X is not None else self.X
+        self.y_true = y if y is not None else self.y_true
         self.n_classes = len(list(set(y)))
 
         self.y_proba = self.model.predict_proba(X)
@@ -81,19 +93,20 @@ class ClassificationModel(BaseModel):
         scores['recall'] = recall_score(
             self.y_true, self.y_preds, average=average)
 
-        roc_auc, roc_curves = dict(), dict()
-        if self.n_classes > 2:
-            y = label_binarize(self.y_true, classes=list(
-                range(0, self.n_classes)))
-            for i in range(0, self.n_classes):
-                roc_auc[i] = roc_auc_score(y[:, i], self.y_proba[:, i])
-                roc_curves[i] = roc_curve(y[:, i], self.y_proba[:, i])
-        else:
-            roc_auc[0] = roc_auc_score(self.y_true, self.y_proba[:, 1])
-            roc_curves[0] = roc_curve(self.y_true, self.y_proba[:, 1])
+        if self.y_proba is not None:
+            roc_auc, roc_curves = dict(), dict()
+            if self.n_classes > 2:
+                y = label_binarize(self.y_true, classes=list(
+                    range(0, self.n_classes)))
+                for i in range(0, self.n_classes):
+                    roc_auc[i] = roc_auc_score(y[:, i], self.y_proba[:, i])
+                    roc_curves[i] = roc_curve(y[:, i], self.y_proba[:, i])
+            else:
+                roc_auc[0] = roc_auc_score(self.y_true, self.y_proba[:, 1])
+                roc_curves[0] = roc_curve(self.y_true, self.y_proba[:, 1])
 
-        scores['roc_auc'] = [v for k, v in roc_auc.items()]
-        scores['roc_curve'] = [v for k, v in roc_curves.items()]
+            scores['roc_auc'] = [v for k, v in roc_auc.items()]
+            scores['roc_curve'] = [v for k, v in roc_curves.items()]
 
         self.scores_dict = scores
 

@@ -14,6 +14,7 @@ class StructuredDataset():
     And you can also find out dataset bias with `plot_bias` function.
     """
     orig_target_value = None
+    target_mean = None
 
     def __init__(self, df, target=None):
         """
@@ -43,6 +44,7 @@ class StructuredDataset():
             elif target in df.select_dtypes('number').columns:
                 df, orig_val = utils.regression_to_classification(df, target)
                 self.orig_target_value = orig_val
+                self.target_mean = np.mean(orig_val).round(3)
 
         self.df = df.copy()
         self.target = target

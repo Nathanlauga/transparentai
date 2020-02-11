@@ -186,7 +186,7 @@ def regression_to_classification(df, target):
     if target not in df.select_dtypes('number').columns:
         raise TypeError('target column is not a number')
 
-    mean = np.mean(df[target])
+    mean = np.mean(df[target]).round(3)
     orig_target_val = df[target].values
     df[target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
     df[target] = df[target].astype('category')
