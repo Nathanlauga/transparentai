@@ -32,6 +32,10 @@ class ModelProtectedAttribute(ProtectedAttribute):
         true = perf_df[self.target].values
         pred = perf_df['preds'].values
 
+        for val in list(set(self.preds)):
+            if val not in matrix.columns:
+                matrix[val] = 0
+
         for val in matrix.columns.values:
             if val not in matrix.index.values:
                 matrix.loc[val, :] = 0
@@ -151,6 +155,8 @@ class ModelProtectedAttribute(ProtectedAttribute):
         N = 0
         for v in other_values:
             N += self.num_spec_value(target_value=v, privileged=privileged)
+        if N == 0:
+            return 0
         return FP / N
 
     def true_positive_rate(self, target_value, privileged=None):
@@ -173,6 +179,8 @@ class ModelProtectedAttribute(ProtectedAttribute):
                                privileged=privileged)['TP']
         P = self.num_spec_value(
             target_value=target_value, privileged=privileged)
+        if P == 0:
+            return 0
         return TP / P
 
     def disparate_impact(self, target_value):

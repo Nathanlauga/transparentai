@@ -119,3 +119,28 @@ def plot_correlation_matrix(corr_df):
         horizontalalignment='right'
     )
     plt.show()
+
+
+def plot_gauge(ax, value, goal, bar_color='r', gap=1):
+    """
+    Display a gauge plot with a blue diverging palette.
+
+    Parameters
+    ----------
+    ax: plt.axes.Axes
+        Axe where to put the gauge plot
+    value: float
+        Current value
+    goal: number
+        Goal value, the graphic will be centered on this value
+    bar_color: str
+        Color of the bar where the value is
+    gap: int
+        Limit gap from the goal value (goal+/-gap)
+    """
+    cmap = sns.diverging_palette(255, 255, sep=10, n=100, as_cmap=True)
+    colors = cmap(np.arange(cmap.N))
+    ax.imshow([colors], extent=[goal-gap, goal+gap, 0, 0.25])
+    ax.set_yticks([])
+    ax.set_xlim(goal-gap, goal+gap)
+    ax.axvline(linewidth=4, color=bar_color, x=value)

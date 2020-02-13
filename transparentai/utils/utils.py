@@ -164,7 +164,7 @@ def init_corr_matrix(columns, index, fill_diag=1.):
     return pd.DataFrame(zeros, columns=columns, index=index)
 
 
-def regression_to_classification(df, target):
+def regression_to_classification(df, target, mean):
     """
     Convert a dataframe for regression to classification by 
     computing if the value is above the average.
@@ -186,7 +186,6 @@ def regression_to_classification(df, target):
     if target not in df.select_dtypes('number').columns:
         raise TypeError('target column is not a number')
 
-    mean = np.mean(df[target]).round(3)
     orig_target_val = df[target].values
     df[target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
     df[target] = df[target].astype('category')

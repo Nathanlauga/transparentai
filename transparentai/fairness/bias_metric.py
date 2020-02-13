@@ -84,9 +84,9 @@ class BiasMetric():
         attr_json = {}
         if target_value is None:
             for value in self.labels.unique():
-                attr_json[value] = metrics.loc[value].to_json()
+                attr_json[value] = metrics.loc[value].to_dict()
         else:
-            attr_json[target_value] = metrics.loc[target_value].to_json()
+            attr_json[target_value] = metrics.loc[target_value].to_dict()
 
         return attr_json
 

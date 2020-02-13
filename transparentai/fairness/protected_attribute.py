@@ -33,6 +33,11 @@ class ProtectedAttribute():
         self.labels = dataset.df[dataset.target].values
         self.crosstab = pd.crosstab(self.values, self.labels, margins=True)
 
+        if 0 not in self.crosstab.index:
+            self.crosstab[0] = 0
+        if 1 not in self.crosstab.index:
+            self.crosstab[1] = 0
+
     def to_frame(self):
         """
         """

@@ -16,7 +16,7 @@ class StructuredDataset():
     orig_target_value = None
     target_mean = None
 
-    def __init__(self, df, target=None):
+    def __init__(self, df, target=None, mean=None):
         """
         Parameters
         ----------
@@ -42,9 +42,11 @@ class StructuredDataset():
                 df[target] = df[target].astype('category')
 
             elif target in df.select_dtypes('number').columns:
-                df, orig_val = utils.regression_to_classification(df, target)
+                self.target_mean = mean if mean is not None else np.mean(
+                    df[target]).round(3)
+                df, orig_val = utils.regression_to_classification(
+                    df, target, self.target_mean)
                 self.orig_target_value = orig_val
-                self.target_mean = np.mean(orig_val).round(3)
 
         self.df = df.copy()
         self.target = target
@@ -278,7 +280,7 @@ class StructuredDataset():
         - numerical to categorical (discrete) (using Point Biserial)
         """
         df = utils.remove_var_with_one_value(self.df)
-        
+
         if self.orig_target_value is not None:
             df[self.target] = self.orig_target_value
 
