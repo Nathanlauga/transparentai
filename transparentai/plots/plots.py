@@ -42,7 +42,10 @@ def plot_stack_bar(ax, tab, labels, legend_labels):
 
     # tab.div(tab.sum(axis=1), axis=0).round(2).astype(int)
     for i, row in tab.iterrows():
-        tab.loc[i] = ((row / row.sum()).round(2)*100).astype(int)
+        if row.sum() > 0:
+            tab.loc[i] = ((row / row.sum()).round(2)*100).astype(int)
+        else:
+            tab.loc[i] = 0
 
     for i, l in enumerate(legend_labels):
         bottom = tab[legend_labels[i-1]] if i > 0 else None

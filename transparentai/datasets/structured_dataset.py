@@ -54,17 +54,21 @@ class StructuredDataset():
     def __str__(self):
         return str(self.df)
 
-    # Plot functions
-    # --------------
+    def filter_df_nrows(self, nrows=None):
+        """
+        """
+        if nrows is not None:
+            df = utils.filter_df_nrows(df=self.df, nrows=nrows)
+        else:
+            df = self.df
+        return df
+
     def plot_dataset_overview(self):
         """
         """
-        # TODO
-
-    def plot_target(self):
-        """
-        """
-        # TODO (handle regression case)
+        display(Markdown(f'#### Dataset shape : {self.df.shape}'))
+        display(Markdown('First 5 rows of the dataset : '))
+        display(self.df.head())
 
     def plot_missing_values(self):
         """
@@ -73,7 +77,7 @@ class StructuredDataset():
         """
         plots.plot_missing_values(df=self.df)
 
-    def plot_num_variable(self, var):
+    def plot_one_numeric_variable(self, var, nrows=None):
         """
         Display multiple graphics of a numerical variable.
 
@@ -94,9 +98,11 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a numerical variable inside the dataframe')
 
-        plots.plot_numerical_var(df=self.df, var=var, target=self.target)
+        df = self.filter_df_nrows(nrows=nrows)
 
-    def plot_cat_variable(self, var):
+        plots.plot_numerical_var(df=df, var=var, target=self.target)
+
+    def plot_one_categorical_variable(self, var, nrows=None):
         """
         Display multiple graphics of a categorical variable.
 
@@ -116,9 +122,12 @@ class StructuredDataset():
         if var not in self.df.select_dtypes(['object', 'category']).columns:
             raise ValueError(
                 'The variable has to be a categorical variable inside the dataframe')
-        plots.plot_categorical_var(df=self.df, var=var, target=self.target)
 
-    def plot_datetime_variable(self, var):
+        df = self.filter_df_nrows(nrows=nrows)
+
+        plots.plot_categorical_var(df=df, var=var, target=self.target)
+
+    def plot_one_datetime_variable(self, var, nrows=None):
         """
         Display multiple graphics of a datetime variable.
 
@@ -138,9 +147,12 @@ class StructuredDataset():
         if var not in self.df.select_dtypes('datetime').columns:
             raise ValueError(
                 'The variable has to be a datetime variable inside the dataframe')
-        plots.plot_datetime_var(df=self.df, var=var, target=self.target)
 
-    def plot_variables(self):
+        df = self.filter_df_nrows(nrows=nrows)
+
+        plots.plot_datetime_var(df=df, var=var, target=self.target)
+
+    def plot_variables(self, nrows=None):
         """
         Display multiple graphics of all differents variables.
         The goal of this function is to do less code and get insightfull 
@@ -152,6 +164,18 @@ class StructuredDataset():
         num_vars = self.df.select_dtypes('number')
         dat_vars = self.df.select_dtypes('datetime')
 
+        if self.target is not None:
+            df = self.filter_df_nrows(nrows=nrows)
+            display(Markdown('### Target variable'))
+
+            if self.target in cat_vars.columns:
+                plots.plot_categorical_var(df=df, var=self.target)
+                cat_vars = cat_vars.drop(columns=self.target)
+
+            elif self.target in num_vars.columns:
+                plots.plot_numerical_var(df=df, var=self.target)
+                num_vars = num_vars.drop(columns=self.target)
+
         if len(num_vars) > 0:
             display(Markdown('### Numerical variables'))
         for var in num_vars:
@@ -160,7 +184,7 @@ class StructuredDataset():
             if len(self.df[var].unique()) <= 1:
                 display(Markdown('Only one value.'))
                 continue
-            self.plot_num_variable(var=var)
+            self.plot_one_numeric_variable(var=var, nrows=nrows)
 
         if len(cat_vars) > 0:
             display(Markdown('### Categorical variables'))
@@ -170,7 +194,7 @@ class StructuredDataset():
             if len(self.df[var].unique()) <= 1:
                 display(Markdown('Only one value.'))
                 continue
-            self.plot_cat_variable(var=var)
+            self.plot_one_categorical_variable(var=var, nrows=nrows)
 
         if len(num_vars) > 0:
             display(Markdown('### Datetime variables'))
@@ -180,9 +204,9 @@ class StructuredDataset():
             if len(self.df[var].unique()) <= 1:
                 display(Markdown('Only one value.'))
                 continue
-            self.plot_datetime_variable(var=var)
+            self.plot_one_datetime_variable(var=var, nrows=nrows)
 
-    def plot_scatter_two_variables(self, var1, var2):
+    def plot_two_numeric_variables(self, var1, var2, nrows=None):
         """
         Show two numerical variables relations with jointplot.
 
@@ -205,10 +229,12 @@ class StructuredDataset():
             raise ValueError(
                 'Both variables has to be a numerical variables inside the dataframe')
 
-        plots.plot_numerical_jointplot(
-            df=self.df, var1=var1, var2=var2, target=self.target)
+        df = self.filter_df_nrows(nrows=nrows)
 
-    def plot_variables_scatter(self):
+        plots.plot_numerical_jointplot(
+            df=df, var1=var1, var2=var2, target=self.target)
+
+    def plot_numeric_var_relation(self, nrows=None):
         """
         Show all numerical variables 2 by 2 with graphics understand their relation.
         If target is set, separate dataset for each target value.
@@ -218,15 +244,15 @@ class StructuredDataset():
 
         cols = num_vars.columns.values
         var_combi = [tuple(sorted([v1, v2]))
-                     for v1 in cols for v2 in cols if v1 != v2]
+                     for v1 in cols for v2 in cols if (v1 != v2) & (self.target not in [v1, v2])]
         var_combi = list(set(var_combi))
 
         for var1, var2 in var_combi:
             display(Markdown(''))
             display(Markdown(f'Joint plot for **{var1}** & **{var2}**'))
-            self.plot_scatter_two_variables(var1=var1, var2=var2)
+            self.plot_two_numeric_variables(var1=var1, var2=var2, nrows=nrows)
 
-    def plot_boxplot_two_variables(self, var1, var2):
+    def plot_one_cat_and_num_variables(self, var1, var2, nrows=None):
         """
         Show boxplots for a specific pair of categorical and numerical variables
         If target is set, separate dataset for each target value.
@@ -244,10 +270,12 @@ class StructuredDataset():
             raise ValueError(
                 'At least one of the variables was not found inside the columns data')
 
-        plots.plot_boxplot_two_variables(
-            df=self.df, var1=var1, var2=var2, target=self.target)
+        df = self.filter_df_nrows(nrows=nrows)
 
-    def plot_variables_boxplot(self):
+        plots.plot_one_cat_and_num_variables(
+            df=df, var1=var1, var2=var2, target=self.target)
+
+    def plot_cat_and_num_variables(self, nrows=None):
         """
         Show boxplots for each pair of categorical and numerical variables
         If target is set, separate dataset for each target value.
@@ -258,28 +286,31 @@ class StructuredDataset():
         cat_vars = df.select_dtypes(['object', 'category'])
 
         var_combi = [(v1, v2) for v1 in num_vars.columns for v2 in cat_vars.columns if (
-            v1 != v2) & (v2 != self.target)]
+            v1 != v2) & (self.target not in [v1, v2])]
 
         if self.target is not None:
             for num_var in num_vars.columns:
                 display(Markdown(''))
                 display(
                     Markdown(f'Box plot for **{self.target}** & **{num_var}**'))
-                self.plot_boxplot_two_variables(var1=self.target, var2=num_var)
+                self.plot_one_cat_and_num_variables(
+                    var1=self.target, var2=num_var, nrows=nrows)
 
         for num_var, cat_var in var_combi:
             display(Markdown(''))
             display(Markdown(f'Box plot for **{cat_var}** & **{num_var}**'))
-            self.plot_boxplot_two_variables(var1=cat_var, var2=num_var)
+            self.plot_one_cat_and_num_variables(
+                var1=cat_var, var2=num_var, nrows=nrows)
 
-    def plot_correlations(self):
+    def plot_correlations(self, nrows=None):
         """
         Show differents correlations matrix for 3 cases :
         - numerical to numerical (using Pearson coeff)
         - categorical to categorical (using Cramers V & Chi square)
         - numerical to categorical (discrete) (using Point Biserial)
         """
-        df = utils.remove_var_with_one_value(self.df)
+        df = self.filter_df_nrows(nrows=nrows)
+        df = utils.remove_var_with_one_value(df)
 
         if self.orig_target_value is not None:
             df[self.target] = self.orig_target_value
@@ -324,9 +355,6 @@ class StructuredDataset():
 
         if (len(cat_vars) > 0) and (len(num_df) > 0):
             data_encoded, _ = utils.encode_categorical_vars(df)
-            # pearson_corr = data_encoded.corr()
-            # display(Markdown('#### Pearson correlation matrix for categorical variables'))
-            # plots.plot_correlation_matrix(pearson_corr)
 
             var_combi = [(v1, v2)
                          for v1 in cat_vars for v2 in num_vars if v1 != v2]

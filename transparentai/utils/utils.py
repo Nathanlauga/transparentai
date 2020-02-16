@@ -251,3 +251,12 @@ def save_dict_to_json(obj, fname):
     with OpenFile(fname, mode='w') as file:
         json.dump(obj, file)
     file.close()
+
+def filter_df_nrows(df, nrows):
+    """
+    """
+    if len(df) <= nrows:
+        return df
+
+    df_filter = df.sample(nrows)
+    return df_filter

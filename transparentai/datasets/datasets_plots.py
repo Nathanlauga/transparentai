@@ -61,7 +61,7 @@ def plot_numerical_var(df, var, target=None):
 
     ax = plt.subplot(int(f'{rows}21'))
     if target == None:
-        sns.distplot(df[var])
+        sns.distplot(df[var].dropna())
     else:
         labels = sorted(df[target].unique())
         for l in labels:
@@ -75,7 +75,7 @@ def plot_numerical_var(df, var, target=None):
     ax = plt.subplot(int(f'{rows}22'))
     x = df[target] if target != None else None
 
-    sns.boxplot(x=x, y=df[var])
+    sns.boxplot(x=x, y=df[var].dropna())
 
     if target != None:
         tab = pd.crosstab(df[var], df[target])
@@ -220,8 +220,21 @@ def plot_numerical_jointplot(df, var1, var2, target=None):
     target: str (optional)
         Target column for classifier
     """
+    if df[var1].nunique() <= 1:
+        display(Markdown(f'{var1} has only one value'))
+        return
+    if df[var2].nunique() <= 1:
+        display(Markdown(f'{var2} has only one value'))
+        return
+
+    if target is not None:
+        if (min(df[target].value_counts()) <= 1) | (df[target].nunique() == 1):
+            display(
+                Markdown(f'{target} has not enough data to be represented'))
+            target = None
+
     if target == None:
-        g = sns.jointplot(var1, var2, data=df, kind="hex", space=0, height=8)
+        g = sns.jointplot(var1, var2, data=df, space=0, height=8)
     else:
         legend_labels = sorted(df[target].unique())
         cols = [var1, var2, target] if target is not None else [var1, var2]
@@ -230,14 +243,16 @@ def plot_numerical_jointplot(df, var1, var2, target=None):
 
         g = grid.plot_joint(sns.scatterplot, hue=target, data=df, alpha=0.3)
         for l in legend_labels:
-            sns.distplot(df.loc[df[target] == l, var1], ax=g.ax_marg_x)
-            sns.distplot(df.loc[df[target] == l, var2],
-                         ax=g.ax_marg_y, vertical=True)
+            df_v1 = df.loc[df[target] == l, var1]
+            df_v2 = df.loc[df[target] == l, var2]
+            sns.distplot(df_v1, ax=g.ax_marg_x, kde=(df_v1.nunique() > 1))
+            sns.distplot(df_v2, ax=g.ax_marg_y, kde=(
+                df_v2.nunique() > 1), vertical=True)
 
     plots.plot_or_save(fname=f'{var1}_{var2}_variable_jointplot.png')
 
 
-def plot_boxplot_two_variables(df, var1, var2, target=None):
+def plot_one_cat_and_num_variables(df, var1, var2, target=None):
     """
     Show boxplots for a specific pair of categorical and numerical variables
     If target is set, separate dataset for each target value.
@@ -253,6 +268,13 @@ def plot_boxplot_two_variables(df, var1, var2, target=None):
     target: str (optional)
         Target column for classifier
     """
+    if df[var1].nunique() <= 1:
+        display(Markdown(f'{var1} has only one value'))
+        return
+    if df[var2].nunique() <= 1:
+        display(Markdown(f'{var2} has only one value'))
+        return
+
     val_cnt = df[var1].value_counts()
     if len(val_cnt) > 10:
         val_cnt = val_cnt.head(10)
