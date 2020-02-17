@@ -96,17 +96,21 @@ class ClassificationModel(BaseModel):
         if self.y_proba is not None:
             roc_auc, roc_curves = dict(), dict()
             if self.n_classes > 2:
-                y = label_binarize(self.y_true, classes=list(
-                    range(0, self.n_classes)))
-                for i in range(0, self.n_classes):
-                    roc_auc[i] = roc_auc_score(y[:, i], self.y_proba[:, i])
-                    roc_curves[i] = roc_curve(y[:, i], self.y_proba[:, i])
+                y = label_binarize(self.y_true, classes=self.y_true.unique())
+                for i, v in enumerate(list(self.y_true.unique())):
+                    try:
+                        roc_auc[int(v)] = roc_auc_score(y[:, i], self.y_proba[:, i])
+                        roc_curves[int(v)] = roc_curve(y[:, i], self.y_proba[:, i])
+                    except ValueError:
+                        roc_auc[int(v)] = 1
+                        roc_curves[int(v)] = [[1,1], [0,1]]
+                        pass
             else:
                 roc_auc[0] = roc_auc_score(self.y_true, self.y_proba[:, 1])
                 roc_curves[0] = roc_curve(self.y_true, self.y_proba[:, 1])
 
-            scores['roc_auc'] = [v for k, v in roc_auc.items()]
-            scores['roc_curve'] = [v for k, v in roc_curves.items()]
+            scores['roc_auc'] = roc_auc # [v for k, v in roc_auc.items()]
+            scores['roc_curve'] = roc_curves # [v for k, v in roc_curves.items()]
 
         self.scores_dict = scores
 

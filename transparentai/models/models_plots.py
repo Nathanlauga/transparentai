@@ -82,17 +82,17 @@ def plot_roc_curve(roc_curve, roc_auc, n_classes):
     """
     fpr, tpr = dict(), dict()
 
-    for i in range(0, len(roc_curve)):
-        fpr[i] = roc_curve[i][0]
-        tpr[i] = roc_curve[i][1]
+    for v in list(roc_curve.keys()):
+        fpr[v] = roc_curve[v][0]
+        tpr[v] = roc_curve[v][1]
     lw = 2
 
     colors = sns.color_palette("colorblind", n_classes)
-    for i, color in zip(range(n_classes), colors):
-        n = 1 if n_classes == 1 else i
-        plt.plot(fpr[i], tpr[i], color=color, lw=lw,
+    for v, color in zip(list(roc_auc.keys()), colors):
+        n = 1 if n_classes == 1 else v
+        plt.plot(fpr[v], tpr[v], color=color, lw=lw,
                  label='ROC curve of class {0} (area = {1:0.2f})'
-                 ''.format(n, roc_auc[i]))
+                 ''.format(n, roc_auc[v]))
         if n_classes <= 2:
             break
 
@@ -128,15 +128,16 @@ def plot_class_distribution(y_true, y_proba, n_classes):
     """
     df = pd.DataFrame()
     df['y_true'] = y_true
-    for i in range(0, n_classes):
-        df[i] = [v[i] for v in y_proba]
+    for idx, v in enumerate(list(df['y_true'].unique())):
+        df[v] = [p[idx] for p in y_proba]
 
     if n_classes == 2:
         df[0] = df[1]
 
     colors = sns.color_palette("colorblind", n_classes)
-    for i in range(0, n_classes):
-        sns.distplot(df[df['y_true'] == i][i], label=i)
+    for v in df['y_true'].unique():
+        kde = df[df['y_true'] == v][v].nunique() > 1
+        sns.distplot(df[df['y_true'] == v][v], label=v, kde=kde)
         plt.legend(loc=0)
 
     plt.xlabel('Predicted probabilities')
