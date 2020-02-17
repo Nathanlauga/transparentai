@@ -1,5 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
 import seaborn as sns
 import numpy as np
 
@@ -143,7 +144,10 @@ def plot_gauge(ax, value, goal, bar_color='r', gap=1):
     gap: int
         Limit gap from the goal value (goal+/-gap)
     """
-    cmap = sns.diverging_palette(255, 255, sep=10, n=100, as_cmap=True)
+    # https://github.com/mwaskom/seaborn/issues/1907
+    # cmap = sns.diverging_palette(255, 255, sep=10, n=100, as_cmap=True)
+
+    cmap = ListedColormap(sns.color_palette("coolwarm", 100).as_hex())
     colors = cmap(np.arange(cmap.N))
     ax.imshow([colors], extent=[goal-gap, goal+gap, 0, 0.25])
     ax.set_yticks([])

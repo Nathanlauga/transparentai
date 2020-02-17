@@ -313,31 +313,6 @@ def get_metric_text(protected_attr, target_value, metric_name, bias_type='datase
     return 'no metric selected'
 
 
-def plot_gauge(ax, value, goal, bar_color='r', gap=1):
-    """
-    Display a gauge plot with a blue diverging palette.
-
-    Parameters
-    ----------
-    ax: plt.axes.Axes
-        Axe where to put the gauge plot
-    value: float
-        Current value
-    goal: number
-        Goal value, the graphic will be centered on this value
-    bar_color: str
-        Color of the bar where the value is
-    gap: int
-        Limit gap from the goal value (goal+/-gap)
-    """
-    cmap = sns.diverging_palette(255, 255, sep=10, n=100, as_cmap=True)
-    colors = cmap(np.arange(cmap.N))
-    ax.imshow([colors], extent=[goal-gap, goal+gap, 0, 0.25])
-    ax.set_yticks([])
-    ax.set_xlim(goal-gap, goal+gap)
-    ax.axvline(linewidth=4, color=bar_color, x=value)
-
-
 def plot_bias_metric(axes, protected_attr, target_value, metric, bias_type='dataset'):
     """
     Display a row of graphics for a specific bias metric.
@@ -363,7 +338,7 @@ def plot_bias_metric(axes, protected_attr, target_value, metric, bias_type='data
     axes[0].axis('off')
 
     color = 'r' if (value < goal-0.2) or (value > goal+0.2) else 'g'
-    plot_gauge(ax=axes[1], value=value, goal=goal, bar_color=color)
+    plots.plot_gauge(ax=axes[1], value=value, goal=goal, bar_color=color)
     axes[1].set_title(
         f'Considered not biased between {goal-0.2} and {goal+0.2}', loc='left', fontsize=17)
 
