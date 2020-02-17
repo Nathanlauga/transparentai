@@ -4,7 +4,9 @@ import seaborn as sns
 import numpy as np
 
 
-__SAVEPLOT__ = False
+save_plot = False
+save_dir = './'
+verbose = 0
 
 
 def plot_or_save(fname=None):
@@ -15,11 +17,13 @@ def plot_or_save(fname=None):
     fname: str
         file name where to save the plot
     """
-    if not __SAVEPLOT__:
+    if not save_plot:
         plt.show()
     else:
         fname = 'plot.png' if fname is None else fname
-        plt.savefig(fname)
+        plt.savefig(save_dir+fname)
+        if verbose > 0:
+            print(f'Plot saved at : {save_dir}{fname}')
 
 
 def plot_stack(ax, tab, labels):
@@ -93,7 +97,6 @@ def plot_barplot_cat_num_var(df, cat_var, num_var, target=None):
     sns.boxplot(x=cat_var, y=num_var, hue=target,
                 data=df_plot, palette=palette)
     plt.xticks(rotation=60)
-    plt.show()
 
 
 def plot_correlation_matrix(corr_df):
@@ -121,7 +124,6 @@ def plot_correlation_matrix(corr_df):
         rotation=45,
         horizontalalignment='right'
     )
-    plt.show()
 
 
 def plot_gauge(ax, value, goal, bar_color='r', gap=1):

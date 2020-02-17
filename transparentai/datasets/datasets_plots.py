@@ -315,4 +315,4 @@ def plot_correlation_matrix(corr_df):
         rotation=45,
         horizontalalignment='right'
     )
-    plt.show()
+    plots.plot_or_save(fname=f'correlation_matrix_plot.png')

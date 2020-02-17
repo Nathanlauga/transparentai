@@ -56,7 +56,7 @@ def plot_bar_performance(orig_perf=None, new_perf=None, alert_threshold=None):
     fig.legend(labels=labels, fontsize=16)
     
     fig.suptitle('Performance bar plot', fontsize=18)
-    plt.show()
+    plots.plot_or_save(fname='monitoring_bar_performance_plot')
         
         
 def plot_gauge_bias(attr=None, target_value=None, orig_bias=None, new_bias=None):
@@ -103,4 +103,4 @@ def plot_gauge_bias(attr=None, target_value=None, orig_bias=None, new_bias=None)
             fig.legend(labels=labels, fontsize=16)
                     
             fig.suptitle(f'Focus on {attr} attribute : bias plot for{target_value} label', fontsize=18)
-            plt.show()
+            plots.plot_or_save(fname=f'monitoring_{attr}_{target_value}_gauge_bias_plot.png')

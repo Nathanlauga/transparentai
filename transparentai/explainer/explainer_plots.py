@@ -2,6 +2,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
+from transparentai import plots
+
 def plot_global_feature_influence(feat_importance):
     """
     Display global feature influence sorted.
@@ -17,7 +19,8 @@ def plot_global_feature_influence(feat_importance):
     plt.title('Feature importance (using Shap)')
     plt.ylabel('Features')
     plt.xlabel('Global value influence')
-    plt.show()
+    
+    plots.plot_or_save(fname='global_feature_influence_plot.png')
            
         
 def plot_local_feature_influence(feat_importance, based_value, pred):
@@ -79,4 +82,5 @@ def plot_local_feature_influence(feat_importance, based_value, pred):
     green_patch = mpatches.Patch(color='green')
     ax.legend([line_based, line_pred, green_patch, rects], 
               ['Based value', 'Prediction', 'Positive influence', 'Negative influence'])
-    plt.show()
+    
+    plots.plot_or_save(fname='local_feature_influence_plot.png')

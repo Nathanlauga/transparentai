@@ -8,6 +8,7 @@ from IPython.display import display, Markdown
 
 from transparentai.fairness.protected_attribute import ProtectedAttribute
 import transparentai.utils as utils
+from transparentai import plots
 
 BIAS_COLORS = ['#3498db', '#ecf0f1']
 PREDICTED_COLORS = ['#bdc3c7', '#2980b9']
@@ -552,7 +553,7 @@ def plot_dataset_bias_metrics(protected_attr, target_value):
         plot_bias_metric(axes, protected_attr, target_value,
                          metric=metric, bias_type='dataset')
 
-    plt.show()
+    plots.plot_or_save(fname='dataset_bias_metrics_plot.png')
 
 
 def plot_model_bias_metrics(protected_attr, target_value):
@@ -611,7 +612,7 @@ def plot_model_bias_metrics(protected_attr, target_value):
         plot_bias_metric(axes, protected_attr, target_value,
                          metric=metric, bias_type='model')
 
-    plt.show()
+    plots.plot_or_save(fname='model_bias_metrics_plot.png')
 
 
 def plot_bias_metrics(protected_attr, bias_type, target_value=None):

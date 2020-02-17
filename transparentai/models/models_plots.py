@@ -4,10 +4,13 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display, Markdown
 
+from transparentai import plots
+
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
+
 
 def plot_classification_scores(scores, y_true, y_proba):
     """
@@ -42,7 +45,7 @@ def plot_classification_scores(scores, y_true, y_proba):
     plot_class_distribution(
         y_true=y_true, y_proba=y_proba, n_classes=n_classes)
 
-    plt.show()
+    plots.plot_or_save(fname='classification_scores_plot.png')
 
 
 def plot_confusion_matrix(matrix):
@@ -193,4 +196,4 @@ def compare_threshold_predictions(threshold_df, y_true):
         ax = fig.add_subplot(2, 2, i+1)
         plot_curve(df=df, var=scores[i])
 
-    plt.show()
+    plots.plot_or_save(fname='compare_threshold_predictions_plot.png')
