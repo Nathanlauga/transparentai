@@ -58,7 +58,7 @@ class BiasMetric():
         pd.DataFrame
             formated bias metrics dataframe
         """
-        if attr == None:
+        if attr is None:
             metrics = list()
             for attr in self.protected_attributes:
                 attr_metrics = self.protected_attributes[attr].metrics
@@ -71,6 +71,7 @@ class BiasMetric():
             # metrics.columns = ['Metrics dataframe']
         else:
             metrics = self.protected_attributes[attr].metrics
+            metrics = metrics.drop(columns='attr')
         return metrics
 
     def _metrics_one_attr_to_json(self, attr, target_value=None):
@@ -120,12 +121,12 @@ class BiasMetric():
 
         return (metrics - copy).applymap(lambda x: (x > 0.2) or (x < -0.2))
 
-    def __insight_str(self, metrics_biased, attr, n_metrics):
+    def __insight_str(self, metrics_biased, attr, target_value, n_metrics):
         """
         """
         n_biased = np.sum(metrics_biased)
         biased = 'not ' if n_biased == 0 else ''
-        return (f"For this target value regarding the '{attr}' attribute {n_biased} for the {n_metrics} bias metrics are/is biased so " +
+        return (f"For this target value ({target_value}) regarding the '{attr}' attribute {n_biased} for the {n_metrics} bias metrics are/is biased so " +
                 f"you can considered that the dataset is {biased}biased.")
 
     def insight_one_attr(self, attr):
@@ -144,14 +145,14 @@ class BiasMetric():
         if self.bias_type == 'dataset':
             for val in values:
                 insight[val] = self.__insight_str(
-                    metrics_biased.loc[val], attr=attr, n_metrics=2)
+                    metrics_biased.loc[val], attr=attr, target_value=val, n_metrics=2)
 
             return insight
 
         elif self.bias_type == 'model':
             for val in values:
                 insight[val] = self.__insight_str(
-                    metrics_biased.loc[val], attr=attr, n_metrics=5)
+                    metrics_biased.loc[val], attr=attr, target_value=val, n_metrics=5)
 
             return insight
 
