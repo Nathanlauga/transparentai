@@ -18,7 +18,7 @@ class ModelExplainer():
     global_explain = None
     X = None
 
-    def __init__(self, model, X=None, feature_names=None, model_type='tree'):
+    def __init__(self, model, X=None, feature_names=None, model_type='tree', multi_label=False):
         """
         Parameters
         ----------
@@ -42,6 +42,7 @@ class ModelExplainer():
 
         self.model_type = model_type
         self.model = model
+        self.multi_label = multi_label
 
         if model_type == 'tree':
             if X is None:
@@ -75,7 +76,7 @@ class ModelExplainer():
         """
         values = self.explainer.shap_values(X)
 
-        if self.model_type == 'tree':
+        if (self.model_type == 'tree') & (not self.multi_label):
             values = values[1]
 
         return values
@@ -124,7 +125,17 @@ class ModelExplainer():
 
         values = self.shap_values(X)
 
-        return dict(zip(feature_names, values))
+        if not self.multi_label:
+            return dict(zip(feature_names, values))
+        else:
+            shap_dict = dict()
+            for feat in feature_names:
+                shap_dict[feat] = list()
+
+            for i in range(0, len(values)):
+                for j, feat in enumerate(feature_names):
+                    shap_dict[feat].append(values[i][j])
+            return shap_dict
 
     def explain_global(self, X):
         """
@@ -135,7 +146,7 @@ class ModelExplainer():
         ----------
         X: pd.DataFrame or np.array
             Data to explain    
-            
+
         Returns
         -------
         dict:
@@ -145,7 +156,7 @@ class ModelExplainer():
         if (self.X is not None) and type(X) in [pd.DataFrame, np.array]:
             if self.X.shape == X.shape:
                 if np.all(self.X == X):
-                    return 
+                    return
         self.X = X
 
         # For a tree explainer and if no example data has been provided, a lot of rows can take a while
@@ -157,8 +168,17 @@ class ModelExplainer():
             self.feature_names = X.columns
 
         values = self.shap_values(X)
-        values = pd.DataFrame(
-            data=values, columns=self.feature_names).abs().mean().to_dict()
+
+        if not self.multi_label:
+            values = pd.DataFrame(
+                data=values, columns=self.feature_names).abs().mean().to_dict()
+        else:
+            tmp = dict()
+            for i in range(0, len(values)):
+                tmp[i] = pd.DataFrame(
+                    data=values[i], columns=self.feature_names).abs().mean().to_dict()
+            values = tmp
+            del tmp
 
         self.global_explain = values
         return values
@@ -173,20 +193,32 @@ class ModelExplainer():
             Data to explain
         """
         values = self.explain_local(X, feature_classes)
-        if self.model_type == 'tree':
+
+        if (self.model_type == 'tree') & (not self.multi_label):
             based_value = self.explainer.expected_value[1]
         else:
             based_value = self.explainer.expected_value
 
-        values = self.format_feature_importance(values)
+        if not self.multi_label:
+            values = self.format_feature_importance(values)
+            if getattr(self.model, "predict_proba", None) is not None:
+                pred = self.model.predict_proba([X])[0][1]
+            else:
+                pred = self.model.predict([X])[0]
 
-        if getattr(self.model, "predict_proba", None) is not None:
-            pred = self.model.predict_proba([X])[0][1]
+            plots.plot_local_feature_influence(
+                feat_importance=values, based_value=based_value, pred=pred)
         else:
-            pred = self.model.predict([X])[0]
+            for i, based_val in enumerate(based_value):
+                val = {}
+                for k,v in values.items():
+                    val[k] = v[i]
+                val = self.format_feature_importance(val)
+                pred = self.model.predict_proba([X])[0][i]
 
-        plots.plot_local_feature_influence(
-            feat_importance=values, based_value=based_value, pred=pred)
+                print(f'Plot for the {i}th class probability.')
+                plots.plot_local_feature_influence(
+                    feat_importance=val, based_value=based_val, pred=pred)
 
     def plot_global_explain(self, X=None, top=None):
         """
@@ -208,8 +240,14 @@ class ModelExplainer():
                 'Please set a X value first, using X parameter in this function or inside explain_global function')
 
         values = self.global_explain
-        values = self.format_feature_importance(values, top=top)
-        plots.plot_global_feature_influence(feat_importance=values)
+        if not self.multi_label:
+            values = self.format_feature_importance(values, top=top)
+            plots.plot_global_feature_influence(feat_importance=values)
+        else:
+            for i in range(0,len(values)):
+                val = self.format_feature_importance(values[i], top=top)
+                print(f'Plot for the {i}th class.')
+                plots.plot_global_feature_influence(feat_importance=val)
 
     def format_feature_importance(self, feat_importance, top=None):
         """
