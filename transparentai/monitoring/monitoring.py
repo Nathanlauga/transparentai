@@ -40,9 +40,17 @@ class Monitoring():
         self.privileged_groups = privileged_groups
         self.alert_threshold = alert_threshold
 
-        df = X.copy()
+        df = X.copy().reset_index(drop=True)
+        if type(y_preds) in [pd.Series, pd.DataFrame]:
+            y_preds = y_preds.values
+        if y_real is not None:
+            if type(y_real) in [pd.Series, pd.DataFrame]:
+                y_real = y_real.values
+
         df['target'] = y_preds if y_real is None else y_real
-        self.dataset = StructuredDataset(df=df, target='target', mean=mean)
+
+        target_regr = model_type == 'regression'
+        self.dataset = StructuredDataset(df=df, target='target', mean=mean, target_regr=target_regr)
 
         self._compute_new_metrics()
 
@@ -63,8 +71,8 @@ class Monitoring():
         """
         new_metrics = {}
         # handle only 2 first ?
-#         model_bias_metrics = ['Disparate impact', 'Statistical parity difference']
-#         model_bias_metrics += ['Equal opportunity difference', 'Average abs odds difference', 'Theil index']
+        # model_bias_metrics = ['Disparate impact', 'Statistical parity difference']
+        # model_bias_metrics += ['Equal opportunity difference', 'Average abs odds difference', 'Theil index']
 
         # I have y_real ==> compute model perf & define model bias to compute
         if (self.y_real is not None):
@@ -99,10 +107,9 @@ class Monitoring():
                            if k not in self.orig_metrics[metric]]
             for k in not_in_new:
                 warnings.warn(
-                    f"In original {metric} dict '{k}' key is in but not in the new one.", Warning)
+                    f"In original {metric} dict '{k}' key is in but not in the new one.")
             for k in not_in_orig:
-                warnings.warn(
-                    f"In new {metric} dict '{k}' key is in but not in the orignal one.", Warning)
+                warnings.warn(f"In new {metric} dict '{k}' key is in but not in the orignal one.")
 
     def _check_orig_and_new_metrics(self):
         """
@@ -146,6 +153,10 @@ class Monitoring():
             raise ValueError(
                 "Either original metrics or y_real has to bas set in init to show bias")
         if self.orig_metrics is not None:
+            if self.privileged_groups is None:
+                raise ValueError(
+                    f"privileged_groups object attribute was not set at the init")
+
             if (bias_key not in self.orig_metrics) & (self.y_real is None):
                 raise ValueError(
                     f"'{bias_key}' has to be in orig_metrics dict when y_real is not set")

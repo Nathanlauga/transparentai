@@ -102,7 +102,10 @@ class ProtectedAttribute():
         if self.favorable_label is not None:
             target_values = [self.favorable_label]
         else:
-            target_values = self.labels.unique()
+            if type(self.labels) in [pd.Series, pd.DataFrame]:
+                target_values = self.labels.unique()
+            else:
+                target_values = list(set(self.labels))
 
         metrics = pd.DataFrame()
         metrics.name = self.name

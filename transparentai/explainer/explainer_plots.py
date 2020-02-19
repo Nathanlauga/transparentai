@@ -23,7 +23,7 @@ def plot_global_feature_influence(feat_importance):
     plots.plot_or_save(fname='global_feature_influence_plot.png')
            
         
-def plot_local_feature_influence(feat_importance, based_value, pred):
+def plot_local_feature_influence(feat_importance, base_value, pred):
     """
     Display local feature influence sorted for a specific
     prediction.
@@ -33,14 +33,14 @@ def plot_local_feature_influence(feat_importance, based_value, pred):
     feat_importance: pd.Series
         Feature importance with feature as indexes and 
         shap value as values
-    based_value: number
+    base_value: number
         prediction value if we don't put any feature into the model
     pred: number
         predicted value
     """    
     feat_importance = feat_importance.sort_values(ascending=False)
     
-    current_val = based_value
+    current_val = base_value
     left = list()
     for feat, value in feat_importance.items():
         left.append(current_val)
@@ -50,7 +50,7 @@ def plot_local_feature_influence(feat_importance, based_value, pred):
     feat_importance = feat_importance.sort_values()
         
     fig, ax = plt.subplots(figsize=(12, 8))
-    line_based = ax.axvline(x=based_value, linewidth=2, color='black', linestyle='--')
+    line_based = ax.axvline(x=base_value, linewidth=2, color='black', linestyle='--')
     line_pred = ax.axvline(x=pred, linewidth=2, color='black')
     
     colors = ['green' if v > 0 else 'red' for v in feat_importance.values]

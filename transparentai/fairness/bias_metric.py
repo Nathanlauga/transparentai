@@ -71,7 +71,8 @@ class BiasMetric():
             # metrics.columns = ['Metrics dataframe']
         else:
             metrics = self.protected_attributes[attr].metrics
-            metrics = metrics.drop(columns='attr')
+            if 'attr' in metrics.columns:
+                metrics = metrics.drop(columns='attr')
         return metrics
 
     def _metrics_one_attr_to_json(self, attr, target_value=None):

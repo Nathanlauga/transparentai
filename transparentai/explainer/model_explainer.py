@@ -155,8 +155,8 @@ class ModelExplainer():
         """
         if (self.X is not None) and type(X) in [pd.DataFrame, np.array]:
             if self.X.shape == X.shape:
-                if np.all(self.X == X):
-                    return
+                if np.all(self.X.values == X.values):
+                    return self.global_explain
         self.X = X
 
         # For a tree explainer and if no example data has been provided, a lot of rows can take a while
@@ -183,7 +183,32 @@ class ModelExplainer():
         self.global_explain = values
         return values
 
-    def plot_local_explain(self, X, feature_classes=None):
+    def _get_base_value(self):
+        """
+        """
+        if (self.model_type == 'tree') & (not self.multi_label):
+            return self.explainer.expected_value[1]
+        else:
+            return self.explainer.expected_value
+
+    def _get_predictions(self, X):
+        """
+        """
+        if getattr(self.model, "predict_proba", None) is not None:
+            return self.model.predict_proba([X])[0][1]
+        else:
+            return self.model.predict([X])[0]
+
+    def _plot_local_explain(self, X, values, base_value, top=None):
+        """
+        """
+        values = self.format_feature_importance(values, top=top)
+        pred = self._get_predictions(X)
+
+        plots.plot_local_feature_influence(
+            feat_importance=values, base_value=base_value, pred=pred)
+
+    def plot_local_explain(self, X, feature_classes=None, top=None):
         """
         Display a plot for a local prediction based on X set.
 
@@ -194,31 +219,18 @@ class ModelExplainer():
         """
         values = self.explain_local(X, feature_classes)
 
-        if (self.model_type == 'tree') & (not self.multi_label):
-            based_value = self.explainer.expected_value[1]
-        else:
-            based_value = self.explainer.expected_value
+        base_value = self._get_base_value()
 
         if not self.multi_label:
-            values = self.format_feature_importance(values)
-            if getattr(self.model, "predict_proba", None) is not None:
-                pred = self.model.predict_proba([X])[0][1]
-            else:
-                pred = self.model.predict([X])[0]
-
-            plots.plot_local_feature_influence(
-                feat_importance=values, based_value=based_value, pred=pred)
+            self._plot_local_explain(X, values, base_value, top=top)
         else:
-            for i, based_val in enumerate(based_value):
+            for i, base_val in enumerate(base_value):
                 val = {}
-                for k,v in values.items():
+                for k, v in values.items():
                     val[k] = v[i]
-                val = self.format_feature_importance(val)
-                pred = self.model.predict_proba([X])[0][i]
 
                 print(f'Plot for the {i}th class probability.')
-                plots.plot_local_feature_influence(
-                    feat_importance=val, based_value=based_val, pred=pred)
+                self._plot_local_explain(X, val, base_val, top=top)
 
     def plot_global_explain(self, X=None, top=None):
         """
@@ -244,7 +256,7 @@ class ModelExplainer():
             values = self.format_feature_importance(values, top=top)
             plots.plot_global_feature_influence(feat_importance=values)
         else:
-            for i in range(0,len(values)):
+            for i in range(0, len(values)):
                 val = self.format_feature_importance(values[i], top=top)
                 print(f'Plot for the {i}th class.')
                 plots.plot_global_feature_influence(feat_importance=val)
@@ -276,7 +288,14 @@ class ModelExplainer():
         elif top > len(feat_importance):
             top = len(feat_importance)
 
-        top_index = feat_importance.abs().sort_values().index[0:top]
-        feat_importance = feat_importance.loc[top_index].sort_values()
+        top_index = feat_importance.abs().sort_values(
+            ascending=False).index[0:top]
+        other_index = feat_importance.abs().sort_values(
+            ascending=False).index[top:]
 
-        return feat_importance
+        feat_importance_filtered = feat_importance.loc[top_index].sort_values()
+        if len(other_index) > 0:
+            feat_importance_filtered['Others variables'] = feat_importance.loc[other_index].sum(
+            )
+
+        return feat_importance_filtered.sort_values()

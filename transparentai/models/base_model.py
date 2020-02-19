@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from IPython.display import display, Markdown
 from abc import abstractmethod
 
@@ -43,7 +44,10 @@ class BaseModel():
         scores_json = {}
         for k, v in self.scores_dict.items():
             if k in scores_names:
-                scores_json[k] = v
+                if k == 'roc_auc':
+                    scores_json[k] = np.mean([val for label, val in v.items()])
+                else:
+                    scores_json[k] = v
         return scores_json
 
     def save_scores(self, fname):

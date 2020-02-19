@@ -102,5 +102,5 @@ def plot_gauge_bias(attr=None, target_value=None, orig_bias=None, new_bias=None)
             labels = [txt] if bias_2 is None else [txt, txt_2]
             fig.legend(labels=labels, fontsize=16)
                     
-            fig.suptitle(f'Focus on {attr} attribute : bias plot for{target_value} label', fontsize=18)
+            fig.suptitle(f'Focus on {attr} attribute : bias plot for {target_value} label', fontsize=18)
             plots.plot_or_save(fname=f'monitoring_{attr}_{target_value}_gauge_bias_plot.png')

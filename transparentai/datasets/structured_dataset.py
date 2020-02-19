@@ -16,7 +16,7 @@ class StructuredDataset():
     orig_target_value = None
     target_mean = None
 
-    def __init__(self, df, target=None, mean=None):
+    def __init__(self, df, target=None, mean=None, target_regr=False):
         """
         Parameters
         ----------
@@ -41,7 +41,7 @@ class StructuredDataset():
             if target in df.select_dtypes('object').columns:
                 df[target] = df[target].astype('category')
 
-            elif target in df.select_dtypes('number').columns:
+            elif (target in df.select_dtypes('number').columns) & (target_regr):
                 self.target_mean = mean if mean is not None else np.mean(
                     df[target]).round(3)
                 df, orig_val = utils.regression_to_classification(
