@@ -1,0 +1,71 @@
+{
+    "Detail & Goal":
+    {
+        "q1":{
+            "question":"What is the main goal of this AI ? What do you want to predict ?",
+            "answer":""
+        },
+        "q2":{
+            "question":"Why do you need this AI ?",
+            "answer":""
+        },
+        "q3":{
+            "question":"Who is participating during the AI creation ?",
+            "answer":""
+        },
+        "q4":{
+            "question":"Can you reach the same goal without AI ? If yes, why AI is better for this problem ?",
+            "answer":""
+        },
+        "q5":{
+            "question":"What decisions will be taken with the output of this AI ?",
+            "answer":""
+        },
+        "q6":{
+            "question":"Who will be affected by this AI ?",
+            "answer":""
+        },
+        "q7":{
+            "question":"How users will respond to this AI : Define some questions that users may asked at the end about the AI prediction.",
+            "answer":""
+        }
+    },
+    "Model & Metrics":
+    {
+        "q8":{
+            "question":"What is the type of AI ? (classification, regression , etc.)",
+            "answer":""
+        },
+        "q9":{
+            "question":"Do you need this AI to be train regularly ? How often ?",
+            "answer":""
+        },
+        "q10":{
+            "question":"Which evaluation function will you use ? If binary classifier weight on positive or negative ?",
+            "answer":""
+        },
+        "q11":{
+            "question":"Using this evaluation method, do you think with time, it will affect prediction and be biased ?",
+            "answer":""
+        },
+        "q12":{
+            "question":"Define success metrics : how will you say your AI is succeeding in what it was build for ?",
+            "answer":""
+        },
+        "q13":{
+            "question":"Define negative metrics : how will you say your AI is failing in what it was build for ?",
+            "answer":""
+        }
+    },
+    "Data":
+    {
+        "q14":{
+            "question":"What are the data that you’ll need to build this AI ?",
+            "answer":""
+        },
+        "q15":{
+            "question":"Do you know if your data is reliable ? If no how will you say it can be reliable ?",
+            "answer":""
+        }
+    }
+}
