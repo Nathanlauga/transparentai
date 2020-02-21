@@ -9,13 +9,6 @@ Structured Dataset
 .. autoclass:: StructuredDataset
     :members:
 
-Protected Attribute
--------------------
-
-.. autoclass:: ProtectedAttribute
-    :members:
-
-
 Preformated datasets
 --------------------
 

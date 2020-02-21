@@ -32,6 +32,7 @@ class OpenFile:
 def str_to_file(string: str, fpath: str):
     """
     Create a file based on a string.
+
     Parameters
     ----------
     string: str
@@ -46,7 +47,7 @@ def str_to_file(string: str, fpath: str):
 
 def remove_var_with_one_value(df):
     """
-    Remove dataset's columns that only contains one unique value.
+    Removes dataset's columns that only contain one unique value.
 
     Parameters
     ----------
@@ -71,7 +72,7 @@ def remove_var_with_one_value(df):
 def encode_categorical_vars(df):
     """
     Encode categorical variables from a dataframe to be numerical (discrete)
-    It uses LabelEncoder class from scikit-learn
+    It uses LabelEncoder classes from scikit-learn
 
     Parameters
     ----------
@@ -107,17 +108,17 @@ def encode_categorical_vars(df):
 
 def cramers_v(x, y):
     """
-    Function that return the Cramer V value for two categorical variables using
+    Returns the Cramer V value of two categorical variables using
     chi square. This correlation metric is between 0 and 1.
 
-    Code source found on this article : 
+    Code source found in this article : 
     https://towardsdatascience.com/the-search-for-categorical-correlation-a1cf7f1888c9
 
     Parameters
     ----------
-    x:
+    x: array like
         first categorical variable
-    y:
+    y: array like
         second categorical variable
 
     Returns
@@ -146,11 +147,11 @@ def init_corr_matrix(columns, index, fill_diag=1.):
     Parameters
     ----------
     columns: 
-        list of columns names
+        list of column names
     index:
         list of index names
     fill_diag: float
-        if squared matrix then set diagonal with this value
+        if squared matrix, then set diagonal with this value
 
     Returns
     -------
@@ -182,9 +183,14 @@ def regression_to_classification(df, target, mean):
         Dataframe updated with target column as a category variable
     np.array
         Original values of the target column
+
+    Raises
+    ------
+    ValueError:
+        `target` parameter has to be a numeric variable
     """
     if target not in df.select_dtypes('number').columns:
-        raise TypeError('target column is not a number')
+        raise ValueError('target column is not a number')
 
     orig_target_val = df[target].values
     df[target] = np.where(orig_target_val > mean, f'>{mean}', f'<={mean}')
@@ -195,8 +201,8 @@ def regression_to_classification(df, target, mean):
 
 def labelencoder_to_dict(encoder):
     """
-    Convert a LabelEncoder classes from scikit-learn 
-    to a dictionnary with index as key and original value as value
+    Convert a LabelEncoder class from scikit-learn 
+    to a dictionary with index as key and original value as value
 
     Example:
     encoder.classes_ is ['Male', 'Female']
@@ -214,6 +220,9 @@ def labelencoder_to_dict(encoder):
 
     Raises
     ------
+    TypeError:
+        `encoder` has to be a `LabelEncoder` 
+        from `sklearn.preprocessing` module
     """
     if type(encoder) != LabelEncoder:
         raise TypeError('encoder has to be a LabelEncoder.')
@@ -228,7 +237,7 @@ def labelencoder_to_dict(encoder):
 
 def get_metric_goal(metric):
     """
-    Return bias metric goal given metric name.
+    Returns bias metric goal given metric name.
 
     Parameters
     ---------- 
@@ -247,14 +256,33 @@ def get_metric_goal(metric):
 
 def save_dict_to_json(obj, fname):
     """
+    Save a dictionary object to json file.
+
+    Parameters
+    ----------
+    obj: dict
+        dictionary to save
+    fname: str
+        string of the file path (including filename)
     """
     with OpenFile(fname, mode='w') as file:
         json.dump(obj, file)
     file.close()
 
-def filter_df_nrows(df, nrows):
+def reduce_df_nrows(df, nrows):
     """
+    Returns a dataframe reduced of n rows using `sample()` method.
+
+    Parameters
+    ----------
+    df: pd.DataFrame
+        Dataframe to reduce
+    nrows: int
+        Number of rows to keep
     """
+    if type(df) != pd.DataFrame:
+        raise TypeError('df has to be a pandas DataFrame object')
+
     if len(df) <= nrows:
         return df
 

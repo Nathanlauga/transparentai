@@ -4,14 +4,14 @@
 Datasets plots functions
 ------------------------
 
-.. automodule:: transparentai.plots.datasets_plots
+.. automodule:: transparentai.datasets.datasets_plots
     :members:
 
 
 Models plots functions
 ------------------------
 
-.. automodule:: transparentai.plots.models_plots
+.. automodule:: transparentai.models.models_plots
     :members:
 
 

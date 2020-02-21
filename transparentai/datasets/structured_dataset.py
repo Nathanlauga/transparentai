@@ -54,11 +54,11 @@ class StructuredDataset():
     def __str__(self):
         return str(self.df)
 
-    def filter_df_nrows(self, nrows=None):
+    def reduce_df_nrows(self, nrows=None):
         """
         """
         if nrows is not None:
-            df = utils.filter_df_nrows(df=self.df, nrows=nrows)
+            df = utils.reduce_df_nrows(df=self.df, nrows=nrows)
         else:
             df = self.df
         return df
@@ -98,7 +98,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a numerical variable inside the dataframe')
 
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
 
         plots.plot_numerical_var(df=df, var=var, target=self.target)
 
@@ -123,7 +123,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a categorical variable inside the dataframe')
 
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
 
         plots.plot_categorical_var(df=df, var=var, target=self.target)
 
@@ -148,7 +148,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a datetime variable inside the dataframe')
 
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
 
         plots.plot_datetime_var(df=df, var=var, target=self.target)
 
@@ -165,7 +165,7 @@ class StructuredDataset():
         dat_vars = self.df.select_dtypes('datetime')
 
         if self.target is not None:
-            df = self.filter_df_nrows(nrows=nrows)
+            df = self.reduce_df_nrows(nrows=nrows)
             display(Markdown('### Target variable'))
 
             if self.target in cat_vars.columns:
@@ -229,7 +229,7 @@ class StructuredDataset():
             raise ValueError(
                 'Both variables has to be a numerical variables inside the dataframe')
 
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
 
         plots.plot_numerical_jointplot(
             df=df, var1=var1, var2=var2, target=self.target)
@@ -270,7 +270,7 @@ class StructuredDataset():
             raise ValueError(
                 'At least one of the variables was not found inside the columns data')
 
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
 
         plots.plot_one_cat_and_num_variables(
             df=df, var1=var1, var2=var2, target=self.target)
@@ -309,7 +309,7 @@ class StructuredDataset():
         - categorical to categorical (using Cramers V & Chi square)
         - numerical to categorical (discrete) (using Point Biserial)
         """
-        df = self.filter_df_nrows(nrows=nrows)
+        df = self.reduce_df_nrows(nrows=nrows)
         df = utils.remove_var_with_one_value(df)
 
         if self.orig_target_value is not None:

@@ -8,6 +8,7 @@ __all__ = [
     'labelencoder_to_dict',
     'get_metric_goal',
     'save_dict_to_json',
-    'filter_df_nrows'
+    'reduce_df_nrows'
     ]
+    
 from transparentai.utils.utils import * 
