@@ -18,12 +18,12 @@ def plot_classification_scores(scores, y_true, y_proba):
     - a dataframe for accuracy, f1, precision, recall & roc_auc
     - confusion matrix
     - ROC curve 
-    - Probalities distribution
+    - Probality distribution
 
     Parameters
     ----------
     scores: pd.DataFrame
-        scores dataframe attribute of a ClassificationModel object
+        scores dataframe attribute of a `ClassificationModel` object
     y_true: array-like
         true labels
     y_proba: array
@@ -50,7 +50,7 @@ def plot_classification_scores(scores, y_true, y_proba):
 
 def plot_confusion_matrix(matrix):
     """
-    Show confustion matrix.
+    Show confusion matrix.
 
     Parameters
     ----------
@@ -69,14 +69,14 @@ def plot_confusion_matrix(matrix):
 
 def plot_roc_curve(roc_curve, roc_auc, n_classes):
     """
-    Show a roc curve plot with roc_auc score on legend.
+    Show a roc curve plot with roc_auc score on the legend.
 
     Parameters
     ----------
     roc_curve: array
-        roc_curve metrics result for each classes
+        roc_curve metrics result for each class
     roc_auc: array
-        roc_auc metrics result for each classes        
+        roc_auc metrics result for each class       
     n_classes: int
         Number of classes
     """
@@ -109,12 +109,12 @@ def plot_class_distribution(y_true, y_proba, n_classes):
     """
     Show class distribution using seaborn `distplot`_ function.
     if n_classes is 2 then display probability for class 1 only.
-    So class 0 probalities should tend towards 0 and class 1 towards 1.
+    So class 0 probabilities should tend towards 0 and class 1 towards 1.
 
     else it displays all probabilities for current class so all 
     probabilities should tend towards 1.
 
-    .. _displot: https://seaborn.pydata.org/generated/seaborn.distplot.html
+    .. _distplot: https://seaborn.pydata.org/generated/seaborn.distplot.html
 
     Parameters
     ----------
@@ -163,7 +163,7 @@ def plot_curve(df, var):
 
 def compare_threshold_predictions(threshold_df, y_true):
     """
-    Display curves for four metrics by threshold on x axis :
+    Display curves for four metrics by threshold on the x axis :
     - accuracy
     - f1 score
     - precision
@@ -173,7 +173,7 @@ def compare_threshold_predictions(threshold_df, y_true):
     ----------
     threshold_df: pd.DataFrame
         dataframe with different threshold on columns
-    y_true:
+    y_true: array like
         true labels        
     """
     df = list()

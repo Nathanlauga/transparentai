@@ -53,7 +53,7 @@ def plot_numerical_var(df, var, target=None):
         Dataframe to inspect
     var: str
         Column name that contains numerical values
-    target: str (optional)
+    target: str (default None)
         Target column for classifier
     """
     rows = 1 if target is None else 2
@@ -81,12 +81,12 @@ def plot_numerical_var(df, var, target=None):
         tab = pd.crosstab(df[var], df[target])
 
         ax = plt.subplot(223)
-        plots.plot_stack(ax=ax, tab=tab, labels=labels)
+        plots.plot_stack(ax=ax, df=tab, labels=labels)
 
         tab = tab.div(tab.sum(axis=1), axis=0)
 
         ax = plt.subplot(224)
-        plots.plot_stack(ax=ax, tab=tab, labels=labels)
+        plots.plot_stack(ax=ax, df=tab, labels=labels)
 
     plots.plot_or_save(fname=f'{var}_variable_plot.png')
 
@@ -104,7 +104,7 @@ def plot_categorical_var(df, var, target=None):
         Dataframe to inspect
     var: str
         Column name that contains categorical values
-    target: str (optional)
+    target: str (default None)
         Target column for classifier
     """
     val_cnt = df[var].value_counts()
@@ -134,7 +134,7 @@ def plot_categorical_var(df, var, target=None):
         legend_labels = sorted(df[target].unique())
         tab = pd.crosstab(df[var], df[target])
         tab = tab.loc[labels]
-        plots.plot_stack_bar(ax=ax, tab=tab, labels=labels,
+        plots.plot_stack_bar(ax=ax, df=tab, labels=labels,
                              legend_labels=legend_labels)
 
     plots.plot_or_save(fname=f'{var}_variable_plot.png')
@@ -154,7 +154,7 @@ def plot_datetime_var(df, var, target=None):
         Dataframe to inspect
     var: str
         Column name that contains datetime values
-    target: str (optional)
+    target: str (default None)
         Target column for classifier
     """
     df = df.copy()
@@ -179,7 +179,7 @@ def plot_datetime_var(df, var, target=None):
         tab.div(tab.sum(axis=1), axis=0)
 
         ax = plt.subplot(122)
-        plots.plot_stack(ax=ax, tab=tab, labels=legend_labels)
+        plots.plot_stack(ax=ax, df=tab, labels=legend_labels)
 
     plots.plot_or_save(fname=f'{var}_variable_plot.png')
 
@@ -217,7 +217,7 @@ def plot_numerical_jointplot(df, var1, var2, target=None):
         Column name that contains first numerical values
     var2: str
         Column name that contains second numerical values
-    target: str (optional)
+    target: str (default None)
         Target column for classifier
     """
     if df[var1].nunique() <= 1:
@@ -265,7 +265,7 @@ def plot_one_cat_and_num_variables(df, var1, var2, target=None):
         Column name that contains categorical values
     var2: str
         Column name that contains numerical values
-    target: str (optional)
+    target: str (default None)
         Target column for classifier
     """
     if df[var1].nunique() <= 1:

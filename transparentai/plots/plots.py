@@ -12,6 +12,24 @@ verbose = 0
 
 def plot_or_save(fname=None):
     """
+    Using `save_plot` global attribute (in this file) it uses
+    `plt.show()` or it saves the figure to a file
+
+    To update the `save_plot` to `True` you can use the following code : 
+
+
+    The following directive changes the hightlight language to SQL.
+
+    .. code-block:: python
+    
+        import transparentai.plots as plots
+        # save_plot allows to save
+        plots.save_plot = True
+
+        # For a different directory than the current
+        plots.save_dir = 'plots/'
+        # If you want to see verbose detail
+        plots.verbose = 1
 
     Parameters
     ----------
@@ -27,35 +45,72 @@ def plot_or_save(fname=None):
             print(f'Plot saved at : {save_dir}{fname}')
 
 
-def plot_stack(ax, tab, labels):
+def plot_stack(ax, df, labels):
     """
-    Add a stack plot into the current ax plot
+    Add a stack plot into the current ax plot.
+
+    Parameters
+    ----------
+    ax: plt.axes.Axes
+        axe where to add the plot 
+    df: pd.DataFrame
+        Dataframe object to analyse
+    labels: list
+        list of labels to display in the plot
+
+    Raises
+    ------
+    TypeError:
+        `df` parameter has to be a `pd.DataFrame`
     """
+    if type(df) != pd.DataFrame:
+        raise TypeError('df has to be a DataFrame')
+
     colors = sns.color_palette("colorblind", len(labels))
-    x = tab.index.values
-    y = [list(tab[l].values) for l in labels]
+    x = df.index.values
+    y = [list(df[l].values) for l in labels if l in df.columns]
 
     ax.stackplot(x, y, labels=labels, colors=colors)
     ax.legend(loc=0, frameon=True)
 
 
-def plot_stack_bar(ax, tab, labels, legend_labels):
+def plot_stack_bar(ax, df, labels, legend_labels):
     """
-    Add a stack bar plot into the current ax plot
+    Add a stack bar plot into the current ax plot.
+
+    Parameters
+    ----------
+    ax: plt.axes.Axes
+        axe where to add the plot 
+    df: pd.DataFrame
+        Dataframe object to analyse
+    labels: list
+        list of labels to display in the plot
+    legend_labels: list
+        list of labels where to split the data in
+        stacked area
+
+    Raises
+    ------
+    TypeError:
+        `df` parameter has to be a `pd.DataFrame`
     """
+    if type(df) != pd.DataFrame:
+        raise TypeError('df has to be a DataFrame')
+
     colors = sns.color_palette("colorblind", len(legend_labels))
 
-    # tab.div(tab.sum(axis=1), axis=0).round(2).astype(int)
-    for i, row in tab.iterrows():
+    # df.div(df.sum(axis=1), axis=0).round(2).astype(int)
+    for i, row in df.iterrows():
         if row.sum() > 0:
-            tab.loc[i] = ((row / row.sum()).round(2)*100).astype(int)
+            df.loc[i] = ((row / row.sum()).round(2)*100).astype(int)
         else:
-            tab.loc[i] = 0
+            df.loc[i] = 0
 
     for i, l in enumerate(legend_labels):
-        bottom = tab[legend_labels[i-1]] if i > 0 else None
+        bottom = df[legend_labels[i-1]] if i > 0 else None
 
-        rects = ax.bar(labels, tab[l], label=l, bottom=bottom,
+        rects = ax.bar(labels, df[l], label=l, bottom=bottom,
                        align='center', color=colors[i])
 
         for r in rects:
@@ -71,7 +126,7 @@ def plot_stack_bar(ax, tab, labels, legend_labels):
     ax.legend(loc=0, frameon=True)
 
 
-def plot_barplot_cat_num_var(df, cat_var, num_var, target=None):
+def plot_boxplot_cat_num_var(df, cat_var, num_var, target=None):
     """
     Show boxplots for a specific pair of categorical and numerical variables
     If target is set, separate dataset for each target value.
@@ -140,7 +195,7 @@ def plot_gauge(ax, value, goal, bar_color='r', gap=1):
     goal: number
         Goal value, the graphic will be centered on this value
     bar_color: str
-        Color of the bar where the value is
+        Color of the vertical line
     gap: int
         Limit gap from the goal value (goal+/-gap)
     """
@@ -153,3 +208,27 @@ def plot_gauge(ax, value, goal, bar_color='r', gap=1):
     ax.set_yticks([])
     ax.set_xlim(goal-gap, goal+gap)
     ax.axvline(linewidth=4, color=bar_color, x=value)
+
+
+def plot_bar(ax, value, label):
+    """
+    Display a bar chart into the current ax plot.
+
+    Parameters
+    ----------
+    ax: plt.axes.Axes
+        Axe where to put the plot
+    value: list or number
+        Values list (same size than `label`)
+    label: list or str
+        Labels list (same size than `value`)
+    """
+    rects = ax.bar(label, value)
+
+    for r in rects:
+        h, w, x, y = r.get_height(), r.get_width(), r.get_x(), r.get_y()
+
+        ax.annotate(str(round(h, 3)), xy=(x+w/2, y+h/2), xytext=(0, 0),
+                    textcoords="offset points", fontsize=16,
+                    ha='center', va='center',
+                    color='white', weight='bold', clip_on=True)

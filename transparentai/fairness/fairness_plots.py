@@ -10,8 +10,8 @@ from transparentai.fairness.protected_attribute import ProtectedAttribute
 import transparentai.utils as utils
 from transparentai import plots
 
-BIAS_COLORS = ['#3498db', '#ecf0f1']
-PREDICTED_COLORS = ['#bdc3c7', '#2980b9']
+bias_colors = ['#3498db', '#ecf0f1']
+predicted_colors = ['#bdc3c7', '#2980b9']
 
 
 def plot_text_center(ax, text, fontsize=18):
@@ -24,7 +24,7 @@ def plot_text_center(ax, text, fontsize=18):
         ax where to set centered text
     text: str
         text to display
-    fontsize: int (optionnal)
+    fontsize: int (default 18)
         font size of the text
     """
     left, width = .25, .5
@@ -53,7 +53,7 @@ def plot_text_left(ax, text, fontsize=18):
         ax where to set centered text
     text: str
         text to display
-    fontsize: int (optionnal)
+    fontsize: int (default 18)
         font size of the text
     """
     left, width = 0, 0
@@ -73,7 +73,7 @@ def plot_text_left(ax, text, fontsize=18):
 def plot_percentage_bar_man_img(ax, freq, spacing=0):
     """
     Display a percentage bar plot with custom images. only 10 images
-    will be ploted, and each images has only one color so if the frequency is
+    will be plotted, and each image has only one color so if the frequency is
     0.66 then it rounded up (0.7) and print 7 blue men and 3 grey.
 
     Parameters
@@ -109,7 +109,7 @@ def plot_pie(ax, freq, annot=False):
     """
     Display a pie chart from a frequency.
 
-    This function uses BIAS_COLORS variable.
+    This function uses bias_colors variable.
 
     Parameters
     ----------
@@ -117,13 +117,13 @@ def plot_pie(ax, freq, annot=False):
         ax where to plot the pie chart
     freq: str
         frequency for the pie chart
-    annot: bool
+    annot: bool (default False)
         add percentage annotation in the pie chart
     """
     sizes = [freq, 1-freq]
     autopct = '%1.0f%%' if annot else ''
 
-    ax.pie(sizes, labels=['', ''], colors=BIAS_COLORS, autopct=autopct,
+    ax.pie(sizes, labels=['', ''], colors=bias_colors, autopct=autopct,
            shadow=True, startangle=130)
     ax.axis('equal')
 
@@ -134,7 +134,8 @@ def plot_protected_attr_row(axes, protected_attr, target_value, privileged=True)
     privileged has to be True or False and then the function compute
     the frequency for this population.
 
-    axes need 4 axes : 
+    `axes` need 4 axes : 
+
     1. the percentage image plot (`plot_percentage_bar_man_img()`)
     2. an equal symbol
     3. pie chart of frequency
@@ -177,7 +178,7 @@ def setup_bottom_line(ax):
 
     Code inspired from matplotlib.org_.
 
-    .. _matplotlib: https://matplotlib.org/3.1.1/gallery/ticks_and_spines/tick-locators.html#sphx-glr-gallery-ticks-and-spines-tick-locators-py
+    .. _matplotlib.org: https://matplotlib.org/3.1.1/gallery/ticks_and_spines/tick-locators.html#sphx-glr-gallery-ticks-and-spines-tick-locators-py
 
     Parameters
     ----------
@@ -241,12 +242,22 @@ def get_metric_text(protected_attr, target_value, metric_name, bias_type='datase
         Specific value of the target  
     metric_name: str
         Metric's name 
+    bias_type: str (default: 'dataset')
+        Bias type (can only be 'dataset' or 'model')
 
     Returns
     -------
     str
         String of the metric calculus
+
+    Raises
+    ------
+    ValueError:
+        `bias_type` parameter has to be 'dataset' or 'model'
     """
+    if bias_type not in ['dataset','model']:
+        raise ValueError("bias_type has to be 'dataset' or 'model'")
+
     metrics = protected_attr.metrics
     value = metrics.loc[target_value, metric_name]
 
@@ -321,13 +332,22 @@ def plot_bias_metric(axes, protected_attr, target_value, metric, bias_type='data
     ----------
     axes: list
         Axes for this row
-    protected_attr:
+    protected_attr: transparentai.fairness.ProtectedAttribute
         Protected attribute to inspect
     target_value: str
         Specific value of the target    
     metric: str
         Metric's name
+    bias_type: str (default: 'dataset')
+        Bias type (can only be 'dataset' or 'model')
+
+    Raises
+    ------
+    ValueError:
+        `bias_type` parameter has to be 'dataset' or 'model'
     """
+    if bias_type not in ['dataset','model']:
+        raise ValueError("bias_type has to be 'dataset' or 'model'")
     value = protected_attr.metrics.loc[target_value, metric]
     goal = utils.get_metric_goal(metric=metric)
 
@@ -345,6 +365,22 @@ def plot_bias_metric(axes, protected_attr, target_value, metric, bias_type='data
 
 def plot_bar_freq_predicted(axes, protected_attr, target_value, privileged=True):
     """
+    Display a row with a bar plot for a specific `ProtectedAttribute`.
+    The graph represents frequency of predicted 0 versus predicted 1.
+
+    Parameters
+    ----------
+    axes: list
+        Axes for this row
+    protected_attr: transparentai.fairness.ProtectedAttribute
+        Protected attribute to inspect
+    target_value: str
+        Specific value of the target    
+    privileged: bool (default True)
+        Boolean prescribing whether to
+        condition this metric on the `privileged_groups`, if `True`, or
+        the `unprivileged_groups`, if `False`. Defaults to `None`
+        meaning this metric is computed over the entire dataset.
     """
     freq_1 = (protected_attr.get_freq(target_value,
                                       privileged, predictions=True)*100).round(2)
@@ -355,7 +391,7 @@ def plot_bar_freq_predicted(axes, protected_attr, target_value, privileged=True)
     FPR = FP / (TN+FP)
     priv_text = 'Privileged' if privileged else 'Unprivileged'
 
-    rects = axes[0].barh(['', ''], [freq_0, freq_1], color=PREDICTED_COLORS,
+    rects = axes[0].barh(['', ''], [freq_0, freq_1], color=predicted_colors,
                          left=[0, freq_0], label=['', ''])
 
     for r in rects:
@@ -388,12 +424,11 @@ def plot_protected_attr_row_model(axes, protected_attr, target_value, privileged
     the frequency for this population.
 
     axes need 4 axes : 
-    1. the percentage image plot (`plot_percentage_bar_man_img()`) for 
-    predicted not target value  (aka negatives)
+
+    1. the percentage image plot (`plot_percentage_bar_man_img()`) for rows predicted as not target value  (aka negatives)
     2. pie chart of frequency for negatives
     3. pie chart of frequency for positives
-    4. the percentage image plot (`plot_percentage_bar_man_img()`) for 
-    predicted target value (aka positives)
+    4. the percentage image plot (`plot_percentage_bar_man_img()`) for rows predicted as target value (aka positives)
 
     Parameters
     ----------
@@ -431,7 +466,7 @@ def plot_protected_attr_row_model(axes, protected_attr, target_value, privileged
     axes[3].text(300, -18, f"FP: {FP}", fontsize=16)
 
 
-def set_metric_title(axes, text):
+def set_metric_title(axes, text, fontsize=22):
     """
     Display bias metrics title.
 
@@ -441,9 +476,11 @@ def set_metric_title(axes, text):
         Axes for this row 
     text: str
         Text for the title
+    fontsize: int (default 22)
+        font size of the text
     """
     setup_bottom_line(axes[0])
-    axes[0].text(0.0, 0.2, text, fontsize=22,
+    axes[0].text(0.0, 0.2, text, fontsize=fontsize,
                  transform=axes[0].transAxes, fontweight='bold')
 
 
@@ -451,8 +488,10 @@ def generate_gridspec_row(fig, gs, rstart, rsize=1, n_blocks=1, b_sizes=[10]):
     """
     Return a list of axes for a gridpsec graphic.
     You can use this function with the following logic :
+
     if you want a row of 3 blocks of size 2,2,6 at the 3rd row :
-    `generate_gridspec_row(fig, gs, rstart=3, rsize=1, n_blocks=3, b_sizes=[2,2,6])`
+
+    >>> generate_gridspec_row(fig, gs, rstart=3, rsize=1, n_blocks=3, b_sizes=[2,2,6])
 
     Parameters
     ----------
@@ -463,7 +502,7 @@ def generate_gridspec_row(fig, gs, rstart, rsize=1, n_blocks=1, b_sizes=[10]):
     rstart: int
         Row start
     rsize: int (default 1)
-        Size of the row (number of gridspec rows to occupe)
+        Size of the row (number of gridspec rows)
     n_blocks: int (default 1)
         Number of different axes for this row
     b_sizes: list (default [10])
@@ -485,7 +524,7 @@ def generate_gridspec_row(fig, gs, rstart, rsize=1, n_blocks=1, b_sizes=[10]):
 
 def plot_dataset_bias_metrics(protected_attr, target_value):
     """
-    Display a matplotlib graphics with differents informations about
+    Display matplotlib graphics with different information about
     bias inside a dataset.
 
     Parameters
@@ -592,7 +631,7 @@ def plot_model_bias_metrics(protected_attr, target_value):
 
 def plot_bias_metrics(protected_attr, bias_type, target_value=None):
     """
-    Display a matplotlib graphics with differents informations about
+    Display a matplotlib graphics with different information about
     bias inside a dataset.
 
     Parameters
@@ -601,7 +640,7 @@ def plot_bias_metrics(protected_attr, bias_type, target_value=None):
         Protected attribute to inspect
     bias_type: str
         type of bias to plot ('dataset' or 'model')
-    target_value: str
+    target_value: str (default None)
         Specific value of the target        
     """
     if bias_type not in ['dataset', 'model']:

@@ -205,7 +205,7 @@ def labelencoder_to_dict(encoder):
     to a dictionary with index as key and original value as value
 
     Example:
-    encoder.classes_ is ['Male', 'Female']
+    encoder.classes\_ is ['Male', 'Female']
     returns {0:'Male', 1:'Female'}
 
     Parameters
