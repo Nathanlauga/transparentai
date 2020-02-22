@@ -10,11 +10,75 @@ import transparentai.monitoring.monitoring_plots as plots
 
 class Monitoring():
     """
+    This class allows to see if your model is still with the same performance than
+    just after training and gives you some insight with graphics about the current performance 
+    and dataset / model bias.  
+
+    Attributes
+    ----------
+    X: pd.DataFrame
+        New X data that were used to get the predictions
+    y_preds: np.array or pd.Series
+        Predictions using X parameters
+    y_real: np.array or pd.Series (optional)
+        Real output
+    model_type: str
+        'classification' or 'regression'
+    orig_metrics: dict(dict)
+        Dictionary with metrics group in keys ('performance', 'bias_dataset', 'bias_model') 
+        and original metric values in values
+    new_metrics: dict(dict)
+        Dictionary with metrics group in keys ('performance', 'bias_dataset', 'bias_model') 
+        and new metric values in values
+    privileged_groups: dict(list())
+        Dictionary with protected attributes as keys (e.g. gender) and
+        list of value(s) that are considered privileged (e.g. ['Male'])
+    alert_threshold: dict (optional)
+        Dictionary with metrics in keys and
+        threshold values in values
+    dateset: transparentai.datasets.StructuredDataset
+        Dataset with X and either y_preds if y_real is None or 
+        y_real if not.
     """
 
     def __init__(self, X, y_preds, y_real=None, model_type='classification',
                  orig_metrics=None, privileged_groups=None, alert_threshold=None, mean=None):
         """
+        Parameters
+        ----------
+        X: pd.DataFrame
+            New X data that were used to get the predictions
+        y_preds: np.array or pd.Series
+            Predictions using X parameters
+        y_real: np.array or pd.Series (optional)
+            Real output
+        model_type: str
+            'classification' or 'regression'
+        orig_metrics: dict(dict)
+            Dictionary with metrics group in keys ('performance', 'bias_dataset', 'bias_model') 
+            and original metric values in values
+        privileged_groups: dict(list())
+            Dictionary with protected attributes as keys (e.g. gender) and
+            list of value(s) that are considered privileged (e.g. ['Male'])
+        alert_threshold: dict (optional)
+            Dictionary with metrics in keys and
+            threshold values in values
+        mean: number
+            Mean of target (for regression) to get the same label than
+            original metrics for bias.
+
+        Raises
+        ------
+        ValueError
+            Only regression and classification are handled  for model_type.
+        TypeError
+            X has to be a pandas dataframe
+        ValueError
+            y_preds and X must have the same length
+        ValueError
+            y_real and X must have the same length
+        ValueError
+            Valid keys for orig_metrics are 'performance', 'bias_dataset' or 'bias_model'.
         """
         if model_type not in ['classification', 'regression']:
             raise ValueError(
@@ -30,7 +94,7 @@ class Monitoring():
             metrics_keys = ['performance', 'bias_dataset', 'bias_model']
             if not any([k in metrics_keys for k in orig_metrics]):
                 raise ValueError(
-                    "Valid keys are 'performance', 'bias_dataset' or 'bias_model'.")
+                    "Valid keys for orig_metrics are 'performance', 'bias_dataset' or 'bias_model'.")
 
         self.X = X
         self.y_preds = y_preds
@@ -57,7 +121,7 @@ class Monitoring():
         if orig_metrics is not None:
             self._check_orig_and_new_metrics()
 
-    def compute_orig_metrics(self, X_orig, y_orig):
+    def _compute_orig_metrics(self, X_orig, y_orig):
         """
         Only if you don't have original metrics already stored
         """
@@ -68,6 +132,12 @@ class Monitoring():
 
     def _compute_new_metrics(self):
         """
+        Computes new metrics based on given attributes in init.
+
+        If y_real is not None then computes new performance scores.
+
+        If privileged_groups then it also computes dataset bias and if y_real
+        is define the model bias
         """
         new_metrics = {}
         # handle only 2 first ?
@@ -99,6 +169,15 @@ class Monitoring():
 
     def _check_one_metric(self, metric):
         """
+        Compares differents keys of a specified metric.
+
+        Show a warning if a key is in a dictionary but not in the other one.
+
+        Parameters
+        ----------
+        metric: str
+            Metric key to compare in both orig_metrics and
+            new_metrics
         """
         if (metric in self.orig_metrics) & (metric in self.new_metrics):
             not_in_new = [k for k in self.orig_metrics[metric]
@@ -113,6 +192,8 @@ class Monitoring():
 
     def _check_orig_and_new_metrics(self):
         """
+        Checks that performance metrics in both new and original dictionaries
+        are the same.
         """
         if (self.orig_metrics is None) | (self.new_metrics is None):
             return
@@ -121,6 +202,14 @@ class Monitoring():
 
     def plot_perfomance(self):
         """
+        Plot performance with one bar chart for each metric.
+
+        If `orig_metrics` is not None but `new_metrics` is, then plots only original 
+        performance metrics.
+        If `orig_metrics` is None but `new_metrics` is not, then plots only new 
+        performance metrics.
+        If neither `orig_metrics` and `new_metrics` are not None, then plots
+        comparison between original metrics and new ones.
         """
         if (self.orig_metrics is None) & (self.y_real is None):
             raise ValueError(
@@ -148,6 +237,29 @@ class Monitoring():
 
     def _plot_bias(self, bias_key='bias_dataset', attr=None, target_value=None):
         """
+        Plot bias with one gauge plot for each metric.
+        
+        If `attr` and `target_value` it reduces the number of plots 
+        Example : if you have 2 target values (e.g. 0 and 1) and different protected
+        attributes (e.g. gender and marital status) then you can say that it will
+        only plots for gender and target value = 1 
+
+        If `orig_metrics` is not None but `new_metrics` is, then plots only original 
+        performance metrics.
+        If `orig_metrics` is None but `new_metrics` is not, then plots only new 
+        performance metrics.
+        If neither `orig_metrics` and `new_metrics` are not None, then plots
+        comparison between original metrics and new ones.
+
+        Parameters
+        ----------
+        bias_key: str (default 'bias_dataset')
+            Key for bias metrics
+            Can be 'bias_dataset' or 'bias_model'
+        attr: str (optional)
+            Name of the attribute to analyse
+        target_value: (optional)
+            Specific label value 
         """
         if (self.orig_metrics is None) & (self.y_real is None):
             raise ValueError(
@@ -176,12 +288,28 @@ class Monitoring():
 
     def plot_dataset_bias(self, attr=None, target_value=None):
         """
+        Plot bias with one gauge plot for each dataset bias metric.
+
+        Parameters
+        ----------
+        attr: str (optional)
+            Name of the attribute to analyse
+        target_value: (optional)
+            Specific label value 
         """
         self._plot_bias(bias_key='bias_dataset', attr=attr,
                         target_value=target_value)
 
     def plot_model_bias(self, attr=None, target_value=None):
         """
+        Plot bias with one gauge plot for each model bias metric.
+
+        Parameters
+        ----------
+        attr: str (optional)
+            Name of the attribute to analyse
+        target_value: (optional)
+            Specific label value 
         """
         self._plot_bias(bias_key='bias_model', attr=attr,
                         target_value=target_value)

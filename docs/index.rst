@@ -8,6 +8,7 @@ Welcome to TransparentAI's documentation!
    modules/datasets
    modules/fairness
    modules/models
+   modules/monitoring
    modules/plots
    modules/utils
 
