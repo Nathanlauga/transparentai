@@ -19,7 +19,29 @@ class ClassificationModel(BaseModel):
     Class to inspect a classification model based on a model which has a `predict` and 
     `predict_proba` functions.
     It could help you to explore your model performance and validate or not your model.
-    And you can also find out model bias with `plot_bias` function.
+
+    Attributes
+    ----------
+    X: pd.DataFrame
+        X data that were used to get the predictions
+    y_preds: np.array or pd.Series
+        Predictions using X parameters
+    y_true: np.array or pd.Series (optional)
+        Real output
+    model: 
+        object with at least a `predict` function that returns
+        a series or np.array
+    scores_dict: dict
+        Dictionary with metric name as keys and score value
+        as values
+    model_type: str
+        String that indicates what model type it is : 'classification'
+    n_classes: int
+        Number of classes inside y
+    threshold_df: pd.DataFrame
+        Dataframe with different probability thresholds as columns
+        and their prediction (0 or 1), it can be use only for
+        binary classification
     """
 
     def __init__(self, model=None, X=None, y=None, y_preds=None):
@@ -27,7 +49,14 @@ class ClassificationModel(BaseModel):
         Parameters
         ----------
         model:
-            a classifier model that have a `predict` and `predict_proba` functions
+            a classifier model that have a `predict` and 
+            `predict_proba` (if classification) functions
+        X: pd.DataFrame (optional)
+            X data that will be used to get the predictions
+        y: np.array or pd.Series (optional)
+            Real output
+        y_preds: np.array or pd.Series (optional)
+            Predictions using X parameters if model is not set
         """
         super().__init__(model=model, X=X, y=y, y_preds=y_preds)
         self.threshold_df = None
@@ -49,16 +78,25 @@ class ClassificationModel(BaseModel):
             feature samples
         y: array-like of shape (n_samples,) or (n_samples, n_outputs)
             true labels for X.
-        threshold: float (optional) default=0.5
+        threshold: float (default 0.5)
             only for binary classifier, custome threshold probability 
             for the prediction
+
+        Raises
+        ------
+        AttributeError:
+            X has to be set in init part or in the parameters
+        AttributeError:
+            y_true has to be set in init part or in the parameters as y
+        AttributeError:
+            model attribute was not set at the init step
         """
         if (X is None) & (self.X is None):
-            raise ValueError('X is mandatory to compute scores')
+            raise AttributeError('X is mandatory to compute scores')
         if (y is None) & (self.y_true is None):
-            raise ValueError('y is mandatory to compute scores')
+            raise AttributeError('y is mandatory to compute scores')
         if self.model is None:
-            raise ValueError('model attribute was not set at the init step')
+            raise AttributeError('model attribute was not set at the init step')
 
         self.X = X if X is not None else self.X
         self.y_true = y if y is not None else self.y_true
@@ -77,7 +115,7 @@ class ClassificationModel(BaseModel):
     def scores(self):
         """
         Compute classification metrics scores based on `skearn Model evaluation`_
-        Current metrics : accuracy, confusion_matrix, f1_score, precision, recall & roc_auc
+        Current metrics : accuracy, confusion_matrix, f1_score, precision, recall and roc_auc
 
         .. _skearn Model evaluation: https://scikit-learn.org/0.15/modules/model_evaluation.html
         """
@@ -161,19 +199,26 @@ class ClassificationModel(BaseModel):
     def plot_scores(self):
         """
         Display different charts for all the metrics : 
+
         - a dataframe for accuracy, f1, precision, recall & roc_auc
         - confusion matrix
         - ROC curve 
         - Probalities distribution
-
-        Raises
-        ------
         """
         fun = plots.plot_classification_scores
         self.plot_overall_scores(fun=fun, preds=self.y_proba)
 
     def scores_to_json(self):
         """
+        Formats scores_dict attributes to be read as a json object.
+
+        If 'roc_auc' is in the keys then it computes the score mean
+        for the different target values 
+
+        Returns
+        -------
+        dict:
+            Scores dict formated for json
         """
         scores_names = ['accuracy', 'f1', 'precision', 'recall', 'roc_auc']
         return self._scores_to_json(scores_names)
@@ -189,20 +234,28 @@ class ClassificationModel(BaseModel):
             feature samples
         y: array-like of shape (n_samples,) or (n_samples, n_outputs)
             true labels for X.
-        start: int, default=0
+        start: int, (default 0)
             minimum probability to compare 
             (should be between 0 and 1 and less than end value)
-        end: int, default=1
+        end: int, (default 1)
             minimum probability to compare 
             (should be between 0 and 1 and greater than start value)
-        step: float, default=0.05
+        step: float, (default 0.05)
             value between each threshold steps
 
         Raises
         ------
+        ValueError:
+            This function can be only called for binary classification.
+        ValueError:
+            start has to be smaller than end
+        ValueError:
+            start has to be between 0 and 1
+        ValueError:
+            end has to be between 0 and 1
         """
         if self.n_classes > 2:
-            raise Exception(
+            raise ValueError(
                 'This function can be only called for binary classification.')
         if start > end:
             raise ValueError('start has to be smaller than end')
@@ -228,6 +281,7 @@ class ClassificationModel(BaseModel):
     def plot_threshold(self):
         """
         Display curves for four metrics by threshold on x axis :
+
         - accuracy
         - f1 score
         - precision
@@ -235,9 +289,13 @@ class ClassificationModel(BaseModel):
 
         Raises
         ------
+        ValueError:
+            This function can be only called for binary classification.
+        ValueError:
+            compute_threshold() function has to be compute first.
         """
         if self.n_classes > 2:
-            raise Exception(
+            raise ValueError(
                 'This function can be only called for binary classification.')
         if self.threshold_df is None:
             raise ValueError('Use compute_threshold() function first.')
