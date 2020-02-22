@@ -6,10 +6,55 @@ from transparentai.fairness.protected_attribute import ProtectedAttribute
 
 class ModelProtectedAttribute(ProtectedAttribute):
     """
+    This class retrieves all informations on a protected attribute on a specific model.
+    It computes automatically the `Disparate impact`, `Statistical parity difference`, 
+    `Equal opportunity difference`, `Average abs odds difference` and `Theil index` to
+    get some insight about bias in the model.
+
+    This class is inspired by the ClassificationMetric_ class from aif360 module but it 
+    depends on a unique attribute.
+
+    .. _ClassificationMetric: https://aif360.readthedocs.io/en/latest/modules/metrics.html#classification-metric
+
+    Attributes
+    ----------
+    name: str
+        Attribute name (the column's name in original dataframe)
+    target:
+        Name of the label (or target) column
+    favorable_label:
+        A specific value that is has an advantage over the other(s) values
+    preds:
+        Array with predictions on the dataset  
+    privileged_values: list
+        List with privileged values inside the column (e.g. ['Male'] for 'gender' attribute)  
+    unprivileged_values: list
+        List with unprivileged values inside the column (e.g. ['Female'] for 'gender' attribute)  
+    values: pd.Series
+        Serie with the same length than labels attribute with 0 or 1 values 
+        1 if it correspond to a privileged value, 0 if not.
+    labels: np.array 
+        Array with original label values        
+    crosstab: pd.DataFrame
+        Crosstab of values and labels
+    preds_crosstab:
+        Crosstab of values and predicted labels
     """
 
     def __init__(self, dataset, attr, privileged_values, preds, favorable_label):
         """
+        Parameters
+        ----------
+        dataset: pd.DataFrame
+            Dataframe to inspect
+        attr: str
+            Name of the attribute to analyse (it has to be into dataset columns)
+        privileged_values: list
+            List with privileged values inside the column (e.g. ['Male'] for 'gender' attribute)  
+        preds:
+            Array with predictions on the dataset  
+        favorable_label:
+            A specific value that is has an advantage over the other(s) values
         """
         super().__init__(dataset, attr, privileged_values, favorable_label)
         self.preds = preds
@@ -19,6 +64,21 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def confusion_matrix(self, privileged=None):
         """
+        Computes the confusion matrix on all data if privileged is None else
+        on whether privileged sample or unprivileged one.
+
+        Parameters
+        ----------
+        privileged (bool, optional):
+            Boolean prescribing whether to
+            condition this metric on the `privileged_groups`, if `True`, or
+            the `unprivileged_groups`, if `False`. Defaults to `None`
+            meaning this metric is computed over the entire dataset.
+
+        Returns
+        -------
+        pd.DataFrame:
+            Confusion matrix
         """
         perf_df = self.to_frame()
         perf_df['preds'] = self.preds
@@ -48,6 +108,26 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def performances(self, target_value, privileged=None):
         """
+        Computes the performances on all data if privileged is None else
+        on whether privileged sample or unprivileged one.
+
+        Performances corresponds to TP, FP, TN and FN.
+
+        Parameters
+        ----------
+        target_value:
+            Specific label value for which it will compute the metric
+        privileged (bool, optional):
+            Boolean prescribing whether to
+            condition this metric on the `privileged_groups`, if `True`, or
+            the `unprivileged_groups`, if `False`. Defaults to `None`
+            meaning this metric is computed over the entire dataset.
+
+        Returns
+        -------
+        dict:
+            dictionary with True Positives, False Positives,
+            True Negatives and False Negatives
         """
         other_values = [v for v in list(set(self.preds)) if v != target_value]
         matrix = self.confusion_matrix(privileged=privileged)
@@ -72,12 +152,18 @@ class ModelProtectedAttribute(ProtectedAttribute):
         Parameters
         ----------
         target_value:
-            Specific label value for which it will compute the metric
-        privileged (bool, optional):
+            Specific value of the target
+        privileged (bool, optional): 
             Boolean prescribing whether to
             condition this metric on the `privileged_groups`, if `True`, or
             the `unprivileged_groups`, if `False`. Defaults to `None`
             meaning this metric is computed over the entire dataset.
+
+        Returns
+        -------
+        int:
+            Number of a specified target value of all data if privileged is None, privileged
+            values if privileged is True and unprivileged values if False.
         """
         crosstab = self.crosstab if not predictions else self.preds_crosstab
         if privileged == None:
@@ -89,15 +175,24 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def get_freq(self, target_value, privileged=None, predictions=False):
         """
-        
+        Returns the frequency of a specified target value. 
 
         Parameters
         ----------
-
+        target_value:
+            Specific value of the target
+        privileged (bool, default None): 
+            Boolean prescribing whether to
+            condition this metric on the `privileged_groups`, if `True`, or
+            the `unprivileged_groups`, if `False`. Defaults to `None`
+            meaning this metric is computed over the entire dataset.
+        predictions: bool
+            Whether the frequency is based on predictions or real labels
+            
         Returns
         -------
         float
-            Frequency
+            Frequency of a specified target value
         """
         n_total = self.num_instances(privileged=privileged)
         
@@ -124,22 +219,25 @@ class ModelProtectedAttribute(ProtectedAttribute):
                 condition this metric on the `privileged_groups`, if `True`, or
                 the `unprivileged_groups`, if `False`. Defaults to `None`
                 meaning this metric is computed over the entire dataset.
+
         Returns
         -------
         float:
-            Base rate (optionally conditioned).
+            Base rate
         """
         return (self.num_spec_value(target_value=target_value, privileged=privileged, predictions=True)
                 / self.num_instances(privileged=privileged))
 
     def false_positive_rate(self, target_value, privileged=None):
         """
-        Return the ratio of true positives to positive examples in the
+        Returns the ratio of true positives to positive examples in the
         dataset, :math:`TPR = TP/P`, optionally conditioned on protected
         attributes.
-        Here negatives values correspond to :math:`y != v`
-        So false positives values correspond to :math:`y != v & \hat{y} = v`
+        Here negatives values correspond to :math:`y <> v`
+        So false positives values correspond to :math:`y <> v\ \&\ \hat{y} = v`
 
+        Parameters
+        ----------
         target_value:
             Specific label value for which it will compute the metric
         privileged (bool, optional):
@@ -147,6 +245,11 @@ class ModelProtectedAttribute(ProtectedAttribute):
                 condition this metric on the `privileged_groups`, if `True`, or
                 the `unprivileged_groups`, if `False`. Defaults to `None`
                 meaning this metric is computed over the entire dataset.
+
+        Returns
+        -------
+        float:
+            False positive rate
         """
         other_values = [v for v in list(set(self.preds)) if v != target_value]
 
@@ -161,12 +264,14 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def true_positive_rate(self, target_value, privileged=None):
         """
-        Return the ratio of true positives to positive examples in the
+        Returns the ratio of true positives to positive examples in the
         dataset, :math:`TPR = TP/P`, optionally conditioned on protected
         attributes.
         Here positives values correspond to :math:`y = v`
-        So true positives values correspond to :math:`y = v & \hat{y} = v`
+        So true positives values correspond to :math:`y = v\ \&\ \hat{y} = v`
 
+        Parameters
+        ----------
         target_value:
             Specific label value for which it will compute the metric
         privileged (bool, optional):
@@ -174,6 +279,11 @@ class ModelProtectedAttribute(ProtectedAttribute):
                 condition this metric on the `privileged_groups`, if `True`, or
                 the `unprivileged_groups`, if `False`. Defaults to `None`
                 meaning this metric is computed over the entire dataset.
+        
+        Returns
+        -------
+        float:
+            True positive rate
         """
         TP = self.performances(target_value=target_value,
                                privileged=privileged)['TP']
@@ -185,7 +295,7 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def disparate_impact(self, target_value):
         r"""
-        Compute the disparate impact for a specific label value
+        Computes the disparate impact for a specific label value
 
         .. math::
            \frac{Pr(\hat{Y} = v | D = \text{unprivileged})}
@@ -193,19 +303,23 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
         code source inspired from aif360_
 
-        # ClassificationMetric.disparate_impact
         .. _aif360: https://aif360.readthedocs.io/en/latest/_modules/aif360/metrics/classification_metric.html
 
         Parameters
         ----------
         target_value:
             Specific label value for which it will compute the metric
+
+        Returns
+        -------
+        float:
+            Disparate impact bias metric
         """
         return self.ratio(self.base_rate, target_value=target_value)
 
     def statistical_parity_difference(self, target_value):
         r"""
-        Compute the statistical parity difference for a specific label value
+        Computes the statistical parity difference for a specific label value
 
         .. math::
            Pr(\hat{Y} = v | D = \text{unprivileged})
@@ -213,34 +327,44 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
         code source inspired from aif360_
 
-        # ClassificationMetric.statistical_parity_difference
         .. _aif360: https://aif360.readthedocs.io/en/latest/_modules/aif360/metrics/classification_metric.html
 
         Parameters
         ----------
         target_value:
             Specific label value for which it will compute the metric
+
+        Returns
+        -------
+        float:
+            Statistical parity difference bias metric
         """
         return self.difference(self.base_rate, target_value=target_value)
 
     def equal_opportunity_difference(self, target_value):
         r"""
+        Computes the statistical parity difference for a specific label value
+        
         :math:`TPR_{D = \text{unprivileged}} - TPR_{D = \text{privileged}}`
 
         code source from aif360_
 
-        # ClassificationMetric.true_positive_rate_difference
         .. _aif360: https://aif360.readthedocs.io/en/latest/_modules/aif360/metrics/classification_metric.html
 
         Parameters
         ----------
         target_value:
             Specific label value for which it will compute the metric
+
+        Returns
+        -------
+        float:
+            Equal opportunity difference bias metric
         """
         return self.difference(self.true_positive_rate, target_value=target_value)
 
     def average_abs_odds_difference(self, target_value):
-        """
+        r"""
         Average of absolute difference in FPR and TPR for unprivileged and
         privileged groups:
 
@@ -253,39 +377,45 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
         code source from aif360_
 
-        # ClassificationMetric.average_abs_odds_difference
         .. _aif360: https://aif360.readthedocs.io/en/latest/_modules/aif360/metrics/classification_metric.html
 
         Parameters
         ----------
         target_value:
             Specific label value for which it will compute the metric
+
+        Returns
+        -------
+        float:
+            Average of absolute difference bias metric
         """
         return 0.5 * (np.abs(self.difference(self.false_positive_rate, target_value=target_value))
                       + np.abs(self.difference(self.true_positive_rate, target_value=target_value)))
 
     def theil_index(self, target_value):
-        """
+        r"""
         Theil index or Generalized entropy index (with $\alpha=1$) is proposed as a unified individual and
-        group fairness measure in [3]_.  With :math:`b_i = \hat{y}_i - y_i + 1`:
+        group fairness measure.
+        
+        With :math:`b_i = \hat{y}_i - y_i + 1`:
 
-        .. math:: \frac{1}{n}\sum_{i=1}^n\frac{b_{i}}{\mu}\ln\frac{b_{i}}{\mu}
+        .. math:: 
 
-        References:
-            .. [3] T. Speicher, H. Heidari, N. Grgic-Hlaca, K. P. Gummadi, A. Singla, A. Weller, and M. B. Zafar,
-               "A Unified Approach to Quantifying Algorithmic Unfairness: Measuring Individual and Group Unfairness via Inequality Indices,"
-               ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, 2018.
-
-
+            \frac{1}{n}\sum_{i=1}^n\frac{b_{i}}{\mu}\ln\frac{b_{i}}{\mu}
+            
         code source from aif360_
 
-        # ClassificationMetric.theil_index
         .. _aif360: https://aif360.readthedocs.io/en/latest/_modules/aif360/metrics/classification_metric.html
 
         Parameters
         ----------
         target_value:
             Specific label value for which it will compute the metric
+
+        Returns
+        -------
+        float:
+            Theil index bias metric
         """
         y_pred = self.preds
         y_true = self.labels
@@ -297,7 +427,7 @@ class ModelProtectedAttribute(ProtectedAttribute):
 
     def compute_model_bias_metrics(self):
         """
-        Compute automaticaly all dataset bias metrics for this
+        Computes automaticaly all dataset bias metrics for this
         protected attribute.
         """
         metrics_dict = {

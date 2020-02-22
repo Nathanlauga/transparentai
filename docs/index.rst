@@ -6,6 +6,7 @@ Welcome to TransparentAI's documentation!
    :caption: Modules
 
    modules/datasets
+   modules/fairness
    modules/models
    modules/plots
    modules/utils
