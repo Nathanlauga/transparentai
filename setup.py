@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
-long_description = """
-Python tool to create an ethic AI from defining users's need to monitoring the model.
-"""
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+fh.close()
 
 setup(
     name='transparentai',

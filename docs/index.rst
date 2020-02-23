@@ -10,6 +10,22 @@ https://github.com/Nathanlauga/transparentai/issues
 
 .. _Nathan Lauga: https://github.com/Nathanlauga
 
+
+Quick start
+-----------
+
+Install the library with pypi :
+
+>>> pip install transparentai
+
+.. toctree::
+   :maxdepth: 3
+   :caption: TransparentAI
+
+   installation
+   getting-started
+
+
 .. toctree::
    :maxdepth: 3
    :caption: Modules
