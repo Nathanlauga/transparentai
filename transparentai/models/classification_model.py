@@ -20,6 +20,25 @@ class ClassificationModel(BaseModel):
     `predict_proba` functions.
     It could help you to explore your model performance and validate or not your model.
 
+    Example
+    -------
+    
+    >>> from transparentai.models import ClassificationModel
+    >>> model = ClassificationModel(model=clf)
+    >>> model.compute_scores(X=X_test, y=y_test, threshold=0.5)
+
+    If you want to analyse false positives or false negatives for example
+    you can use the following code (also available for true positives and negatives)
+    
+    >>> FP_df = model.get_false_positives()
+    >>> FN_df = model.get_false_negatives()
+
+    For more details please see the `ClassificationModel for binary classification`_ or
+    `ClassificationModel for multi labels classification`_ notebooks.
+
+    .. _ClassificationModel for binary classification : https://github.com/Nathanlauga/transparentai/notebooks/example_ClassificationModel_binary_classification.ipynb
+    .. _ClassificationModel for multi labels classification : https://github.com/Nathanlauga/transparentai/notebooks/example_ClassificationModel_multi_label_classification.ipynb
+
     Attributes
     ----------
     X: pd.DataFrame

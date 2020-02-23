@@ -14,6 +14,17 @@ class RegressionModel(BaseModel):
     Class to inspect a regression model based on a model which has a `predict`  function.
     It could help you to explore your model performance and validate or not your model.
 
+    Example
+    -------
+
+    >>> from transparentai.models import ClassificationModel
+    >>> model = RegressionModel(model=clf)
+    >>> model.compute_scores(X=X_test, y=y_test)
+
+    For more details please see the `RegressionModel with LinearRegression`_ notebook.
+
+    .. _RegressionModel with LinearRegression : https://github.com/Nathanlauga/transparentai/notebooks/example_RegressionModel_regression.ipynb
+    
     Attributes
     ----------
     X: pd.DataFrame

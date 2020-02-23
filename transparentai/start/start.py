@@ -4,7 +4,6 @@ import os
 
 import transparentai.utils as utils
 
-
 def print_md(text):
     """
     Display a text as Markdown.

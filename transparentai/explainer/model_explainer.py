@@ -14,6 +14,53 @@ class ModelExplainer():
 
     .. _shap : https://github.com/slundberg/shap/
 
+
+    Example
+    -------
+
+    For binary classification :
+
+    X attribute is optional but if you have a lot of data it improves 
+    compute times using 100 rows sample.
+
+    >>> from transparentai.explainer import ModelExplainer
+    >>> explainer = ModelExplainer(model=clf, X=X_train, model_type='tree')
+
+    For multi labels classification : 
+
+    >>> explainer = ModelExplainer(model=clf, X=X_train, model_type='tree',
+                                   multi_label=True)
+
+    For regression : 
+
+    Here X attribute is mandatory.
+
+    >>> explainer = ModelExplainer(model=reg, X=X_train, model_type='linear')
+
+    Computes feature importance with shap.
+
+    >>> explainer.explain_global(X_test)
+    {'CRIM': 0.506476821156253,
+    'ZN': 0.7480023859571747,
+    'INDUS': 0.12914193686288905,
+    'CHAS': 0.34789486135074216,
+    'NOX': 1.6113838160264444,
+    'RM': 2.0451339865520524,
+    'AGE': 0.015167695255383062,
+    'DIS': 2.447244637853398,
+    'RAD': 2.3718108812309993,
+    'TAX': 1.8757421732944977,
+    'PTRATIO': 1.7010831097216834,
+    'B': 0.5731631851895846,
+    'LSTAT': 2.6035683651209123}
+
+    For more details please see the `ModelExplainer for binary classification`_, 
+    `ModelExplainer for multi labels classification`_ or `ModelExplainer for regression`_ notebooks.
+
+    .. _ModelExplainer for binary classification : https://github.com/Nathanlauga/transparentai/notebooks/example_ModelExplainer_binary_classification.ipynb
+    .. _ModelExplainer for multi labels classification : https://github.com/Nathanlauga/transparentai/notebooks/example_ModelExplainer_multi_label_classification.ipynb
+    .. _ModelExplainer for regression : https://github.com/Nathanlauga/transparentai/notebooks/example_ModelExplainer_regression.ipynb
+
     Attributes
     ----------
     model_type:

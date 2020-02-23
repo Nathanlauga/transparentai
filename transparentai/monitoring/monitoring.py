@@ -14,6 +14,21 @@ class Monitoring():
     just after training and gives you some insight with graphics about the current performance 
     and dataset / model bias.  
 
+    Example
+    -------
+    >>> from transparentai.monitoring import Monitoring
+    >>> monitoring = Monitoring(X=new_X, y_preds=new_y_preds, 
+                                y_real=new_y_real,
+                                privileged_groups=privileged_groups,
+                                alert_threshold=alert_threshold,
+                                model_type='classification')
+ 
+    For more details please see the `Monitoring for binary classification`_ or
+    `Montioring for regression`_ notebooks.
+
+    .. _Monitoring for binary classification : https://github.com/Nathanlauga/transparentai/notebooks/example_monitoring_binary_classification.ipynb
+    .. _Montioring for regression : https://github.com/Nathanlauga/transparentai/notebooks/example_monitoring_regression.ipynb
+
     Attributes
     ----------
     X: pd.DataFrame
