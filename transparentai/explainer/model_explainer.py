@@ -13,12 +13,33 @@ class ModelExplainer():
     shap_ package can handle.
 
     .. _shap : https://github.com/slundberg/shap/
+
+    Attributes
+    ----------
+    model_type:
+        Type of model to inspect, it can only be 'tree' or 'linear'
+    model:
+        model to inspect
+    multi_label: bool
+        Whether there is more than 2 classes in the label column
+        (only for classification)
+    explainer: shap.TreeExplainer or shap.LinearExplainer
+        explainer object that has expected values and can
+        compute shap values 
+    feature_names: np.array
+        list of feature names (length == length of X columns)
+    global_explain: dict
+        dictionnary with feature names as keys and
+        global feature importance as values 
+    X: pd.DataFrame or pd.Series
+        Data to explain with column names as indexes / columns
     """
 
     global_explain = None
     X = None
+    feature_names = None
 
-    def __init__(self, model, X=None, feature_names=None, model_type='tree', multi_label=False):
+    def __init__(self, model, X=None, model_type='tree', multi_label=False):
         """
         Parameters
         ----------
@@ -28,17 +49,26 @@ class ModelExplainer():
             data (possibly training) to start the explainer
             mandatory for a linear model but for tree model it can improve computing time
             so it's recommanded to use it.
-        feature_names: list (default, None)
-            list of feature names (length == length of X columns)
-        model_type: str (default, 'tree')
+        model_type: str (default 'tree')
             Type of model to inspect, it can only be 'tree' or 'linear'
+        multi_label: bool
+            Whether there is more than 2 classes in the label column
+            (only for classification)
 
         Raises
         ------
+        ValueError:
+            model_type has to be one of the following : 'tree' or 'linear'
+        TypeError:
+            X has to be a pandas.DataFrame
+        ValueError:
+            If you use a linear explainer then X should be set.
         """
         if model_type not in ['tree', 'linear']:
             raise ValueError(
                 'model_type has to be one of the following : tree or linear')
+        if type(X) is not pd.DataFrame:
+            raise TypeError('X has to be a pandas.DataFrame')
 
         self.model_type = model_type
         self.model = model
@@ -58,7 +88,8 @@ class ModelExplainer():
                 raise ValueError('X should be set as data for the explainer')
             self.explainer = shap.LinearExplainer(model, X)
 
-        self.feature_names = feature_names
+        if X is not None:
+            self.feature_names = X.columns.values
 
     def shap_values(self, X):
         """
@@ -87,8 +118,8 @@ class ModelExplainer():
 
         Parameters
         ----------
-        X: pd.Series or np.array
-            Data to explain
+        X: pd.Series
+            Data to explain with column names as indexes
         feature_classes: dict
             This dictionnary provides new values for categorical feature so
             that the feature can be more interpretable.
@@ -105,8 +136,11 @@ class ModelExplainer():
         Raises
         ------
         """
-        if type(X) not in [pd.Series, np.array]:
+        if type(X) not in [pd.Series]:
             raise TypeError('X has to be a series or a numpy array')
+
+        if self.feature_names is None:
+            self.feature_names = X.index.values
 
         feature_names = list()
         if feature_classes is not None:
@@ -144,7 +178,7 @@ class ModelExplainer():
 
         Parameters
         ----------
-        X: pd.DataFrame or np.array
+        X: pd.DataFrame or pd.Series
             Data to explain    
 
         Returns
@@ -153,7 +187,7 @@ class ModelExplainer():
             dictionnary with feature names as keys and
             feature importance as values 
         """
-        if (self.X is not None) and type(X) in [pd.DataFrame, np.array]:
+        if (self.X is not None) and type(X) in [pd.DataFrame, pd.Series]:
             if self.X.shape == X.shape:
                 if np.all(self.X.values == X.values):
                     return self.global_explain
@@ -162,10 +196,12 @@ class ModelExplainer():
         # For a tree explainer and if no example data has been provided, a lot of rows can take a while
         if (len(X) > 100) and (self.model_type == 'tree'):
             warnings.warn(
-                f"With {len(X)} rows, this function can take a while for a tree explainer.", Warning)
+                f"With {len(X)} rows, this function can take a while for a tree explainer.")
 
         if (self.feature_names is None) and (type(X) == type(pd.DataFrame())):
-            self.feature_names = X.columns
+            self.feature_names = X.columns.values
+        elif type(X) == pd.Series:
+            self.feature_names = X.index.values
 
         values = self.shap_values(X)
 
@@ -185,25 +221,65 @@ class ModelExplainer():
 
     def _get_base_value(self):
         """
+        Returns base value from the explainer attribute.
+
+        Returns
+        -------
+        np.array
+            Array with all expected values. If it's a tree explainer and
+            a binary classification then it returns for only the class 1
         """
         if (self.model_type == 'tree') & (not self.multi_label):
             return self.explainer.expected_value[1]
         else:
             return self.explainer.expected_value
 
-    def _get_predictions(self, X):
+    def _get_predictions(self, X, num_class=1):
         """
+        Returns the prediction using `predict_proba` function if it exists
+        else it uses predict function. 
+
+        Parameters
+        ----------
+        X: pd.DataFrame or np.array
+            Data to explain
+        num_class: int (default 1)
+            Class number for which we want to see the explanation
+            if it's a binary classification then the value is 1
+
+        Returns
+        -------
+        number:
+            prediction
         """
         if getattr(self.model, "predict_proba", None) is not None:
-            return self.model.predict_proba([X])[0][1]
+            return self.model.predict_proba([X])[0][num_class]
         else:
             return self.model.predict([X])[0]
 
-    def _plot_local_explain(self, X, values, base_value, top=None):
+    def _plot_local_explain(self, X, values, base_value, top=None, num_class=1):
         """
+        Display local feature influence sorted for a specific
+        prediction.
+        
+        Parameters
+        ----------
+        X: pd.DataFrame or np.array
+            Data to explain
+        values: pd.Series
+            Feature importance with feature as indexes and 
+            shap value as values
+        base_value: number
+            prediction value if we don't put any feature into the model
+        top: int
+            top n feature to display (in case there are too
+            much features)
+        num_class: int (default 1)
+            Class number for which we want to see the explanation
+            if it's a binary classification then the value is 1
         """
         values = self.format_feature_importance(values, top=top)
-        pred = self._get_predictions(X)
+        pred = self._get_predictions(X, num_class=num_class)
 
         plots.plot_local_feature_influence(
             feat_importance=values, base_value=base_value, pred=pred)
@@ -216,6 +292,12 @@ class ModelExplainer():
         ----------
         X: pd.DataFrame or np.array
             Data to explain
+        feature_classes: dict
+            This dictionnary provides new values for categorical feature so
+            that the feature can be more interpretable.
+            dictionnary with features names as keys and for value
+            a dictionnary with key, value pair representing current value
+            and value to display.
         """
         values = self.explain_local(X, feature_classes)
 
@@ -230,7 +312,7 @@ class ModelExplainer():
                     val[k] = v[i]
 
                 print(f'Plot for the {i}th class probability.')
-                self._plot_local_explain(X, val, base_val, top=top)
+                self._plot_local_explain(X, val, base_val, top=top, num_class=i)
 
     def plot_global_explain(self, X=None, top=None):
         """
@@ -244,11 +326,17 @@ class ModelExplainer():
         top: int
             top n feature to display (in case there are too
             much features)
+
+        Raises
+        ------
+        AttributeError:
+            If X parameter is None then you have to add X in explain_global function first
+            or directly in this function if you prefer to plot directly.
         """
         if X is not None:
             self.explain_global(X)
         elif self.global_explain is None:
-            raise ValueError(
+            raise AttributeError(
                 'Please set a X value first, using X parameter in this function or inside explain_global function')
 
         values = self.global_explain
