@@ -19,20 +19,6 @@ class DatasetBiasMetric(BiasMetric):
 
     .. _here: https://www.fairwork.gov.au/employee-entitlements/protections-at-work/protection-from-discrimination-at-work
 
-    Attributes
-    ----------
-    bias_type: str
-        Bias type of the object : only 'dataset' or 'model'
-    dataset: StructuredDataset
-        dataset with a target set as attribute
-    favorable_label:
-        A specific value that is has an advantage over the other(s) 
-        values
-    labels: array like
-        list of values inside target column
-    protected_attributes: dict
-        Dictionary with protected attributes as keys (e.g. gender) and
-        ProtectedAttribute objects as values
 
     Example
     -------
@@ -79,6 +65,20 @@ class DatasetBiasMetric(BiasMetric):
         }   
         dataset_bias = DatasetBiasMetric(dataset, privileged_groups)
 
+    Attributes
+    ----------
+    bias_type: str
+        Bias type of the object : only 'dataset' or 'model'
+    dataset: StructuredDataset
+        dataset with a target set as attribute
+    favorable_label:
+        A specific value that is has an advantage over the other(s) 
+        values
+    labels: array like
+        list of values inside target column
+    protected_attributes: dict
+        Dictionary with protected attributes as keys (e.g. gender) and
+        ProtectedAttribute objects as values
     """
 
     def __init__(self, dataset, privileged_groups, favorable_label=None):

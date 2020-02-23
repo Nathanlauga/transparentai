@@ -11,7 +11,48 @@ class StructuredDataset():
     """
     Class to inspect a strutured (tabular) dataset based on a pandas DataFrame object.
     It could help you to explore your data, understand what's in it with plot functions.
-    And you can also find out dataset bias with `plot_bias` function.
+    
+    If target is None then display different plots without splitting it by target. 
+
+    In case the target is a continuous numeric variable and you specify it with `target_regr`
+    attribute then it convert the target column to a binary classification variable greater than
+    the mean and lesser or equal.   
+
+    It helps to have a better understanding of your data.
+
+    Example
+    -------
+    For binary classification :
+
+    >>> from transparentai.datasets import StructuredDataset, load_adult
+    >>> adult = load_adult()
+    >>> dataset = StructuredDataset(df=adult, target='income')
+
+    For regression :
+
+    >>> from transparentai.datasets import StructuredDataset, load_boston
+    >>> boston = load_boston()
+    >>> dataset = StructuredDataset(df=boston, target='MEDV', target_regr=True)
+
+    With no target column :
+
+    >>> from transparentai.datasets import StructuredDataset, load_adult
+    >>> adult = load_adult()
+    >>> dataset = StructuredDataset(df=adult)
+
+    Attributes
+    ----------
+    df: pd.DataFrame
+        Dataframe with appropriate dtypes
+    target: str (optional)
+        target column, if None then this StructuredDataset will not
+        be abble to use bias insight
+    target_mean: number (optional)
+        If the target is for a regression model (continuous variable) 
+        Mean of the target variable 
+    orig_target_value: pd.Series (optional)
+        If the target is for a regression model (continuous variable) 
+        this attribute contains original target values.
     """
     orig_target_value = None
     target_mean = None
@@ -25,15 +66,25 @@ class StructuredDataset():
         target: str
             target column, if None then this StructuredDataset will not
             be abble to use bias insight
+        mean: number (optional)
+            If the target is for a regression model (continuous variable) 
+            Mean of the target variable 
+        target_regr: bool
+            Whether the target is for a regression model (continuous variable)
+            or not.
 
         Raises
         ------
+        TypeError:
+            Must provide a pandas DataFrame representing the data (features, target)
+        ValueError:
+            target attribute has to be in the df columns   
         """
-        if df is None:
-            raise TypeError("Must provide a pandas DataFrame representing "
-                            "the data (features, labels, protected attributes)")
+        if (df is None) & (type(df) is not pd.DataFrame):
+            raise TypeError("Must provide a pandas DataFrame representing " +
+                            "the data (features, target)")
         if (target is not None) and (target not in df.columns):
-            print('error : label not in dataframe')
+            raise ValueError('target attribute has to be in the df columns')
 
         df = df.copy()
 
@@ -54,8 +105,21 @@ class StructuredDataset():
     def __str__(self):
         return str(self.df)
 
-    def reduce_df_nrows(self, nrows=None):
+    def _reduce_df_nrows(self, nrows=None):
         """
+        Returns a reduce version of the df attribute dataframe.
+
+        It usefull if there is too much data.
+        
+        Parameters
+        ----------
+        nrows: int (optional)
+            If None then returns the original dataset
+            else returns a sample of the dataset
+        Returns
+        -------
+        pd.DataFrame:
+            Reduced df attribute dataframe
         """
         if nrows is not None:
             df = utils.reduce_df_nrows(df=self.df, nrows=nrows)
@@ -65,6 +129,10 @@ class StructuredDataset():
 
     def plot_dataset_overview(self):
         """
+        Displays an overview of the dataset :
+
+        - Shape 
+        - Head
         """
         display(Markdown(f'#### Dataset shape : {self.df.shape}'))
         display(Markdown('First 5 rows of the dataset : '))
@@ -72,7 +140,7 @@ class StructuredDataset():
 
     def plot_missing_values(self):
         """
-        Display a bar chart of missing values for columns which contains
+        Displays a bar chart of missing values for columns which contains
         at least one missing value.
         """
         plots.plot_missing_values(df=self.df)
@@ -84,10 +152,18 @@ class StructuredDataset():
         Parameters
         ----------
         var: str
-            Variable name of a numerical variable inside dataframe object        
+            Variable name of a numerical variable inside dataframe object 
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
 
         Raises
         ------
+        TypeError:
+            Must provide a valid variable name string
+        ValueError:
+            The variable must be in the columns of the data
+        ValueError:
+            The variable has to be a numerical variable inside the dataframe
         """
         if var is None:
             raise TypeError("Must provide a valid variable name string")
@@ -98,7 +174,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a numerical variable inside the dataframe')
 
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
 
         plots.plot_numerical_var(df=df, var=var, target=self.target)
 
@@ -109,10 +185,18 @@ class StructuredDataset():
         Parameters
         ----------
         var: str
-            Variable name of a categorical variable inside dataframe object        
+            Variable name of a categorical variable inside dataframe object   
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows     
 
         Raises
         ------
+        TypeError:
+            Must provide a valid variable name string
+        ValueError:
+            The variable must be in the columns of the data
+        ValueError:
+            The variable has to be a categorical variable inside the dataframe
         """
         if var is None:
             raise TypeError("Must provide a valid variable name string")
@@ -123,7 +207,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a categorical variable inside the dataframe')
 
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
 
         plots.plot_categorical_var(df=df, var=var, target=self.target)
 
@@ -134,10 +218,18 @@ class StructuredDataset():
         Parameters
         ----------
         var: str
-            Variable name of a datetime variable inside dataframe object        
+            Variable name of a datetime variable inside dataframe object  
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows      
 
         Raises
         ------
+        TypeError:
+            Must provide a valid variable name string
+        ValueError:
+            The variable must be in the columns of the data
+        ValueError:
+            The variable has to be a datetime variable inside the dataframe
         """
         if var is None:
             raise TypeError("Must provide a valid variable name string")
@@ -148,7 +240,7 @@ class StructuredDataset():
             raise ValueError(
                 'The variable has to be a datetime variable inside the dataframe')
 
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
 
         plots.plot_datetime_var(df=df, var=var, target=self.target)
 
@@ -159,13 +251,18 @@ class StructuredDataset():
         informations about the data.
 
         Data type handle : categorical, numerical, datetime
+
+        Parameters
+        ----------
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
         """
         cat_vars = self.df.select_dtypes(['object', 'category'])
         num_vars = self.df.select_dtypes('number')
         dat_vars = self.df.select_dtypes('datetime')
 
         if self.target is not None:
-            df = self.reduce_df_nrows(nrows=nrows)
+            df = self._reduce_df_nrows(nrows=nrows)
             display(Markdown('### Target variable'))
 
             if self.target in cat_vars.columns:
@@ -216,9 +313,17 @@ class StructuredDataset():
             Column name that contains first numerical values
         var2: str
             Column name that contains second numerical values
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
 
         Raises
         ------
+        TypeError:
+            Must provide a valid variable name string
+        ValueError:
+            Both variables must be in the columns of the data
+        ValueError:
+            Both variables has to be numeric variables inside the dataframe
         """
         if var1 is None or var2 is None:
             raise TypeError("Must provide valid variables name string")
@@ -229,7 +334,7 @@ class StructuredDataset():
             raise ValueError(
                 'Both variables has to be a numerical variables inside the dataframe')
 
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
 
         plots.plot_numerical_jointplot(
             df=df, var1=var1, var2=var2, target=self.target)
@@ -263,6 +368,15 @@ class StructuredDataset():
             Column name that contains categorical values
         var2: str
             Column name that contains numerical values
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
+
+        Raises
+        ------
+        TypeError:
+            Must provide valid variables name string
+        ValueError:
+            Both variables must be in the columns of the data
         """
         if var1 is None or var2 is None:
             raise TypeError("Must provide valid variables name string")
@@ -270,7 +384,7 @@ class StructuredDataset():
             raise ValueError(
                 'At least one of the variables was not found inside the columns data')
 
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
 
         plots.plot_one_cat_and_num_variables(
             df=df, var1=var1, var2=var2, target=self.target)
@@ -279,6 +393,11 @@ class StructuredDataset():
         """
         Show boxplots for each pair of categorical and numerical variables
         If target is set, separate dataset for each target value.
+
+        Parameters
+        ----------
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
         """
         df = utils.remove_var_with_one_value(self.df)
 
@@ -305,11 +424,17 @@ class StructuredDataset():
     def plot_correlations(self, nrows=None):
         """
         Show differents correlations matrix for 3 cases :
+        
         - numerical to numerical (using Pearson coeff)
         - categorical to categorical (using Cramers V & Chi square)
         - numerical to categorical (discrete) (using Point Biserial)
+
+        Parameters
+        ----------
+        nrows: int (optional)       
+            If not None reduce the data to a sample of nrows
         """
-        df = self.reduce_df_nrows(nrows=nrows)
+        df = self._reduce_df_nrows(nrows=nrows)
         df = utils.remove_var_with_one_value(df)
 
         if self.orig_target_value is not None:
