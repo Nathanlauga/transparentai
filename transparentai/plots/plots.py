@@ -4,11 +4,11 @@ from matplotlib.colors import ListedColormap
 import seaborn as sns
 import numpy as np
 
+import transparentai
 
 save_plot = False
 save_dir = './'
 verbose = 0
-
 
 def plot_or_save(fname=None):
     """
@@ -36,13 +36,15 @@ def plot_or_save(fname=None):
     fname: str
         file name where to save the plot
     """
-    if not save_plot:
-        plt.show()
-    else:
+    if transparentai.plots.save_plot:
+        save_dir = transparentai.plots.save_dir
+        
         fname = 'plot.png' if fname is None else fname
         plt.savefig(save_dir+fname)
-        if verbose > 0:
+        if transparentai.plots.verbose > 0:
             print(f'Plot saved at : {save_dir}{fname}')
+    else:
+        plt.show()
 
 
 def plot_stack(ax, df, labels):

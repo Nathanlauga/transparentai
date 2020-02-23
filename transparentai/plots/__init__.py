@@ -5,7 +5,10 @@ __all__ = [
     'plot_boxplot_cat_num_var',
     'plot_correlation_matrix',
     'plot_gauge',
-    'plot_bar'
+    'plot_bar',
+    'save_plot',
+    'save_dir',
+    'verbose'
     ]
 
 from transparentai.plots.plots import *

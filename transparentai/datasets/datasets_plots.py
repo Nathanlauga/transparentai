@@ -290,7 +290,7 @@ def plot_one_cat_and_num_variables(df, var1, var2, target=None):
     plots.plot_or_save(fname=f'{var1}_{var2}_variable_boxplot.png')
 
 
-def plot_correlation_matrix(corr_df):
+def plot_correlation_matrix(corr_df, fname='correlation_matrix_plot.png'):
     """
     Plot a seaborn heatmap based on a correlation dataframe.
 
@@ -298,6 +298,8 @@ def plot_correlation_matrix(corr_df):
     ----------
     corr_df: pd.DataFrame
         Correlation dataframe
+    fname: str
+        File path where to save the plot if plots.save_plot if True
     """
     annot = max(corr_df.shape) <= 20
 
@@ -315,4 +317,4 @@ def plot_correlation_matrix(corr_df):
         rotation=45,
         horizontalalignment='right'
     )
-    plots.plot_or_save(fname=f'correlation_matrix_plot.png')
+    plots.plot_or_save(fname=fname)

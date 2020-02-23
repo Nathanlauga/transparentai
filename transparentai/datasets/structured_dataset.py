@@ -175,8 +175,11 @@ class StructuredDataset():
                 'The variable has to be a numerical variable inside the dataframe')
 
         df = self._reduce_df_nrows(nrows=nrows)
-
-        plots.plot_numerical_var(df=df, var=var, target=self.target)
+        
+        if var == self.target:
+            plots.plot_numerical_var(df=df, var=self.target) 
+        else:
+            plots.plot_numerical_var(df=df, var=var, target=self.target)
 
     def plot_one_categorical_variable(self, var, nrows=None):
         """
@@ -209,7 +212,10 @@ class StructuredDataset():
 
         df = self._reduce_df_nrows(nrows=nrows)
 
-        plots.plot_categorical_var(df=df, var=var, target=self.target)
+        if var == self.target:
+            plots.plot_categorical_var(df=df, var=self.target) 
+        else:
+            plots.plot_categorical_var(df=df, var=var, target=self.target)
 
     def plot_one_datetime_variable(self, var, nrows=None):
         """
@@ -385,9 +391,13 @@ class StructuredDataset():
                 'At least one of the variables was not found inside the columns data')
 
         df = self._reduce_df_nrows(nrows=nrows)
-
-        plots.plot_one_cat_and_num_variables(
-            df=df, var1=var1, var2=var2, target=self.target)
+        
+        if var1 == self.target:
+            plots.plot_one_cat_and_num_variables(
+                df=df, var1=var1, var2=var2)
+        else:
+            plots.plot_one_cat_and_num_variables(
+                df=df, var1=var1, var2=var2, target=self.target)
 
     def plot_cat_and_num_variables(self, nrows=None):
         """
@@ -459,7 +469,7 @@ class StructuredDataset():
             pearson_corr = num_df.corr()
             display(
                 Markdown('#### Pearson correlation matrix for numerical variables'))
-            plots.plot_correlation_matrix(pearson_corr)
+            plots.plot_correlation_matrix(pearson_corr, fname='pearson_corr.png')
 
         if len(cat_vars) > 0:
             var_combi = [tuple(sorted([v1, v2]))
@@ -476,7 +486,7 @@ class StructuredDataset():
 
             display(
                 Markdown('#### Cramers V correlation matrix for categorical variables'))
-            plots.plot_correlation_matrix(cramers_v_corr)
+            plots.plot_correlation_matrix(cramers_v_corr, fname='cramers_v_corr.png')
 
         if (len(cat_vars) > 0) and (len(num_df) > 0):
             data_encoded, _ = utils.encode_categorical_vars(df)
@@ -497,4 +507,4 @@ class StructuredDataset():
 
             display(Markdown(
                 '#### Point Biserial correlation matrix for numerical & categorical variables'))
-            plots.plot_correlation_matrix(pbs_corr)
+            plots.plot_correlation_matrix(pbs_corr, fname='pointbiserialr_corr.png')
