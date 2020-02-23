@@ -8,7 +8,7 @@ issues GitHub page from the library here : https://github.com/Nathanlauga/transp
 
 ![TransparentAI Pipeline](images/transparentai_pipeline.png)
 
-Documentation is available here : [API Documentation](https://readthedocs.org/projects/transparentai/).
+Documentation is available here : [API Documentation](https://transparentai.readthedocs.io/en/latest/).
 
 <div align="left">
   <!-- PyPI -->
