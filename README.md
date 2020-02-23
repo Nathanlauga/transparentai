@@ -1,6 +1,9 @@
 # TransparentAI
 *A transparent AI from A to Z!*
 
+[![Documentation](https://readthedocs.org/projects/transparentai/badge/?version=latest)](http://transparentai.readthedocs.io/en/latest/?badge=latest)
+[![PyPI version](https://badge.fury.io/py/transparentai.svg)](https://badge.fury.io/py/transparentai)
+
 This library is a toolbox so that you can create or inspect an AI on every step of the pipeline.
 
 This is a new tools so if you found any bugs or other kind of problems please do not hesitate to report them on the
@@ -9,13 +12,6 @@ issues GitHub page from the library here : https://github.com/Nathanlauga/transp
 ![TransparentAI Pipeline](images/transparentai_pipeline.png)
 
 Documentation is available here : [API Documentation](https://transparentai.readthedocs.io/en/latest/).
-
-<div align="left">
-  <!-- PyPI -->
-  <a href="https://pypi.org/project/transparentai">
-    <img src="https://img.shields.io/pypi/v/transparentai.svg?style=for-the-badge" alt="pypi" />
-  </a>
-</div>
 
 ## Installation
 
