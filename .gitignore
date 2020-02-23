@@ -120,5 +120,5 @@ run_flask.sh
 run.sh
 archive/
 *.pkl
-notebooks/save
-notebooks/plots
+notebooks/save/*
+notebooks/plots/*
