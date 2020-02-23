@@ -7,12 +7,31 @@ import transparentai.utils as utils
 
 def print_md(text):
     """
+    Display a text as Markdown.
+
+    Parameters
+    ----------
+    text: str
+        text to display
+
+    Returns
+    -------
+    function:
+        display(Markdown(text))
     """
     return display(Markdown(text))
 
 
 def get_questions():
     """
+    Retrieves questions to start.
+
+    Questions are stored in a json file at ../src/json directory
+
+    Returns
+    -------
+    dict:
+        Dictionary with the questions classified in categories
     """
     fpath = os.path.abspath(os.path.join(
             os.path.dirname(__file__), '../src/json/'))
@@ -25,6 +44,12 @@ def get_questions():
 
 def how_can_i_start(md=True):
     """
+    Displays text about how to start an AI with this module.
+
+    Parameters
+    ----------
+    md: bool (default True)
+        Whether the text is display in Markdown or with print function
     """
     print_fun = print if not md else print_md
 
@@ -40,12 +65,24 @@ def how_can_i_start(md=True):
               'to your AI.')
 
 
-def quick_start(md=True, answer=None, with_input=True):
+def quick_start(md=True, with_input=True):
     """
+    Displays a set of questions to start a project. The questions were wrote using
+    `ML Canvas`_ and `PAIR Guidebook`_.
+
+    .. _ML Canvas: https://www.louisdorard.com/machine-learning-canvas
+    .. _PAIR Guidebook: https://pair.withgoogle.com/
+
+    Parameters
+    ----------
+    md: bool (default True)
+        Whether the text is display in Markdown or with print function
+    with_input: bool (default True)
+        Whether you want to input answer or just see the questions 
     """
     print_fun = print if not md else print_md
     questions = get_questions()
-    answered_question = questions if answer is None else answer
+    answered_question = questions # if answer is None else answer
 
     title = 'Quick start' if not md else '### Quick start'
     print_fun(title)
@@ -72,8 +109,24 @@ def quick_start(md=True, answer=None, with_input=True):
 
 def format_answer(answer, format='json'):
     """
+    Format the answer dictionnary to a single string or dictionnary
+    depending on the format set.
 
-    Accepted format json, txt and md
+    If format is 'json' then it returns a dictionary else a string.
+
+    Parameters
+    ----------
+    answer: dict
+        Dictionary with questions and answer 
+        returned from `quick_start()` function
+    format: str (default 'json')
+        Format that you want for the output
+        if json then a dictionary is returned else it's a string
+
+    Returns
+    -------
+    dict or str
+        Formated answers with questions
     """
     ans_return = '' if format != 'json' else {}
 
@@ -96,6 +149,18 @@ def format_answer(answer, format='json'):
 
 def save_answer_to_file(answer, fname, format='json'):
     """
+    Saves answer to a file.
+
+    Parameters
+    ----------
+    answer: dict
+        Dictionary with questions and answer 
+        returned from `quick_start()` function
+    fname: str
+        string of the file path (including filename)
+    format: str (default 'json')
+        Format that you want for the output
+        if json then a dictionary is stored else it's a string
     """
     answer = format_answer(answer, format=format)
     if format != 'json':
@@ -108,12 +173,28 @@ def save_answer_to_file(answer, fname, format='json'):
 
 def format_link(url, md_text, md):
     """
+    Formats url link depending on if it's Mardown or print function.
+
+    Parameters
+    ----------
+    url: str
+        Url string to the website
+    md_text: str
+        Text to display in hyperlink if it's markdown
+    md: bool
+        Whether the text is display in Markdown or with print function
     """
     return url if not md else f'[{md_text}]({url})'
 
 
 def external_link(md=True):
     """
+    Displays text about alternative solutions to start a ML project.
+
+    Parameters
+    ----------
+    md: bool (default True)
+        Whether the text is display in Markdown or with print function
     """
     print_fun = print if not md else print_md
 

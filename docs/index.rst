@@ -5,6 +5,7 @@ Welcome to TransparentAI's documentation!
    :maxdepth: 3
    :caption: Modules
 
+   modules/start
    modules/datasets
    modules/fairness
    modules/models
