@@ -6,7 +6,7 @@
 
 This library is a toolbox so that you can create or inspect an AI on every step of the pipeline.
 
-This is a new tools so if you found any bugs or other kind of problems please do not hesitate to report them on the
+This is a new tool so if you found any bugs or other kind of problems please do not hesitate to report them on the
 issues GitHub page from the library here : https://github.com/Nathanlauga/transparentai/issues.
 
 ![TransparentAI Pipeline](images/transparentai_pipeline.png)
@@ -28,10 +28,23 @@ cd transparentai
 python setup.py install
 ```
 
+## Library tools
+
+Supported objects:
+
+| submodule   | object              | description                                                              |
+| ----------- | ------------------- | ------------------------------------------------------------------------ |
+| `datasets`  | StructuredDataset   | Can handle Structured dataset (tabular)                                  |
+| `models`    | ClassificationModel | Can handle classifier model with `predict` and `predict_proba` functions |
+| `models`    | RegressionModel     | Can handle regression model with a `predict` function                    |
+| `fairness`  | DatasetBiasMetric   | Can handle a dataset with a target column                                |
+| `fairness`  | ModelBiasMetric     | Can handle a dataset and predictions (Classification and regression)     |
+| `explainer` | ModelExplainer      | Can handle tree and linear model                                         |
+
 ## How to use it
 
-Take a look on the [Getting started] page of the documenation or you can search specific use cases 
-in the `notebooks/` directory.
+Take a look on the [Getting started](https://transparentai.readthedocs.io/en/latest/getting-started.html) page of the documenation or you can search specific use cases 
+in the [`notebooks/`](notebooks/) directory.
 
 Here is some example for the `StructuredDataset`, `DatasetBiasMetric`, `ClassificationModel` 
 and `ModelExplainer`. But I take a look on the links above, there are a lot more to see!
@@ -238,6 +251,10 @@ explainer.plot_local_explain(one_row, top=10, feature_classes=feature_names)
 See the [contributing file](CONTRIBUTING.md).
 
 *PRs accepted.*
+
+## Credits and ressources
+
+See the [ressources file](RESSOURCES.md) where I explain why I created this tool and mainly I quote my different inspirations and ressources.
 
 ## Author
 
