@@ -12,7 +12,7 @@
 
 * [Example notebook : analyse structured dataset for a binary classification](example_StructuredDataset_binary_classification.ipynb)
 * [Example notebook : analyse structured dataset for a multi labels classification](example_StructuredDataset_multi_label_classification.ipynb)
-* [Example notebook : analyse structured dataset for a regression](example_StructuredDataset_regression_with_target.ipynb)
+* [Example notebook : analyse structured dataset for regression](example_StructuredDataset_regression_with_target.ipynb)
 * [Example notebook : analyse structured dataset without target](example_StructuredDataset_regression_without_target.ipynb)
 * [Example notebook : structured dataset variable plots and saving image](example_StructuredDataset_variable_plots_and_save_image.ipynb)
 
@@ -31,7 +31,7 @@
 ## `fairness` submodule
 
 * [Example notebook : Dataset bias analyse for a binary classification](example_DatasetBiasMetric_binary_classification.ipynb)
-* [Example notebook : Dataset bias analyse for a regression](example_DatasetBiasMetric_regression.ipynb)
+* [Example notebook : Dataset bias analyse for regression](example_DatasetBiasMetric_regression.ipynb)
 * [Example notebook : Model bias analyse for a binary classification¶](example_ModelBiasMetric_binary_classification.ipynb)
 
 ## `monitoring` submodule
