@@ -9,7 +9,7 @@ This library is a toolbox so that you can create or inspect an AI on every step 
 This is a new tool so if you found any bugs or other kind of problems please do not hesitate to report them on the
 issues GitHub page from the library here : https://github.com/Nathanlauga/transparentai/issues.
 
-![TransparentAI Pipeline](images/transparentai_pipeline.png)
+![TransparentAI Pipeline](https://github.com/Nathanlauga/transparentai/tree/master/images/transparentai_pipeline.png)
 
 Documentation is available here : [API Documentation](https://transparentai.readthedocs.io/en/latest/).
 
@@ -86,25 +86,25 @@ you can use the following line of codes :
 ```
 dataset.plot_one_categorical_variable(var='income')
 ```
-![](docs/images/income_variable_plot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/income_variable_plot.png)
 
 ```
 dataset.plot_two_numeric_variables(var1='education-num', var2='hours-per-week', nrows=10000)
 ```
 
-![](docs/images/education-num_hours-per-week_variable_jointplot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/education-num_hours-per-week_variable_jointplot.png)
 
 ```
 dataset.plot_one_cat_and_num_variables(var1='relationship', var2='age')
 ```
 
-![](docs/images/relationship_age_variable_boxplot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/relationship_age_variable_boxplot.png)
 
 ```
 dataset.plot_one_cat_and_num_variables(var1='income', var2='age')
 ```
 
-![](docs/images/income_age_variable_boxplot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/income_age_variable_boxplot.png)
 
 
 ### DatasetBiasMetric
@@ -149,7 +149,7 @@ Plot one attribute bias.
 dataset_bias.plot_bias(attr='gender')
 ```
 
-![](docs/images/dataset_bias_metrics_plot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/dataset_bias_metrics_plot.png)
 
 ### ClassificationModel
 
@@ -174,7 +174,7 @@ Overall model performance
 score 	0.864313 	0.860986 	0.859721 	0.864313 	{0: 0.9104387547348203}
 ```
 
-![](docs/images/classification_scores_plot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/classification_scores_plot.png)
 
 ### ModelExplainer
 
@@ -213,7 +213,7 @@ Global feature importance plot :
 explainer.plot_global_explain(top=10)
 ```
 
-![](docs/images/global_feature_influence_plot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/global_feature_influence_plot.png)
 
 The variable `feature_names` is a mapping dictionary so that categorical
 variables that are encoded as number (e.g. 'gender': Male is 1 and Female 0)
@@ -244,7 +244,7 @@ Plot local explanation :
 explainer.plot_local_explain(one_row, top=10, feature_classes=feature_names)
 ```
 
-![](docs/images/local_feature_influence_plot.png)
+![](https://github.com/Nathanlauga/transparentai/tree/master/docs/images/local_feature_influence_plot.png)
 
 ## Contributing
 
