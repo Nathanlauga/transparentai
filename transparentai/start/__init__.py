@@ -6,4 +6,4 @@ __all__ = [
     'external_link'
 ]
     
-from transparentai.start.start import * 
+from .start import * 

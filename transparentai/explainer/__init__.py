@@ -4,5 +4,5 @@ __all__ = [
     'plot_local_feature_influence'
 ]
 
-from transparentai.explainer.model_explainer import ModelExplainer
-from transparentai.explainer.explainer_plots import *
+from .model_explainer import ModelExplainer
+from .explainer_plots import *

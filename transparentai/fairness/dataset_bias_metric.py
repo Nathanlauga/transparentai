@@ -2,9 +2,9 @@ import pandas as pd
 import numpy as np
 from IPython.display import display, Markdown
 
-from transparentai.fairness.dataset_protected_attribute import DatasetProtectedAttribute
-from transparentai.fairness.bias_metric import BiasMetric
-import transparentai.fairness.fairness_plots as plots
+from .dataset_protected_attribute import DatasetProtectedAttribute
+from .bias_metric import BiasMetric
+from ..fairness import fairness_plots as plots
 
 
 class DatasetBiasMetric(BiasMetric):

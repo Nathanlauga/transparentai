@@ -5,8 +5,8 @@ from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import r2_score
 
-import transparentai.models.models_plots as plots
-from transparentai.models.base_model import BaseModel
+from ..models import models_plots as plots
+from .base_model import BaseModel
 
 
 class RegressionModel(BaseModel):

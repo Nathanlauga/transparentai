@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from IPython.display import display, Markdown
 
-from transparentai import plots
+from .. import plots
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score

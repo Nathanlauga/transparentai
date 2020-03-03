@@ -3,9 +3,9 @@ import numpy as np
 from IPython.display import display, Markdown
 from abc import abstractmethod
 
-from transparentai.datasets.structured_dataset import StructuredDataset
-import transparentai.fairness.fairness_plots as plots
-import transparentai.utils as utils
+from ..datasets.structured_dataset import StructuredDataset
+from ..fairness import fairness_plots as plots
+from transparentai import utils
 
 
 class BiasMetric():

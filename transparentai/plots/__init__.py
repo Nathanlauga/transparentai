@@ -9,6 +9,6 @@ __all__ = [
     'save_plot',
     'save_dir',
     'verbose'
-    ]
+]
 
-from transparentai.plots.plots import *
+from .plots import *

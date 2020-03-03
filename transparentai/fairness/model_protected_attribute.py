@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from transparentai.fairness.protected_attribute import ProtectedAttribute
+from .protected_attribute import ProtectedAttribute
 
 
 class ModelProtectedAttribute(ProtectedAttribute):

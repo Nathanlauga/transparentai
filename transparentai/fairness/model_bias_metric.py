@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-from transparentai.fairness.model_protected_attribute import ModelProtectedAttribute
-from transparentai.fairness.bias_metric import BiasMetric
+from .model_protected_attribute import ModelProtectedAttribute
+from .bias_metric import BiasMetric
 
 
 class ModelBiasMetric(BiasMetric):

@@ -3,8 +3,8 @@ import numpy as np
 from IPython.display import display, Markdown
 from abc import abstractmethod
 
-import transparentai.models.models_plots as plots
-import transparentai.utils as utils
+from ..models import models_plots as plots
+from .. import utils
 
 
 class BaseModel():

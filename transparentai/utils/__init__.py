@@ -9,6 +9,6 @@ __all__ = [
     'get_metric_goal',
     'save_dict_to_json',
     'reduce_df_nrows'
-    ]
+]
     
-from transparentai.utils.utils import * 
+from .utils import * 

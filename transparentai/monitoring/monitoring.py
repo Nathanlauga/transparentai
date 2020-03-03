@@ -2,10 +2,10 @@ import numpy as np
 import pandas as pd
 import warnings
 
-from transparentai.models import ClassificationModel, RegressionModel
-from transparentai.datasets import StructuredDataset
-from transparentai.fairness import DatasetBiasMetric, ModelBiasMetric
-import transparentai.monitoring.monitoring_plots as plots
+from ..models import ClassificationModel, RegressionModel
+from ..datasets import StructuredDataset
+from ..fairness import DatasetBiasMetric, ModelBiasMetric
+from ..monitoring import monitoring_plots as plots
 
 
 class Monitoring():

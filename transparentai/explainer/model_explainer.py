@@ -3,7 +3,7 @@ import warnings
 import pandas as pd
 import numpy as np
 
-import transparentai.explainer.explainer_plots as plots
+from ..explainer import explainer_plots as plots
 
 
 class ModelExplainer():

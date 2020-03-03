@@ -6,9 +6,9 @@ import seaborn as sns
 import numpy as np
 from IPython.display import display, Markdown
 
-from transparentai.fairness.protected_attribute import ProtectedAttribute
-import transparentai.utils as utils
-from transparentai import plots
+from .protected_attribute import ProtectedAttribute
+from .. import utils
+from .. import plots
 
 bias_colors = ['#3498db', '#ecf0f1']
 predicted_colors = ['#bdc3c7', '#2980b9']

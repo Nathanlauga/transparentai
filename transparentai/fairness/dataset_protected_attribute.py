@@ -1,5 +1,5 @@
 import pandas as pd
-from transparentai.fairness.protected_attribute import ProtectedAttribute
+from .protected_attribute import ProtectedAttribute
 
 
 class DatasetProtectedAttribute(ProtectedAttribute):

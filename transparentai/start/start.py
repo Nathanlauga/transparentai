@@ -2,7 +2,7 @@ from IPython.display import display, Markdown
 import json
 import os
 
-import transparentai.utils as utils
+from .. import utils
 
 def print_md(text):
     """

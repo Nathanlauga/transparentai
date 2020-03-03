@@ -13,6 +13,6 @@ __all__ = [
     'plot_correlation_matrix'
 ]
 
-from transparentai.datasets.structured_dataset import StructuredDataset
-from transparentai.datasets.datasets import *
-from transparentai.datasets.datasets_plots import *
+from .structured_dataset import StructuredDataset
+from .datasets import *
+from .datasets_plots import *

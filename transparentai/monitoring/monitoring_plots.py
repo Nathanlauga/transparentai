@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-import transparentai.utils as utils
-import transparentai.plots as plots
+from .. import utils
+from .. import plots
         
     
 def plot_bar_performance(orig_perf=None, new_perf=None, alert_threshold=None):

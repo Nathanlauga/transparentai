@@ -3,8 +3,8 @@ import numpy as np
 import scipy.stats as ss
 from IPython.display import display, Markdown
 
-import transparentai.datasets.datasets_plots as plots
-import transparentai.utils as utils
+from ..datasets import datasets_plots as plots
+from ..utils import utils as utils
 
 
 class StructuredDataset():
