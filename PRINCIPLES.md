@@ -59,10 +59,39 @@ Elements table (feature to implement) :
 # 2. `non-maleficence`
 
 
+| Element (feature) | Questions to answer | feature type | Requirements / information to help |
+| ----------------- | ------------------- | ------------ | ---------------------------------- |
+| Resilience to attacks | Does the AI is robbust to attacks ? <br> What did I try to t est the AI security ? | `technical` | Robustness package <br> Checklist to test AI safety |
+| Fallback plan | Do I have a backup plan if something goes wrong ? | `meta` | Define a processus if there is a problem |
+| General safety | What technology does the AI use ? <br> Did I check if the technology is safe ? | `meta` `technical` | Search online of security breach if the technology <br> Implement basic problems of main AI technologies |
+| Accuracy & performance | Is the model working with good performance ? <br> Did I try my model on a test set ? <br> If the model is working in the real world, what are the perf ? | `technical` | use `models` module |
+| Privacy & data protection |
+| Reliability & Reproducibility |
+| Quality & integrity | Is there any mistakes in the data ? <br> What rules can ensure me of the data quality ? | `technical` | [Best practices for creating data quality rules](https://blog.syncsort.com/2017/10/big-data/best-practices-data-quality-rules/) |
+| Social impact | What social attribute can be find in the data ? <br> Does the model favour a particular attribute ? | `technical` | Use `fairness` module <br> list of social attribute |
+
+
 # 3. `autonomy`
 
+| Element (feature) | Questions to answer | feature type | Requirements / information to help |
+| ----------------- | ------------------- | ------------ | ---------------------------------- |
+| Decisions | Can the human make decision instead of the AI ? <br> Does the human understand how the model gives a prediction ? | `technical` | module `explainer` <br> get insight in natural language |
+| Oversight | Is the model doing good in real case, after deployment ? <br> If the model is a re-entering one, does the prediction exclude new possible scenario ? | `technical` | use `monitoring` module |
 
 # 4. `justice`
 
-
+| Element (feature) | Questions to answer | feature type | Requirements / information to help |
+| ----------------- | ------------------- | ------------ | ---------------------------------- |
+| Avoidance of unfair bias | If some bias are detected, is it understandable given AI's goal ? <br> Should I remove the bias or just mitigate them ? | `technical` | use `fairness` module <br> use `2 - Social impact` and `1 - Fundamental rights` with a define threshold to validate or not |
+| Universal design |
+| Auditability | Is the model development documented ? <br> Same for model paramater choose ? <br> Same for data pipeline ? | `meta` `technical` | Documentation is indepedent <br> Auto generatation of a pipeline |
+| Minimisation & reporting of negative impact | How can you say the AI is doing something wrong ? <br> Define a threshold for bias or/and performance | `meta` `technical` | Define threshold <br> Mitigate bias |
+| Trade-off & redress |
+ 
 # 5. `explicability`
+
+| Element (feature) | Questions to answer | feature type | Requirements / information to help |
+| ----------------- | ------------------- | ------------ | ---------------------------------- |
+| Tracability | Is the data used documented ? <br> Is the model pipeline documented ? | `meta` `technical` | Same as `4 - Auditability` |
+| Explainability | How does the model is working in general ? <br> Same for one prediction ? | `technical` | use `explainer` module <br> get insight in natural language and graphics |
+| Interpretability | Is the model mathematically complex ? | `technical` | Map model type with complexity |
