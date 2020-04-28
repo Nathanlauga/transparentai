@@ -15,8 +15,7 @@ COPY ./setup.py /transparentai
 RUN pip install wheel
 RUN pip install -r /transparentai/requirements.txt
 
-RUN cd /transparentai \
-    python setup.py install
+RUN python /transparentai/setup.py install
 
 RUN pip install jupyter
 
