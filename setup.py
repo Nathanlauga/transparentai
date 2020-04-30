@@ -21,7 +21,6 @@ setup(
         'pandas',
         'numpy',
         'matplotlib',
-        'seaborn',
         'scikit-learn',
         'shap',
         'energyusage',

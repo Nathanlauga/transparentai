@@ -85,3 +85,47 @@ def is_array_like(obj, n_dims=1):
         return type(obj[0]) != list
 
     return obj.shape[n_dims] == 1
+
+
+def format_describe_str(desc, max_len=20):
+    """Returns a formated list for the matplotlib table
+    cellText argument.
+    
+    Each element of the list is like this : ['key    ','value    ']
+    
+    Number of space at the end of the value depends on 
+    len_max argument.
+    
+    Parameters
+    ----------
+    desc: dict
+        Dictionnary returned by the variable.describe
+        function
+    len_max: int (default 20)
+        Maximum length for the values
+        
+    Returns
+    -------
+    list(list):
+        Formated list for the matplotlib table
+        cellText argument
+    """
+    res = {}
+    _max = max([len(str(e)) for k, e in desc.items()])
+    max_len = _max if _max < max_len else max_len
+    
+    n_valid = desc['valid values']
+    n_missing = desc['missing values']
+    n = n_valid + n_missing
+    
+    for k, e in desc.items():
+        if k == 'valid values':
+            e = str(e) + ' (' + str(int(n_valid*100/n)) + '%)'
+        elif k == 'missing values':
+            e = str(e) + ' (' + str(int(n_missing*100/n)) + '%)'
+        else:
+            e = str(e)
+        e = e.ljust(max_len) if len(e) <= 15 else e[:max_len]
+        res[k.ljust(15).title()] = e
+
+    return [[k,e] for k,e in res.items()]
