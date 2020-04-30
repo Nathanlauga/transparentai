@@ -5,3 +5,4 @@ __all__ = [
 ]
 
 from .datasets import *
+from .variable import *

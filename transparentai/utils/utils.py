@@ -1,55 +1,87 @@
-import energyusage
-import subprocess
+import numpy as np
+import pandas as pd
 
 
-def evaluate_kWh(func, *args, verbose=False):
-    """Using energyusage.evaluate function returns
-    the result of the function and the effective 
-    emissions of the function (in kWh)
+def find_dtype(arr, len_sample=1000):
+    """Find the general dtype of an array.
+    Three possible dtypes :
 
-    With verbose = True you can see the report with details.
-
-    If you want a pdf please use the following:
-    >>> energyusage.evaluate(func, *args, pdf=True)
+    - Number
+    - Datetime
+    - Object
 
     Parameters
     ----------
-    func: 
-        User's function
-    *args:
-        Arguments of the function
-    verbose: bool (default False)
-        Whether it shows details or not
+    arr: array-like
+        Array to inspect
+    len_sample: int (default, 1000)
+        Number max of items to analyse
+        if len_sample > len(arr) then use len(arr)
 
     Returns
     -------
-    float:
-        effective emissions of the function in kWh
-    any
-        function's return
+    str:
+        dtype string ('number', 'datetime' or 'object')
 
+    Raises
+    ------
+    TypeError:
+        arr is not an array like
     """
+    if not is_array_like(arr):
+        raise TypeError('arr is not an array like')
 
-    _, kWh, fun_return = energyusage.evaluate(func, *args, energyOutput=True,
-                                              pdf=False, printToScreen=verbose)
+    if type(arr) == list:
+        arr = np.array(arr)
+    if type(arr) in [pd.Series, pd.DataFrame]:
+        arr = arr.to_numpy()
 
-    return kWh, fun_return
+    n = len_sample if len(arr) > len_sample else len(arr)
+    arr = arr[:n]
 
+    try:
+        arr.astype(int)
+        return 'number'
+    except:
+        pass
 
-def check_packages_security(full_report=True):
-    """Using safety package, check out the known vulnerabilities 
-    of the installed packages.
+    try:
+        pd.to_datetime(arr)
+        return 'datetime'
+    except:
+        pass
 
-    For more details you can look at the package page :
-    https://github.com/pyupio/safety
+    return 'object'
+
+def is_array_like(obj, n_dims=1):
+    """Returns whether an object is an array like.
+    Valid dtypes are list, np.ndarray, pd.Series, pd.DataFrame.
 
     Parameters
     ----------
-    full_report: True
-        Whether you want the full report or 
-        short report.    
+    obj:
+        Object to inspect
+    n_dims: int (default 1)
+        number of dimension accepted
+
+    Returns
+    -------
+    bool:
+        Whether the object is an array like or not
     """
-    report = '--full-report' if full_report else '--short-report'
-    result = subprocess.run(
-        ['safety', 'check', report], stdout=subprocess.PIPE)
-    print(result.stdout.decode('utf-8'))
+
+    dtype = type(obj)
+
+    valid_types = [list, np.ndarray, pd.Series, pd.DataFrame]
+    if dtype not in valid_types:
+        return False
+
+    if dtype == list:
+        obj = np.array(obj)
+    elif dtype != np.ndarray:
+        obj = obj.to_numpy()
+
+    if len(obj.shape) <= n_dims:
+        return type(obj[0]) != list
+
+    return obj.shape[n_dims] == 1
