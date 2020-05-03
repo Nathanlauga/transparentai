@@ -10,7 +10,7 @@ from .variable import describe
 DEFAULT_COLOR = '#3498db'
 
 
-def plot_table(ax, cell_text, table_type='describe'):
+def plot_table_describe(ax, cell_text):
     """Insert a table in a matplotlib graphic
     using an axis.
 
@@ -20,18 +20,15 @@ def plot_table(ax, cell_text, table_type='describe'):
         axe where to add the plot 
     cell_text: list(list)
         The texts to place into the table cells.
-    table_type: str (default 'describe')
-        table type, custom color for example
     """
 
     table = ax.table(cellText=cell_text, cellLoc='left', loc='center')
 
-    if table_type == 'describe':
-        table[(0, 0)].get_text().set_color('green')
-        table[(1, 0)].get_text().set_color('red')
+    table[(0, 0)].get_text().set_color('green')
+    table[(1, 0)].get_text().set_color('red')
 
-        for i in range(len(cell_text)):
-            table[(i, 0)].get_text().set_weight('bold')
+    for i in range(len(cell_text)):
+        table[(i, 0)].get_text().set_weight('bold')
 
     table.set_fontsize(24)
     table.scale(1, 3)
@@ -281,6 +278,6 @@ def plot_variable(arr, legend=None, colors=None, xlog=False, ylog=False):
 
     # Add describe stats table
     desc_formated = utils.format_describe_str(desc)
-    plot_table(ax2, desc_formated)
+    plot_table_describe(ax2, desc_formated)
 
     plt.show()

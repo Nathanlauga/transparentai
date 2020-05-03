@@ -3,6 +3,7 @@ import numpy as np
 
 # Evaluation function for classifiers
 
+
 def accuracy(y_true, y_pred, **args):
     """Accuracy score based on the `sklearn.metrics.accuracy_score`_ function.
 
@@ -132,6 +133,19 @@ def precision(y_true, y_pred, **args):
     return sklearn.metrics.precision_score(y_true, y_pred, **args)
 
 
+def precision_micro(y_true, y_pred, **args):
+    """Precision score based on the `sklearn.metrics.precision_score`_ function.
+
+    Average argument set to 'micro'.
+
+    More details here : `Precision, recall and F-measures`_
+
+    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
+    .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
+    """
+    return sklearn.metrics.precision_score(y_true, y_pred, average='micro', **args)
+
+
 def recall(y_true, y_pred, **args):
     """Recall score based on the `sklearn.metrics.recall_score`_ function.
 
@@ -141,6 +155,19 @@ def recall(y_true, y_pred, **args):
     .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
     """
     return sklearn.metrics.recall_score(y_true, y_pred, **args)
+
+
+def recall_micro(y_true, y_pred, **args):
+    """Recall score based on the `sklearn.metrics.recall_score`_ function.
+
+    Average argument set to 'micro'.
+
+    More details here : `Precision, recall and F-measures`_
+
+    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
+    .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
+    """
+    return sklearn.metrics.recall_score(y_true, y_pred, average='micro', **args)
 
 
 def jaccard(y_true, y_pred, **args):
@@ -174,6 +201,18 @@ def confusion_matrix(y_true, y_pred, **args):
     .. _Confusion matrix: https://scikit-learn.org/stable/modules/model_evaluation.html#confusion-matrix
     """
     return sklearn.metrics.confusion_matrix(y_true, y_pred, **args)
+
+
+def roc_curve(y_true, y_prob, **args):
+    """Area Under the Receiver Operating Characteristic Curve (ROC AUC)
+    score based on the `sklearn.metrics.roc_auc_score`_ function.
+
+    More details here : `Receiver operating characteristic (ROC)`_
+
+    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/0.15/modules/generated/sklearn.metrics.roc_curve.html#sklearn.metrics.roc_curve
+    .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
+    """
+    return sklearn.metrics.roc_curve(y_true, y_prob, **args)
 
 
 def roc_auc(y_true, y_prob, **args):

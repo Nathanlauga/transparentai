@@ -5,3 +5,4 @@ scikit-learn==0.22.2
 shap==0.35.0
 safety
 energyusage==0.0.14
+seaborn==0.10.1

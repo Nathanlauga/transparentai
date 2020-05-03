@@ -17,9 +17,12 @@ METRICS = {
     'f1_samples': f1_samples,
     'log_loss': log_loss,
     'precision': precision,
+    'precision_micro': precision_micro,
     'recall': recall,
+    'recall_micro': recall_micro,
     'jaccard': jaccard,
     'matthews_corrcoef': matthews_corrcoef,
+    'roc_curve':roc_curve,
     'roc_auc': roc_auc,
     'roc_auc_ovr': roc_auc_ovr,
     'roc_auc_ovo': roc_auc_ovo,
@@ -49,6 +52,11 @@ METRICS = {
     'mean_poisson_deviance': mean_poisson_deviance,
     'mean_gamma_deviance': mean_gamma_deviance
 }
+
+def score_function_need_prob(fn):
+    """
+    """
+    return 'y_prob' in METRICS[fn].__code__.co_varnames
 
 def preprocess_metrics(input_metrics):
     """Preprocess the inputed metrics so that it maps
