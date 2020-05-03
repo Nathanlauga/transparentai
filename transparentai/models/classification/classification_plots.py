@@ -6,6 +6,8 @@ import pandas as pd
 from ..classification import compute_metrics
 from ..evaluation import evaluation
 
+from transparentai import plots
+
 
 def plot_confusion_matrix(confusion_matrix):
     """
@@ -65,34 +67,27 @@ def plot_roc_curve(roc_curve, roc_auc):
     plt.legend(loc="lower right")
 
 
-def plot_table_score(perf):
+SCORE_PLOT_FUNCTION = {
+    'confusion_matrix': plot_confusion_matrix,
+    'roc_auc': plot_roc_curve
+}
+
+
+def plot_table_score_clf(perf):
     """Insert a table of scores on a
-    matplotlib graphic
+    matplotlib graphic for a classifier
 
     Parameters
     ----------
     perf: dict
         Dictionnary with computed score  
     """
-    cell_text = [(k, round(v, 4))
-                 for (k, v) in perf.items() if k not in SCORE_PLOT_FUNCTION]
-
-    table = plt.table(cell_text, cellLoc='left', loc='center')
-
-    for i in range(len(cell_text)):
-        table[(i, 0)].get_text().set_weight('bold')
-
-    table.set_fontsize(12)
-    table.scale(1, 2)
-    plt.title('Table of scores', loc='left')
-
-    plt.axis('off')
-
-
-SCORE_PLOT_FUNCTION = {
-    'confusion_matrix': plot_confusion_matrix,
-    'roc_auc': plot_roc_curve
-}
+    perf_clf = {}
+    for k, v in perf.items():
+        if k in SCORE_PLOT_FUNCTION:
+            continue
+        perf_clf[k] = v
+    return plots.plot_table_score(perf_clf)
 
 
 def plot_score_function(perf, perf_prob, metric):
@@ -154,6 +149,8 @@ def compute_prob_performance(y_true, y_prob, metrics):
     """
     if type(metrics) != list:
         raise TypeError('metrics must be a list')
+    if type(y_prob) in [list, pd.Series, pd.DataFrame]:
+        y_prob = np.array(y_prob)
 
     for m in metrics:
         if not evaluation.score_function_need_prob(m):
@@ -300,12 +297,12 @@ def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metri
         # Header with scores
         if not validation:
             ax = fig.add_subplot(gs[0, :])
-            plot_table_score(perf)
+            plot_table_score_clf(perf)
         else:
             ax = fig.add_subplot(gs[0, 0])
-            plot_table_score(perf)
+            plot_table_score_clf(perf)
             ax = fig.add_subplot(gs[0, 1])
-            plot_table_score(perf_valid)
+            plot_table_score_clf(perf_valid)
 
         for m in metrics_plot:
             ax = fig.add_subplot(gs[r:r+1, c])

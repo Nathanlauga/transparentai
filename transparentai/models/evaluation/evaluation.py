@@ -149,14 +149,27 @@ def compute_metrics(y_true, y_pred, metrics, classification=True):
 
     if classification:
         y_prob = y_pred
-        y_pred = np.round(y_pred, 0)
+
+        if len(y_pred.shape) > 1:
+            n_classes = y_pred.shape[1]
+            y_pred = np.argmax(y_pred, axis=1)
+            # y_prob = y_prob[:,1]
+        else:
+            y_pred = np.round(y_pred, 0)
 
     res = {}
     for name, fn in metrics.items():
         need_prob = 'y_prob' in fn.__code__.co_varnames
 
         if need_prob & classification:
-            res[name] = fn(y_true, y_prob)
+            if (len(y_prob.shape) == 1) | ('_ov' in name):
+                res[name] = fn(y_true, y_prob)
+            elif len(y_prob.shape) == 2:
+                res[name] = fn(y_true, y_prob[:,1])
+            else:
+                res[name] = list()
+                for c in range(n_classes):
+                    res[name].append(fn(y_true, y_prob[:,c]))
         else:
             res[name] = fn(y_true, y_pred)
 
