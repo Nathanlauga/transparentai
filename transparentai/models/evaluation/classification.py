@@ -287,7 +287,7 @@ def roc_auc_ovo_weighted(y_true, y_prob, **args):
                                          multi_class='ovo', **args)
 
 
-def true_positives(y_true, y_pred, num_label=1):
+def true_positives(y_true, y_pred, pos_label=1):
     """Returns the number of true positives given a class number.
 
     .. math::
@@ -300,7 +300,7 @@ def true_positives(y_true, y_pred, num_label=1):
         True labels
     y_pred: array like
         Predicted labels
-    num_label: int (default 1)
+    pos_label: int (default 1)
         Label class number (if binary classification then it's 1)
 
     Returns
@@ -313,10 +313,10 @@ def true_positives(y_true, y_pred, num_label=1):
     if type(y_pred) == list:
         y_pred = np.array(y_pred)
 
-    return np.sum((y_true == num_label) & (y_pred == num_label))
+    return np.sum((y_true == pos_label) & (y_pred == pos_label))
 
 
-def false_positives(y_true, y_pred, num_label=1):
+def false_positives(y_true, y_pred, pos_label=1):
     """Returns the number of false positives given a class number.
 
     .. math::
@@ -329,7 +329,7 @@ def false_positives(y_true, y_pred, num_label=1):
         True labels
     y_pred: array like
         Predicted labels
-    num_label: int (default 1)
+    pos_label: int (default 1)
         Label class number (if binary classification then it's 1)
 
     Returns
@@ -342,10 +342,10 @@ def false_positives(y_true, y_pred, num_label=1):
     if type(y_pred) == list:
         y_pred = np.array(y_pred)
 
-    return np.sum((y_true != num_label) & (y_pred == num_label))
+    return np.sum((y_true != pos_label) & (y_pred == pos_label))
 
 
-def false_negatives(y_true, y_pred, num_label=1):
+def false_negatives(y_true, y_pred, pos_label=1):
     """Returns the number of false negatives given a class number.
 
     .. math::
@@ -358,7 +358,7 @@ def false_negatives(y_true, y_pred, num_label=1):
         True labels
     y_pred: array like
         Predicted labels
-    num_label: int (default 1)
+    pos_label: int (default 1)
         Label class number (if binary classification then it's 1)
 
     Returns
@@ -371,10 +371,10 @@ def false_negatives(y_true, y_pred, num_label=1):
     if type(y_pred) == list:
         y_pred = np.array(y_pred)
 
-    return np.sum((y_true == num_label) & (y_pred != num_label))
+    return np.sum((y_true == pos_label) & (y_pred != pos_label))
 
 
-def true_negatives(y_true, y_pred, num_label=1):
+def true_negatives(y_true, y_pred, pos_label=1):
     """Returns the number of true negatives given a class number.
 
     .. math::
@@ -387,7 +387,7 @@ def true_negatives(y_true, y_pred, num_label=1):
         True labels
     y_pred: array like
         Predicted labels
-    num_label: int (default 1)
+    pos_label: int (default 1)
         Label class number (if binary classification then it's 1)
 
     Returns
@@ -400,4 +400,24 @@ def true_negatives(y_true, y_pred, num_label=1):
     if type(y_pred) == list:
         y_pred = np.array(y_pred)
 
-    return np.sum((y_true != num_label) & (y_pred != num_label))
+    return np.sum((y_true != pos_label) & (y_pred != pos_label))
+
+def true_positive_rate(y_true, y_pred, pos_label=1):
+    """
+    """
+    TP = true_positives(y_true, y_pred, pos_label)
+    FN = false_negatives(y_true, y_pred, pos_label)
+    if TP + FN > 0:
+        return TP / (TP + FN)
+    else:
+        return 1.
+
+def false_positive_rate(y_true, y_pred, pos_label=1):
+    """
+    """
+    FP = false_positives(y_true, y_pred, pos_label)
+    TN = true_negatives(y_true, y_pred, pos_label)
+    if FP + TN > 0:
+        return FP / (FP + TN)
+    else:
+        return 1.

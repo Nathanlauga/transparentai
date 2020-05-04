@@ -122,3 +122,5 @@ archive/
 *.pkl
 notebooks/save/*
 notebooks/plots/*
+# dev/*
+notebooks/*
