@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import warnings
 
 
 def find_dtype(arr, len_sample=1000):
@@ -129,3 +130,53 @@ def format_describe_str(desc, max_len=20):
         res[k.ljust(15).title()] = e
 
     return [[k,e] for k,e in res.items()]
+
+
+def preprocess_metrics(input_metrics, metrics_dict):
+    """Preprocess the inputed metrics so that it maps
+    with the appropriate function in metrics_dict global variable.
+
+    input_metrics can have str or function. If it's a string
+    then it has to be a key from metrics_dict global variable dict
+
+    Returns a dictionnary with metric's name as key and 
+    metric function as value
+
+    Parameters
+    ----------
+    input_metrics: list
+        List of metrics to compute
+    metrics_dict: dict
+        Dictionnary to compare input_metrics with
+
+    Returns
+    -------
+    dict:
+        Dictionnary with metric's name as key and 
+        metric function as value
+
+    Raises
+    ------
+    TypeError:
+        input_metrics must be a list
+    """
+    if type(input_metrics) != list:
+        raise TypeError('input_metrics must be a list')
+
+    fn_dict = {}
+    cnt_custom = 1
+
+    for fn in input_metrics:
+        if type(fn) == str:
+            if fn in metrics_dict:
+                fn_dict[fn] = metrics_dict[fn]
+            else:
+                warnings.warn('%s function not found' % fn)
+        else:
+            fn_dict['custom_'+str(cnt_custom)] = fn
+            cnt_custom += 1
+
+    if len(fn_dict.keys()) == 0:
+        raise ValueError('No valid metrics found')
+
+    return fn_dict
