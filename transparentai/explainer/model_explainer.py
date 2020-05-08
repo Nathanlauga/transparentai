@@ -16,7 +16,7 @@ class ModelExplainer():
 
 
     Example
-    -------
+    =======
 
     For binary classification :
 

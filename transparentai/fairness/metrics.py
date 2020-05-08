@@ -75,7 +75,7 @@ def base_rate(y, prot_attr, pos_label=1, privileged=True):
     return 1.
 
 
-def model_metrics_priv(metrics_fun, *args, privileged=True):
+def model_metrics_priv(metrics_fun, *args, privileged=None):
     """Computes a metric function 
     (e.g. transparentai.evaluation.classification.true_positive_rate)
     for a priviliged or unprivileged group 
@@ -84,7 +84,7 @@ def model_metrics_priv(metrics_fun, *args, privileged=True):
     ----------
     metrics_fun: function
         metrics function to compute
-    privileged: bool (default True)
+    privileged: bool (default None)
         Boolean prescribing whether to
         condition this metric on the `privileged_groups`, if `True`, or
         the `unprivileged_groups`, if `False`. Defaults to `None`
@@ -101,8 +101,9 @@ def model_metrics_priv(metrics_fun, *args, privileged=True):
     y_true = preprocess_y(y_true, pos_label)
     y_pred = preprocess_y(y_pred, pos_label)
 
-    y_true = y_true[prot_attr == int(privileged)]
-    y_pred = y_pred[prot_attr == int(privileged)]
+    if privileged is not None:
+        y_true = y_true[prot_attr == int(privileged)]
+        y_pred = y_pred[prot_attr == int(privileged)]
 
     return metrics_fun(y_true, y_pred)
 
