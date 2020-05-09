@@ -3,39 +3,37 @@
 
 .. automodule:: transparentai.fairness
 
-Base Bias Metric
-----------------------
+Fairness module
+---------------
 
-.. autoclass:: BiasMetric
+.. automodule:: transparentai.fairness.fairness
     :members:
 
-Dataset Bias Metric
-----------------------
 
-.. autoclass:: DatasetBiasMetric
-    :members:
+Fairness metrics
+----------------
 
-Model Bias Metric
-----------------------
+Statistical parity difference
+*****************************
 
-.. autoclass:: ModelBiasMetric
-    :members:
+.. autofunction:: transparentai.fairness.metrics.statistical_parity_difference
 
-Base Protected Attribute
-------------------------
+Disparate Impact
+****************
 
-.. autoclass:: ProtectedAttribute
-    :members:
+.. autofunction:: transparentai.fairness.metrics.disparate_impact
 
-Dataset Protected Attribute
----------------------------
+Equal opportunity difference
+****************************
 
-.. autoclass:: DatasetProtectedAttribute
-    :members:
+.. autofunction:: transparentai.fairness.metrics.equal_opportunity_difference
 
-Model Protected Attribute
--------------------------
+Average odds difference
+***********************
 
-.. autoclass:: ModelProtectedAttribute
-    :members:
+.. autofunction:: transparentai.fairness.metrics.average_odds_difference
 
+Theil Index
+****************
+
+.. autofunction:: transparentai.fairness.metrics.theil_index

@@ -111,6 +111,6 @@ def mean_gamma_deviance(y_true, y_pred, **args):
     More details here : `Mean Poisson, Gamma, and Tweedie deviances`_
 
     .. _sklearn.metrics.mean_gamma_deviance: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.mean_gamma_deviance.html#sklearn.metrics.mean_gamma_deviance
-   .. _Mean Poisson, Gamma, and Tweedie deviances: https://scikit-learn.org/stable/modules/model_evaluation.html#mean-tweedie-deviance
+    .. _Mean Poisson, Gamma, and Tweedie deviances: https://scikit-learn.org/stable/modules/model_evaluation.html#mean-tweedie-deviance
     """
     return sklearn.metrics.mean_gamma_deviance(y_true, y_pred, **args)

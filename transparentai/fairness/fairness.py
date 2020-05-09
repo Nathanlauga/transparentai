@@ -8,7 +8,11 @@ from ..fairness import metrics
 from ..datasets import variable
 
 __all__ = [
-    
+    'create_privilieged_df', 
+    'compute_fairness_metrics', 
+    'FAIRNESS_METRICS', 
+    'model_bias', 
+    'find_correlated_feature'
 ]
 
 FAIRNESS_METRICS = {
@@ -25,10 +29,11 @@ def create_privilieged_df(df, privileged_group):
     and whether the row is privileged (1) or not (0).
 
     example of a privileged_group dictionnary :
+
     >>> privileged_group = {
-    >>>     'gender':['Male'],                # privileged group is man for gender attribute
-    >>>     'age': lambda x: x > 30 & x < 55  # privileged group aged between 30 and 55 years old
-    >>> }
+         'gender':['Male'],                # privileged group is man for gender attribute
+         'age': lambda x: x > 30 & x < 55  # privileged group aged between 30 and 55 years old
+     }
 
     Parameters
     ----------
@@ -442,17 +447,17 @@ def model_bias(y_true, y_pred, df, privileged_group,
 def find_correlated_feature(df, privileged_group, corr_threshold=0.4):
     """Finds correlated feature with protected attribute set in the
     privileged_group argument.
-    
+
     This function is a helper to find out if protected attribute
     can be found in other features.
-    
+
     Returns a dictionnary with protected attributes name's 
     as key containing a dictionnary with metric's
     name as key and metric function's result as value.
-    
+
     Example
     =======
-    
+
     >>> from transparentai.datasets import load_adult
     >>> from transparentai import fairness
 
@@ -463,7 +468,7 @@ def find_correlated_feature(df, privileged_group, corr_threshold=0.4):
             'marital-status': lambda x: 'Married' in x,
             'race':['White']
         }
-        
+
     >>> fairness.find_correlated_feature(data, privileged_group, 
                                          corr_threshold=0.4)
     {'gender': {'marital-status': 0.4593,
@@ -473,7 +478,7 @@ def find_correlated_feature(df, privileged_group, corr_threshold=0.4):
       'gender': 0.4593,
       'income': 0.4482},
      'race': {'native-country': 0.4006}}
-     
+
 
     Parameters
     ----------
@@ -485,7 +490,7 @@ def find_correlated_feature(df, privileged_group, corr_threshold=0.4):
         returning a boolean corresponding to a privileged group
     corr_threshold: float (default 0.4)
         Threshold for which features are considered to be correlated
-        
+
     Returns
     -------
     dict:
@@ -495,13 +500,13 @@ def find_correlated_feature(df, privileged_group, corr_threshold=0.4):
     """
     privileged_df = create_privilieged_df(df, privileged_group)
     corr_df = variable.compute_correlation(df)
-        
+
     res = {}
     for attr, values in privileged_df.iteritems():
         cond = corr_df[attr].abs() > corr_threshold
         corr_feats = corr_df[attr][cond].round(4).to_dict()
         del corr_feats[attr]
-        
+
         res[attr] = corr_feats
-        
+
     return res

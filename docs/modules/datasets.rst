@@ -3,10 +3,13 @@
 
 .. automodule:: transparentai.datasets
 
-Structured Dataset
+Variable submodule
 ----------------------
 
-.. autoclass:: StructuredDataset
+.. automodule:: transparentai.datasets.variable.variable
+    :members:
+
+.. automodule:: transparentai.datasets.variable.correlation
     :members:
 
 Preformated datasets

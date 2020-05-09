@@ -127,7 +127,7 @@ def precision(y_true, y_pred, **args):
 
     More details here : `Precision, recall and F-measures`_
 
-    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
+    .. _sklearn.metrics.precision_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
     .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
     """
     return sklearn.metrics.precision_score(y_true, y_pred, **args)
@@ -140,7 +140,7 @@ def precision_micro(y_true, y_pred, **args):
 
     More details here : `Precision, recall and F-measures`_
 
-    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
+    .. _sklearn.metrics.precision_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.precision_score.html#sklearn.metrics.precision_score
     .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
     """
     return sklearn.metrics.precision_score(y_true, y_pred, average='micro', **args)
@@ -151,7 +151,7 @@ def recall(y_true, y_pred, **args):
 
     More details here : `Precision, recall and F-measures`_
 
-    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
+    .. _sklearn.metrics.recall_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
     .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
     """
     return sklearn.metrics.recall_score(y_true, y_pred, **args)
@@ -164,7 +164,7 @@ def recall_micro(y_true, y_pred, **args):
 
     More details here : `Precision, recall and F-measures`_
 
-    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
+    .. _sklearn.metrics.recall_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.recall_score.html#sklearn.metrics.recall_score
     .. _Precision, recall and F-measures: https://scikit-learn.org/stable/modules/model_evaluation.html#precision-recall-f-measure-metrics
     """
     return sklearn.metrics.recall_score(y_true, y_pred, average='micro', **args)
@@ -175,7 +175,7 @@ def jaccard(y_true, y_pred, **args):
 
     More details here : `Jaccard similarity coefficient score`_
 
-    .. _sklearn.metrics.function: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.jaccard_score.html#sklearn.metrics.jaccard_score
+    .. _sklearn.metrics.jaccard_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.jaccard_score.html#sklearn.metrics.jaccard_score
     .. _Jaccard similarity coefficient score: https://scikit-learn.org/stable/modules/model_evaluation.html#jaccard-similarity-score
     """
     return sklearn.metrics.jaccard_score(y_true, y_pred, **args)
@@ -221,7 +221,6 @@ def roc_auc(y_true, y_prob, **args):
 
     More details here : `Receiver operating characteristic (ROC)`_
 
-    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
     .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
     """
     return sklearn.metrics.roc_auc_score(y_true, y_prob, **args)
@@ -235,7 +234,6 @@ def roc_auc_ovr(y_true, y_prob, **args):
 
     More details here : `Receiver operating characteristic (ROC)`_
 
-    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
     .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
     """
     return sklearn.metrics.roc_auc_score(y_true, y_prob, multi_class='ovr', **args)
@@ -249,7 +247,6 @@ def roc_auc_ovo(y_true, y_prob, **args):
 
     More details here : `Receiver operating characteristic (ROC)`_
 
-    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
     .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
     """
     return sklearn.metrics.roc_auc_score(y_true, y_prob, multi_class='ovo', **args)
@@ -263,7 +260,6 @@ def roc_auc_ovr_weighted(y_true, y_prob, **args):
 
     More details here : `Receiver operating characteristic (ROC)`_
 
-    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
     .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
     """
     return sklearn.metrics.roc_auc_score(y_true, y_prob,
@@ -279,7 +275,6 @@ def roc_auc_ovo_weighted(y_true, y_prob, **args):
 
     More details here : `Receiver operating characteristic (ROC)`_
 
-    .. _sklearn.metrics.roc_auc_score: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.roc_auc_score.html#sklearn.metrics.roc_auc_score
     .. _Receiver operating characteristic (ROC): https://scikit-learn.org/stable/modules/model_evaluation.html#roc-metrics
     """
     return sklearn.metrics.roc_auc_score(y_true, y_prob,

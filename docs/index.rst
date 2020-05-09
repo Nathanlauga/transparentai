@@ -30,14 +30,11 @@ Install the library with pypi :
    :maxdepth: 3
    :caption: Modules
 
-   modules/start
    modules/datasets
    modules/fairness
-   modules/explainer
    modules/models
-   modules/monitoring
-   modules/plots
    modules/utils
+   modules/plots
 
 Indices and tables
 ==================

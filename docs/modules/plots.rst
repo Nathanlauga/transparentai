@@ -10,24 +10,31 @@ Common plots functions
     :members:
 
 
-Datasets plots functions
-------------------------
+Datasets variable plots functions
+---------------------------------
 
-.. automodule:: transparentai.datasets.datasets_plots
+.. automodule:: transparentai.datasets.variable.variable_plots
     :members:
 
 
-Models plots functions
-------------------------
+Classification plots functions
+------------------------------
 
-.. automodule:: transparentai.models.models_plots
+.. automodule:: transparentai.models.classification.classification_plots
+    :members:
+
+
+Regression plots functions
+--------------------------
+
+.. automodule:: transparentai.models.regression.regression_plots
     :members:
 
 
 Explainer plots functions
 -------------------------
 
-.. automodule:: transparentai.explainer.explainer_plots
+.. automodule:: transparentai.models.explainers.explainer_plots
     :members:
 
 
@@ -37,11 +44,5 @@ Fairness plots functions
 .. automodule:: transparentai.fairness.fairness_plots
     :members:
 
-
-Monitoring plots functions
---------------------------
-
-.. automodule:: transparentai.monitoring.monitoring_plots
-    :members:
 
 

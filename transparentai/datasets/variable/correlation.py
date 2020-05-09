@@ -207,7 +207,10 @@ def compute_correlation(df, nrows=None, max_cat_val=100):
     - categorical to categorical (using Cramers V & Chi square)
     - numerical to categorical (discrete) (using Point Biserial)
 
-    /!\ ==== Caution ==== /!\
+    .. raw:: html
+        
+        <b>/!\ ==== Caution ==== /!\\</b>
+
     This matrix has a default : the cramers_v_corr is scale from 0 to 1, but 
     the others are from to -1 to 1. Be sure to understand this.
 

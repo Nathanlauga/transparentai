@@ -5,6 +5,10 @@ import warnings
 
 from transparentai import utils
 
+__all__ = [
+    'compute_metrics'
+]
+
 # Inspired from https://scikit-learn.org/stable/modules/model_evaluation.html
 EVALUATION_METRICS = {
     # CLASSIFICATION METRICS
@@ -23,13 +27,13 @@ EVALUATION_METRICS = {
     'recall': recall,
     'recall_micro': recall_micro,
     'TPR': true_positive_rate,
-    'true_positive_rate':true_positive_rate,
-    'sensitivity':true_positive_rate,
-    'FPR':false_positive_rate,
-    'false_positive_rate':false_positive_rate,
+    'true_positive_rate': true_positive_rate,
+    'sensitivity': true_positive_rate,
+    'FPR': false_positive_rate,
+    'false_positive_rate': false_positive_rate,
     'jaccard': jaccard,
     'matthews_corrcoef': matthews_corrcoef,
-    'roc_curve':roc_curve,
+    'roc_curve': roc_curve,
     'roc_auc': roc_auc,
     'roc_auc_ovr': roc_auc_ovr,
     'roc_auc_ovo': roc_auc_ovo,
@@ -60,57 +64,11 @@ EVALUATION_METRICS = {
     'mean_gamma_deviance': mean_gamma_deviance
 }
 
+
 def score_function_need_prob(fn):
     """
     """
     return 'y_prob' in EVALUATION_METRICS[fn].__code__.co_varnames
-
-# def preprocess_metrics(input_metrics):
-#     """Preprocess the inputed metrics so that it maps
-#     with the appropriate function in METRICS global variable.
-
-#     input_metrics can have str or function. If it's a string
-#     then it has to be a key from METRICS global variable dict
-
-#     Returns a dictionnary with metric's name as key and 
-#     metric function as value
-
-#     Parameters
-#     ----------
-#     input_metrics: list
-#         List of metrics to compute
-
-#     Returns
-#     -------
-#     dict:
-#         Dictionnary with metric's name as key and 
-#         metric function as value
-
-#     Raises
-#     ------
-#     TypeError:
-#         input_metrics must be a list
-#     """
-#     if type(input_metrics) != list:
-#         raise TypeError('input_metrics must be a list')
-
-#     fn_dict = {}
-#     cnt_custom = 1
-
-#     for fn in input_metrics:
-#         if type(fn) == str:
-#             if fn in METRICS:
-#                 fn_dict[fn] = METRICS[fn]
-#             else:
-#                 warnings.warn('%s function not found' % fn)
-#         else:
-#             fn_dict['custom_'+str(cnt_custom)] = fn
-#             cnt_custom += 1
-
-#     if len(fn_dict.keys()) == 0:
-#         raise ValueError('No valid metrics found')
-
-#     return fn_dict
 
 
 def compute_metrics(y_true, y_pred, metrics, classification=True):
@@ -152,9 +110,9 @@ def compute_metrics(y_true, y_pred, metrics, classification=True):
     if type(y_pred) == list:
         y_pred = np.array(y_pred)
 
-    metrics = utils.preprocess_metrics(input_metrics=metrics, 
+    metrics = utils.preprocess_metrics(input_metrics=metrics,
                                        metrics_dict=EVALUATION_METRICS)
-                                       
+
     if classification:
         y_prob = y_pred
 
@@ -172,11 +130,11 @@ def compute_metrics(y_true, y_pred, metrics, classification=True):
             if (len(y_prob.shape) == 1) | ('_ov' in name):
                 res[name] = fn(y_true, y_prob)
             elif len(y_prob.shape) == 2:
-                res[name] = fn(y_true, y_prob[:,1])
+                res[name] = fn(y_true, y_prob[:, 1])
             else:
                 res[name] = list()
                 for c in range(n_classes):
-                    res[name].append(fn(y_true, y_prob[:,c]))
+                    res[name].append(fn(y_true, y_prob[:, c]))
         else:
             res[name] = fn(y_true, y_pred)
 

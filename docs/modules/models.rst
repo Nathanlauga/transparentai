@@ -3,22 +3,31 @@
 
 .. automodule:: transparentai.models
 
-Base Model
-----------------------
 
-.. autoclass:: BaseModel
+Evaluation submodule
+--------------------
+
+.. automodule:: transparentai.models.evaluation.evaluation
     :members:
 
-Classification Model
+
+Classification metrics
 ----------------------
 
-.. autoclass:: ClassificationModel
+.. automodule:: transparentai.models.evaluation.classification
     :members:
 
-Regression Model
+Regression metrics
 ----------------------
 
-.. autoclass:: RegressionModel
+.. automodule:: transparentai.models.evaluation.regression
+    :members:
+
+
+Model Explainer
+----------------------
+
+.. autoclass:: transparentai.models.explainers.ModelExplainer
     :members:
 
 

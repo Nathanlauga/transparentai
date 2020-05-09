@@ -1,6 +1,14 @@
 from transparentai.models import evaluation
 import numpy as np
 
+__all__ = [
+    'average_odds_difference',
+    'disparate_impact',
+    'equal_opportunity_difference',
+    'statistical_parity_difference',
+    'theil_index'
+]
+
 
 def preprocess_y(y, pos_label):
     """Preprocess Y prediction if it's probabilities.
@@ -178,12 +186,12 @@ def statistical_parity_difference(y, prot_attr, pos_label=1):
 
     .. math::
 
-       Pr(\hat{Y} = v | D = \text{unprivileged})
-       - Pr(\hat{Y} = v | D = \text{privileged})
+       Pr(\\hat{Y} = v | D = \\text{unprivileged})
+       - Pr(\\hat{Y} = v | D = \\text{privileged})
 
-    code source inspired from aif360_
+    code source inspired from `aif360 statistical_parity_difference`_
 
-    .. _aif360: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.statistical_parity_difference.html?highlight=Statistical%20Parity%20Difference#aif360.sklearn.metrics.statistical_parity_difference
+    .. _aif360 statistical_parity_difference: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.statistical_parity_difference.html?highlight=Statistical%20Parity%20Difference#aif360.sklearn.metrics.statistical_parity_difference
 
     Parameters
     ----------
@@ -227,12 +235,12 @@ def disparate_impact(y, prot_attr, pos_label=1):
 
     .. math::
 
-       \frac{Pr(\hat{Y} = v | D = \text{unprivileged})}
-       {Pr(\hat{Y} = v | D = \text{privileged})}
+       \\frac{Pr(\\hat{Y} = v | D = \\text{unprivileged})}
+       {Pr(\\hat{Y} = v | D = \\text{privileged})}
 
-    code source inspired from aif360_
+    code source inspired from `aif360 disparate_impact`_ 
 
-    .. _aif360: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.disparate_impact_ratio.html?highlight=Disparate%20Impact#aif360.sklearn.metrics.disparate_impact_ratio
+    .. _aif360 disparate_impact: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.disparate_impact_ratio.html?highlight=Disparate%20Impact#aif360.sklearn.metrics.disparate_impact_ratio
 
     Parameters
     ----------
@@ -277,11 +285,11 @@ def equal_opportunity_difference(y_true, y_pred, prot_attr, pos_label=1):
 
     Fairness for this metric is between -0.1 and 0.1
 
-    :math:`TPR_{D = \text{unprivileged}} - TPR_{D = \text{privileged}}`
+    :math:`TPR_{D = \\text{unprivileged}} - TPR_{D = \\text{privileged}}`
 
-    code source from aif360_
+    code source from `aif360 equal_opportunity_difference`_
 
-    .. _aif360: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.equal_opportunity_difference.html?highlight=Equal%20Opportunity%20Difference
+    .. _aif360 equal_opportunity_difference: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.equal_opportunity_difference.html?highlight=Equal%20Opportunity%20Difference
 
     Parameters
     ----------
@@ -317,7 +325,11 @@ def equal_opportunity_difference(y_true, y_pred, prot_attr, pos_label=1):
 
 
 def average_odds_difference(y_true, y_pred, prot_attr, pos_label=1):
-    """Computes the average odds difference 
+    """    
+    Average odds difference 
+    ***********************
+
+    Computes the average odds difference 
     for a protected attribute and a specified label 
 
     Computed as average difference of false positive rate 
@@ -333,14 +345,14 @@ def average_odds_difference(y_true, y_pred, prot_attr, pos_label=1):
 
     .. math::
 
-       \frac{1}{2}\left[|FPR_{D = \text{unprivileged}} - FPR_{D = \text{privileged}}|
-       + |TPR_{D = \text{unprivileged}} - TPR_{D = \text{privileged}}|\right]
+       \\frac{1}{2}\\left[|FPR_{D = \\text{unprivileged}} - FPR_{D = \\text{privileged}}|
+       + |TPR_{D = \\text{unprivileged}} - TPR_{D = \\text{privileged}}|\\right]
 
     A value of 0 indicates equality of odds.
 
-    code source from aif360_
+    code source from `aif360 average_odds_difference`_
 
-    .. _aif360: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.average_odds_difference.html?highlight=Average%20Odds%20Difference#aif360.sklearn.metrics.average_odds_difference
+    .. _aif360 average_odds_difference: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.sklearn.metrics.average_odds_difference.html?highlight=Average%20Odds%20Difference#aif360.sklearn.metrics.average_odds_difference
 
     Parameters
     ----------
@@ -390,15 +402,15 @@ def theil_index(y_true, y_pred, prot_attr, pos_label=1):
 
     Fairness is indicated by lower scores, higher scores are problematic
 
-    With :math:`b_i = \hat{y}_i - y_i + 1`:
+    With :math:`b_i = \\hat{y}_i - y_i + 1`:
 
     .. math:: 
 
-        \frac{1}{n}\sum_{i=1}^n\frac{b_{i}}{\mu}\ln\frac{b_{i}}{\mu}
+        \\frac{1}{n}\sum_{i=1}^n\\frac{b_{i}}{\mu}\ln\\frac{b_{i}}{\mu}
 
-    code source from aif360_
+    code source from `aif360 theil_index`_
 
-    .. _aif360: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.metrics.ClassificationMetric.html?highlight=Theil%20Index#aif360.metrics.ClassificationMetric.generalized_entropy_index
+    .. _aif360 theil_index: https://aif360.readthedocs.io/en/latest/modules/generated/aif360.metrics.ClassificationMetric.html?highlight=Theil%20Index#aif360.metrics.ClassificationMetric.generalized_entropy_index
 
     Parameters
     ----------
