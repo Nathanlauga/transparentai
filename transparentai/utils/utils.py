@@ -243,3 +243,7 @@ def encode_categorical_vars(df):
         encoders[feature] = le
 
     return data_encoded, encoders
+
+
+def object_has_function(obj, fn):
+    return bool(getattr(obj, fn, None))
