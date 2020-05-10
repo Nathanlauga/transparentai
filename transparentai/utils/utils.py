@@ -4,6 +4,7 @@ import warnings
 
 from sklearn.preprocessing import LabelEncoder
 
+
 def find_dtype(arr, len_sample=1000):
     """Find the general dtype of an array.
     Three possible dtypes :
@@ -33,19 +34,22 @@ def find_dtype(arr, len_sample=1000):
     if not is_array_like(arr):
         raise TypeError('arr is not an array like')
 
-    if type(arr) == list:
-        arr = np.array(arr)
-    if type(arr) in [pd.Series, pd.DataFrame]:
-        arr = arr.to_numpy()
+    if type(arr) in [list, np.ndarray]:
+        arr = pd.DataFrame(arr)
+    elif type(arr) == pd.Series:
+        arr = arr.to_frame()
 
     n = len_sample if len(arr) > len_sample else len(arr)
-    arr = arr[:n]
+    arr = arr.iloc[:n]
 
-    try:
-        arr.astype(int)
+    is_number = arr.select_dtypes('number').shape[1] > 0
+    is_datetime = arr.select_dtypes(['datetime', 'datetimetz']).shape[1] > 0
+
+    if is_number:
         return 'number'
-    except:
-        pass
+
+    elif is_datetime:
+        return 'datetime'
 
     try:
         pd.to_datetime(arr)
