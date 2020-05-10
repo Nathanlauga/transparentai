@@ -33,6 +33,7 @@ Install the library with pypi :
    modules/datasets
    modules/fairness
    modules/models
+   modules/monitoring
    modules/utils
    modules/plots
 

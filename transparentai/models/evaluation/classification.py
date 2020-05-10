@@ -287,7 +287,7 @@ def true_positives(y_true, y_pred, pos_label=1):
 
     .. math::
 
-        TN = \sum_{i}^{n} (y_i == 1) & (\hat{y}_i == 1)
+        TP = \sum_{i}^{n} (y_i = 1) \& (\hat{y}_i = 1)
 
     Parameters
     ----------
@@ -316,7 +316,7 @@ def false_positives(y_true, y_pred, pos_label=1):
 
     .. math::
 
-        TN = \sum_{i}^{n} (y_i != 1) & (\hat{y}_i == 1)
+        FP = \sum_{i}^{n} (y_i \\ne 1) \& (\hat{y}_i = 1)
 
     Parameters
     ----------
@@ -345,7 +345,7 @@ def false_negatives(y_true, y_pred, pos_label=1):
 
     .. math::
 
-        TN = \sum_{i}^{n} (y_i == 1) & (\hat{y}_i != 1)
+        FN = \\sum_{i}^n (y_i = 1) \& (\hat{y}_i \\ne 1)
 
     Parameters
     ----------
@@ -374,7 +374,7 @@ def true_negatives(y_true, y_pred, pos_label=1):
 
     .. math::
 
-        TN = \sum_{i}^{n} (y_i != 1) & (\hat{y}_i != 1)
+        TN = \sum_{i}^{n} (y_i \\ne 1) \& (\hat{y}_i \\ne 1)
 
     Parameters
     ----------

@@ -44,5 +44,11 @@ Fairness plots functions
 .. automodule:: transparentai.fairness.fairness_plots
     :members:
 
+Monitoring plots functions
+--------------------------
+
+.. automodule:: transparentai.monitoring.monitoring_plots
+    :members:
+
 
 
