@@ -1,5 +1,21 @@
 import matplotlib.pyplot as plt
 
+def plot_or_figure(fig, plot=True):
+    """
+    
+    Parameters
+    ----------
+    fig: matplotlib.figure.Figure
+        figure to plot or to returns
+    plot: bool (default True)
+        Whether you want to plot a figure or 
+        return it
+    """
+    if plot:
+        fig.show()
+    else:
+        return fig
+
 def plot_table_score(perf):
     """Insert a table of scores on a
     matplotlib graphic

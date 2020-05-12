@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from transparentai import utils
+from transparentai import plots
 from .variable import describe
 
 
@@ -157,7 +158,7 @@ def plot_object_var(ax, arr, top=10, color=DEFAULT_COLOR, label=None, alpha=1.):
     bar = ax.bar(x, y, color=color, label=label, alpha=alpha)
 
 
-def plot_variable(arr, legend=None, colors=None, xlog=False, ylog=False):
+def plot_variable(arr, legend=None, colors=None, xlog=False, ylog=False, **kwargs):
     """Plots a graph with two parts given an array.
     First part is the plot custom plot depending on the array dtype.
     Second part is the describe statistics table.
@@ -280,4 +281,5 @@ def plot_variable(arr, legend=None, colors=None, xlog=False, ylog=False):
     desc_formated = utils.format_describe_str(desc)
     plot_table_describe(ax2, desc_formated)
 
-    plt.show()
+    # plt.show()
+    return plots.plot_or_figure(fig, **kwargs)

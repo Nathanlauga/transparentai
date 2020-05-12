@@ -214,7 +214,7 @@ def preprocess_scores(y_pred):
     return y_pred, y_prob, n_classes
 
 
-def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metrics=None):
+def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metrics=None, **kwargs):
     """Plots the performance of a classifier. 
     You can use the metrics of your choice with the metrics argument
 
@@ -323,3 +323,4 @@ def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metri
             title += ' train set (left) and test set (right)'
         fig.suptitle(title, fontsize=18)
         plt.show()
+        return plots.plot_or_figure(fig, **kwargs)

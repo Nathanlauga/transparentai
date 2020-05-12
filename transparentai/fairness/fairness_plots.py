@@ -3,6 +3,7 @@ from matplotlib.patches import Rectangle
 import textwrap
 
 from ..fairness import fairness
+from transparentai import plots
 
 
 def get_protected_attr_values(attr, df, privileged_group, privileged=True):
@@ -226,7 +227,7 @@ def plot_fairness_text(ax, score, metric):
 
 
 def plot_bias(y_true, y_pred, df, privileged_group, pos_label=1,
-              regr_split=None, with_text=True):
+              regr_split=None, with_text=True, **kwargs):
     """Plots the fairness metrics for protected attributes
     refered in the privileged_group argument.
 
@@ -335,4 +336,5 @@ def plot_bias(y_true, y_pred, df, privileged_group, pos_label=1,
 
         row += 3+int(with_text)
 
-    plt.show()
+    # plt.show()
+    return plots.plot_or_figure(fig, **kwargs)

@@ -36,7 +36,7 @@ def plot_error_distribution(errors):
     plt.title('Error distribution (bins=50)')
 
 
-def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metrics=None):
+def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metrics=None, **kwargs):
     """Plots the performance of a regressor. 
     You can use the metrics of your choice with the metrics argument
 
@@ -105,4 +105,5 @@ def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metri
         title += ' train set (left) and test set (right)'
     fig.suptitle(title, fontsize=18)
 
-    plt.show()
+    # plt.show()
+    return plots.plot_or_figure(fig, **kwargs)

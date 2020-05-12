@@ -2,11 +2,12 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+from transparentai import plots
 from ..monitoring import monitoring
 
 
 def plot_monitoring(y_true, y_pred, timestamp=None, interval='month',
-                    metrics=None, classification=False):
+                    metrics=None, classification=False, **kwargs):
     """Plots model performance over a timestamp array which represent
     the date or timestamp of the prediction.
 
@@ -73,4 +74,5 @@ def plot_monitoring(y_true, y_pred, timestamp=None, interval='month',
         ax.set_title(name)
 
     fig.suptitle('Model performance', fontsize=16)
-    plt.show()
+    # plt.show()
+    return plots.plot_or_figure(fig, **kwargs)

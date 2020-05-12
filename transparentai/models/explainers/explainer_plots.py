@@ -3,8 +3,9 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from transparentai import plots
 
-def plot_global_feature_influence(feat_importance, color='#3498db'):
+def plot_global_feature_influence(feat_importance, color='#3498db', **kwargs):
     """
     Display global feature influence sorted.
     
@@ -37,10 +38,11 @@ def plot_global_feature_influence(feat_importance, color='#3498db'):
     plt.ylabel('Features')
     plt.xlabel('Global value influence')
     
-    plt.show()   
+    # plt.show()   
+    return plots.plot_or_figure(fig, **kwargs)
            
         
-def plot_local_feature_influence(feat_importance, base_value, pred):
+def plot_local_feature_influence(feat_importance, base_value, pred, **kwargs):
     """
     Display local feature influence sorted for a specific
     prediction.
@@ -102,4 +104,5 @@ def plot_local_feature_influence(feat_importance, base_value, pred):
     ax.legend([line_based, line_pred, green_patch, red_patch], 
               ['Based value', 'Prediction', 'Positive influence', 'Negative influence'])
     
-    plt.show()
+    # plt.show()
+    return plots.plot_or_figure(fig, **kwargs)

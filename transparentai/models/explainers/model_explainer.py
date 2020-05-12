@@ -476,7 +476,7 @@ class ModelExplainer():
         return feat_importance_filtered.sort_values()
     
         
-    def _plot_local_explain(self, X, values, base_value, top=None, num_class=1):
+    def _plot_local_explain(self, X, values, base_value, top=None, num_class=1, **kwargs):
         """
         Display local feature influence sorted for a specific
         prediction.
@@ -500,10 +500,10 @@ class ModelExplainer():
         values = self.format_feature_importance(values, top=top)
         pred = self._get_predictions(X, num_class=num_class)
 
-        plots.plot_local_feature_influence(
-            feat_importance=values, base_value=base_value, pred=pred)
+        return plots.plot_local_feature_influence(
+            feat_importance=values, base_value=base_value, pred=pred, **kwargs)
 
-    def plot_local_explain(self, X, feature_classes=None, top=None, num_class=None):
+    def plot_local_explain(self, X, feature_classes=None, top=None, num_class=None, **kwargs):
         """
         Display a plot for a local prediction based on X set.
 
@@ -528,7 +528,7 @@ class ModelExplainer():
         base_value = self._get_base_value()
 
         if not self.multi_label:
-            self._plot_local_explain(X, values, base_value, top=top)
+            return self._plot_local_explain(X, values, base_value, top=top)
         else:
             if num_class is None:
                 num_class = self.model.predict([X])[0]
@@ -536,9 +536,9 @@ class ModelExplainer():
                 if i != num_class:
                     continue
                 # print(f'Plot for the {i}th class probability.')
-                self._plot_local_explain(X, values[i], base_val, top=top, num_class=i)
+                self._plot_local_explain(X, values[i], base_val, top=top, num_class=i, **kwargs)
 
-    def plot_global_explain(self, X=None, nsamples=None, top=None, color='#3498db'):
+    def plot_global_explain(self, X=None, nsamples=None, top=None, color='#3498db', **kwargs):
         """
         Display a plot for model global explanation based on 
         a sample X.
@@ -571,7 +571,7 @@ class ModelExplainer():
         values = self.global_explain
         if not self.multi_label:
             values = self.format_feature_importance(values, top=top)
-            plots.plot_global_feature_influence(feat_importance=values, color=color)
+            return plots.plot_global_feature_influence(feat_importance=values, color=color, **kwargs)
         else:
             res = list()
             for i in range(0, len(values)):
@@ -582,5 +582,5 @@ class ModelExplainer():
             if not ((type(color) == list) & (len(color) == len(values))):
                 color = sns.color_palette("colorblind", len(values))
                 
-            plots.plot_global_feature_influence(feat_importance=res, color=color)
+            return plots.plot_global_feature_influence(feat_importance=res, color=color, **kwargs)
           
