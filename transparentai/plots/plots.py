@@ -10,6 +10,11 @@ def plot_or_figure(fig, plot=True):
     plot: bool (default True)
         Whether you want to plot a figure or 
         return it
+
+    Returns
+    -------
+    matplotlib.figure.Figure
+        Figure
     """
     if plot:
         fig.show()

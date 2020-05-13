@@ -232,7 +232,7 @@ def plot_performance(y_true, y_pred, y_true_valid=None, y_pred_valid=None, metri
     y_pred_valid: array like (1D or 2D) (default None)
         if 1D array Predicted labels, 
         if 2D array probabilities (returns of a predict_proba function)
-    metrics: list
+    metrics: list (default None)
         List of metrics to plots
 
     Raises
