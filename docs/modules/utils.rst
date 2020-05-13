@@ -9,6 +9,12 @@ External functions
 .. automodule:: transparentai.utils.external
     :members:
 
+Reports functions
+------------------
+
+.. automodule:: transparentai.utils.reports
+    :members:
+
 Utility functions
 -----------------
 
