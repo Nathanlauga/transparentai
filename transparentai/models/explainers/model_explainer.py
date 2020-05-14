@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import shap
+import ipywidgets as widgets
+import warnings
 
 import seaborn as sns
 
@@ -195,6 +197,7 @@ class ModelExplainer():
             X = X.to_frame()
         
         self.feature_names = X.columns.values.tolist()
+        self.kwargs_dict = self._generate_kwargs_interactive_dict(X)
 
         # Use kmeans to sample dataset to 50 'representative' rows
         # to precompute the explainer.
@@ -240,6 +243,39 @@ class ModelExplainer():
 
         return explainer
 
+    def _generate_kwargs_interactive_dict(self, X):
+        """
+        """
+        X = np.array(X)
+
+        kwargs = {}
+        for i,f in enumerate(self.feature_names):
+            values = X[:,i]
+            kwargs[f] = {}
+            
+            if values.dtype in [int,np.int16,np.int32,np.int64]:
+                widget = widgets.IntText
+            elif values.dtype in [float,np.float16,np.float32,np.float64]:
+                widget = widgets.FloatText
+            else:
+                widget = widgets.Text
+            
+            kwargs[f]['widget'] = widget
+
+        return kwargs
+
+    def _get_kwargs_interactive(self, X):
+        """
+        """
+        kwargs = {}
+        style = {'description_width': 'initial'}
+
+        for i,f in enumerate(self.feature_names):
+            widget = self.kwargs_dict[f]['widget']
+            kwargs[f] = widget(value=X[i], description=f, style=style)
+            
+        return kwargs
+    
     def compute_shap_values(self, X):
         """Computes the shap values using explainer attribute.
         
@@ -499,9 +535,10 @@ class ModelExplainer():
         """
         values = self.format_feature_importance(values, top=top)
         pred = self._get_predictions(X, num_class=num_class)
+        pred_class = self.model.predict([X])[0]
 
         return plots.plot_local_feature_influence(
-            feat_importance=values, base_value=base_value, pred=pred, **kwargs)
+            feat_importance=values, base_value=base_value, pred=pred, pred_class=pred_class, **kwargs)
 
     def plot_local_explain(self, X, feature_classes=None, top=None, num_class=None, **kwargs):
         """
@@ -537,7 +574,69 @@ class ModelExplainer():
                     continue
                 # print(f'Plot for the {i}th class probability.')
                 self._plot_local_explain(X, values[i], base_val, top=top, num_class=i, **kwargs)
+                
+    
 
+    def plot_local_explain_interact(self, X, feature_classes=None, visible_feat=None,
+                                    top=None, num_class=None, **kwargs):
+        """
+        Display a plot for a local prediction based on X set.
+
+        Parameters
+        ----------
+        X: pd.DataFrame or np.array
+            Data to explain
+        feature_classes: dict
+            This dictionnary provides new values for categorical feature so
+            that the feature can be more interpretable.
+            dictionnary with features names as keys and for value
+            a dictionnary with key, value pair representing current value
+            and value to display.
+        num_class: int (default None)
+            Class number for which we want to see the explanation
+            if it's a binary classification then the value is 1
+            if None and it's a multi_label classifier then plots 
+            for each class
+        """                
+        base_value = self._get_base_value()
+        
+        def plots(**keywords):
+            x = X.copy()
+            x = np.array(x)
+            for k, v in keywords.items():
+                i = np.where(np.array(self.feature_names) == k)
+                x[i] = v
+        
+            values = self.explain_local_influence(x, feature_classes)
+            
+            if not self.multi_label:
+                return self._plot_local_explain(x, values, base_value, top=top, **kwargs)
+            else:
+                if num_class is None:
+                    num_c = self.model.predict([x])[0]
+                else:
+                    num_c = num_class
+                for i, base_val in enumerate(base_value):
+                    if i != num_c:
+                        continue
+                    # print(f'Plot for the {i}th class probability.')
+                    return self._plot_local_explain(x, values[i], base_val, top=top, num_class=i, **kwargs)
+        
+        args = self._get_kwargs_interactive(X)
+        
+        if visible_feat is not None:
+            new = {}
+            for feat in visible_feat:
+                if feat not in self.feature_names:
+                    warnings.warn('%s feature ignored because it is not in feature_names'%(feat))
+                    continue
+                new[feat] = args[feat]
+            args = new
+        
+        interactive_plot = widgets.interactive(plots, **args)
+        return interactive_plot
+                
+         
     def plot_global_explain(self, X=None, nsamples=None, top=None, color='#3498db', **kwargs):
         """
         Display a plot for model global explanation based on 

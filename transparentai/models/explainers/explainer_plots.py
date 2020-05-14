@@ -42,7 +42,7 @@ def plot_global_feature_influence(feat_importance, color='#3498db', **kwargs):
     return plots.plot_or_figure(fig, **kwargs)
            
         
-def plot_local_feature_influence(feat_importance, base_value, pred, **kwargs):
+def plot_local_feature_influence(feat_importance, base_value, pred, pred_class=None, **kwargs):
     """
     Display local feature influence sorted for a specific
     prediction.
@@ -95,7 +95,9 @@ def plot_local_feature_influence(feat_importance, base_value, pred, **kwargs):
     xlim0, xlim1 = ax.get_xlim()
     size = xlim1-xlim0
     ax.set_xlim(xlim0-size*0.001, xlim1+size*0.1)
-    plt.title('Feature importance (using Shap)')
+    title = 'Feature importance (using Shap)' 
+    title = title if pred_class is None else title + ' - Model output : %s'%str(pred_class)
+    plt.title(title)
     plt.ylabel('Features')
     plt.xlabel('Local value influence')
     
