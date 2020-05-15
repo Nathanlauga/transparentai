@@ -125,3 +125,8 @@ notebooks/plots/*
 # dev/*
 notebooks/*
 trust-ai/
+
+# Docker for package development
+Dockerfile
+docker_*
+docker/*
