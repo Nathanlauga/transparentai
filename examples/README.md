@@ -23,7 +23,7 @@ Examples
 
 ### <span id='check_packages_security'>Check if your Python's package are secure with `utils.check_packages_security`</span>
 
-- [Check Python packages security]("utils.check_packages_security\ example.ipynb")
+- [Check Python packages security](utils.check_packages_security example.ipynb)
 
 ----
 
