@@ -1,17 +1,40 @@
 # TransparentAI
-*A transparent AI from A to Z!*
+*Is my AI ethic ?*
+
+
+TransparentAI is a toolbox in Python to answer the question "Is my AI ethic ?" based on the European Commission requierements.
 
 [![Documentation](https://readthedocs.org/projects/transparentai/badge/?version=latest)](http://transparentai.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/transparentai.svg)](https://badge.fury.io/py/transparentai)
 
-This library is a toolbox so that you can create or inspect an AI on every step of the pipeline.
+## Why this tool ?
 
-This is a new tool so if you found any bugs or other kind of problems please do not hesitate to report them on the
-issues GitHub page from the library here : https://github.com/Nathanlauga/transparentai/issues.
+The research of ethic in the Artificial Intelligence field is a hot topic. More than 70 papers between 2016 and 2019 ([Algorithm Watch, 2019](https://algorithmwatch.org/en/project/ai-ethics-guidelines-global-inventory/)). But many papers just present the question of "What should be an ethic AI" not the "How to do it". In consequence, many developers become fustrated and still don't really know to do it in practive ([Peters, May 2019](https://medium.com/ethics-of-digital-experience/beyond-principles-a-process-for-responsible-tech-aefc921f7317)).
 
-![TransparentAI Pipeline](images/transparentai_pipeline.png)
+`TransparentAI` is an answer to this question. The philosophy is that, in coherence with the [Ethics Guidelines for Trustworthy AI](https://ec.europa.eu/futurium/en/ai-alliance-consultation) by the European Commission, you can find out easily (in Python) if **"your AI is ethic"** !
+
+**New tool :** This is a new tool so if you found any bugs or other kind of problems please do not hesitate to report them on the
+issues GitHub page from the library here : https://github.com/Nathanlauga/transparentai/issues. I hope you will enjoy this tool and help me to improve it!
 
 Documentation is available here : [API Documentation](https://transparentai.readthedocs.io/en/latest/).
+
+## Table of content
+
+1. [Installation](#installation)
+2. [Compatible model and data type](#)
+3. [Getting started](#)
+    - [Is my model biased ?](#)
+    - [How can I explain my model ?](#)
+    - [What's my model performance ?](#)
+    - [What is in my data ?](#)
+    - [How can I know is still good over time ?](#)
+    - [Is my model sustainable ?](#)
+    - [Do I use safe packages ?](#)
+4. [UE Commision requirements](#)
+5. [Contributing](#)
+6. [Credits and ressources](#)
+7. [Author](#)
+8. [License](#)
 
 ## Installation
 
@@ -28,223 +51,82 @@ cd transparentai
 python setup.py install
 ```
 
-## Library tools
+*****
 
-Supported objects:
+## Compatible model and data type
 
-| submodule   | object              | description                                                              |
-| ----------- | ------------------- | ------------------------------------------------------------------------ |
-| `datasets`  | StructuredDataset   | Can handle Structured dataset (tabular)                                  |
-| `models`    | ClassificationModel | Can handle classifier model with `predict` and `predict_proba` functions |
-| `models`    | RegressionModel     | Can handle regression model with a `predict` function                    |
-| `fairness`  | DatasetBiasMetric   | Can handle a dataset with a target column                                |
-| `fairness`  | ModelBiasMetric     | Can handle a dataset and predictions (Classification and regression)     |
-| `explainer` | ModelExplainer      | Can handle tree and linear model                                         |
+**Version 0.2** :
 
-## How to use it
+- Data : can only handle tabular dataset.
+- Model : can only handle classification and regression model.
 
-Take a look on the [Getting started](https://transparentai.readthedocs.io/en/latest/getting-started.html) page of the documenation or you can search specific use cases 
-in the [`notebooks/`](notebooks/) directory.
+*****
 
-Here is some example for the `StructuredDataset`, `DatasetBiasMetric`, `ClassificationModel` 
-and `ModelExplainer`. But I take a look on the links above, there are a lot more to see!
+## Getting started 
 
-### StructuredDataset
+Take a look on the [Getting started](https://transparentai.readthedocs.io/en/latest/getting-started.html) page of the documenation or you can search specific use cases in the [`examples/`](examples/) directory.
 
-Using the Adult dataset which is include in the library let's observe
-the data with some graphics.
+*****
 
-```
-from transparentai.datasets import StructuredDataset, load_adult
-adult = load_adult()
-```
+## UE Commision requirements
 
-Create the StructuredDataset object :
+The European Commission defined seven requirements that allow to make a trustworthy AI.
 
-```
-# target is not mandatory it just split data in the graphics for each target value
-dataset = StructuredDataset(df=adult, target='income')
-```
+These requirements are applicable to different stakeholders partaking in AI systems’ life cycle: developers, deployers and end-users, as well as the broader society. By developers, we refer to those who research, design and/or develop AI systems. By deployers, we refer to public or private organisations that use AI systems within their business processes and to offer products and services to others. End-users are those engaging with the AI system, directly or indirectly. Finally, the broader society encompasses all others that are directly or indirectly affected by AI systems. Different groups of stakeholders have different roles to play in ensuring that the requirements are met:
 
-Then you can use differents plotting functions to have a better
-understanding of the dataset.
+- Developers should implement and apply the requirements to design and development processes.
+- Deployers should ensure that the systems they use and the products and services they offer meet the requirements.
+- End-users and the broader society should be informed about these requirements and able to request that they are upheld.
 
-To start I recommend the following :
+The below list of requirements is non-exhaustive. 35 It includes systemic, individual and societal aspects:
 
-```
-dataset.plot_dataset_overview() # Shows an overview of the data
-dataset.plot_missing_values() # Plots missing values
-dataset.plot_variables() # Plots each variable, one by one
-dataset.plot_numeric_var_relation() # Plots each numeric var pair
-dataset.plot_cat_and_num_variables() # Plots each numeric and categorical var pair
-dataset.plot_correlations() # Plots correlations
-```
+1. **Human agency and oversight**:
+Including fundamental rights, human agency and human oversight
+2. **Technical robustness and safety**:
+Including resilience to attack and security, fall back plan and general safety, accuracy, reliability and reproducibility
+3. **Privacy and data governance**:
+Including respect for privacy, quality and integrity of data, and access to data
+4. **Transparency**:
+Including traceability, explainability and communication
+5. **Diversity, non-discrimination and fairness**:
+Including the avoidance of unfair bias, accessibility and universal design, and stakeholder participation
+6. **Societal and environmental wellbeing**: 
+Including sustainability and environmental friendliness, social impact, society and democracy
+7. **Accountability**: 
+Including auditability, minimisation and reporting of negative impact, trade-offs and redress.
 
-But if you want to see a particular variable or variable combination
-you can use the following line of codes :
+<div style='width=100%;text-align:center;'>
+<img src='images/en_7_requirements.png' width='440'>
+</div>
 
-```
-dataset.plot_one_categorical_variable(var='income')
-```
-![](docs/images/income_variable_plot.png)
+This table allows you to in details for each requirements and if it's possible how to control if the aspect is ethic with `TransparentAI`. Some aspects do not have technical implementation in this tool because it requires legal or other knowledge. If you want to understand the differents aspect and requirements you can read details in the [Ethics Guidelines for Trustworthy AI](https://ec.europa.eu/futurium/en/ai-alliance-consultation) paper.
 
-```
-dataset.plot_two_numeric_variables(var1='education-num', var2='hours-per-week', nrows=10000)
-```
+| UE requirements | Aspect | `TransparentAI` implementation |
+| ----------- | ------------- | ----------- |
+| **1. Human agency and oversight** | Fundamental rights | No technical implementation. |
+|                            | Human agency | No technical implementation. |
+|                            | Human oversight | [Control AI performance over time with `monitoring.monitor_model` or `monitoring.plot_monitoring`]() |
+| **2. Technical robustness and safety** | Resilience to attack and security | [Try different input scenario in the model to see how it handles it with `models.explainers.ModelExplainer`]() |
+|                            | Fallback plan and general safety | [Check if your Python's package are secure with `utils.check_packages_security`]() |
+|                            | Accuracy | [Validate your AI performance with `models.classification.plot_performance` or `models.regression.plot_performance`]() |
+|                            | Reliability and Reproducibility | No technical implementation. |
+| **3. Privacy and data governance** | Privacy and data protection | No technical implementation. |
+|                            | Quality and integrity of data | [Check if the variable is coherent in its distribution with `datasets.variable.plot_variable`]() |
+|                            | Access to data | No technical implementation. |
+| **4. Transparency** | Traceability | [Generate a performance validation report with `utils.reports.generate_validation_report`]() |
+|                            | Explainability | [Explain the local or global behavior of your model with `models.explainers.ModelExplainer`]()|
+|                            | Communication | No technical implementation. |
+| **5. Diversity, non-discrimination and fairness** | Avoidance of unfair bias |[Check if your AI is biased on protected attributes with `fairness.model_bias` or `fairness.plot_bias`]() |
+|                            | Accessibility and universal design | No technical implementation. |
+|                            | Stakeholder Participation | No technical implementation. |
+| **6. Societal and environmental well-being** | Sustainable and environmentally friendly AI | [Get the kWh value of the AI training with `utils.evaluate_kWh`]() |
+|                            | Social impact | [Check if your AI is biased on protected attributes with `fairness.model_bias` or `fairness.plot_bias`]() |
+| **7. Accountability** | Auditability | [Generate a performance validation report with `utils.reports.generate_validation_report`]() |
+|                            | Minimisation and reporting of negative impacts | No technical implementation. |
+|                            | Trade-offs | No technical implementation. |
+|                            | Redress | No technical implementation. |
 
-![](docs/images/education-num_hours-per-week_variable_jointplot.png)
-
-```
-dataset.plot_one_cat_and_num_variables(var1='relationship', var2='age')
-```
-
-![](docs/images/relationship_age_variable_boxplot.png)
-
-```
-dataset.plot_one_cat_and_num_variables(var1='income', var2='age')
-```
-
-![](docs/images/income_age_variable_boxplot.png)
-
-
-### DatasetBiasMetric
-
-Import DatasetBiasMetric class.
-
-```
-from transparentai.fairness import DatasetBiasMetric
-```
-
-Define privileged_groups
-
-```
-privileged_groups = {
-    'marital-status': ['Married-civ-spouse','Married-AF-spouse'],
-    'race': ['White'],
-    'gender': ['Male']
-}
-```
-
-Create the instance
-
-```
-dataset_bias = DatasetBiasMetric(dataset, privileged_groups, favorable_label='>50K')
-```
-
-Retrieve the bias metrics as a pandas DataFrame
-
-```
-dataset_bias.get_bias_metrics()
- 		                Disparate impact 	Statistical parity difference
-attr 	        index 		
-age category 	>50K 	0.257312 	        -0.222479
-marital-status 	>50K 	0.143299 	        -0.382106
-race 	        >50K 	0.600592 	        -0.101445
-gender 	        >50K 	0.359655 	        -0.194516
-```
-
-Plot one attribute bias.
-
-```
-dataset_bias.plot_bias(attr='gender')
-```
-
-![](docs/images/dataset_bias_metrics_plot.png)
-
-### ClassificationModel
-
-```
-from transparentai.models import ClassificationModel
-```
-
-You need a trained classifier to use the ClassificationModel class.
-Then with compute_scores() function you will be able to access score.
-
-```
-model = ClassificationModel(model=clf)
-model.compute_scores(X=X_test, y=y_test, threshold=0.5)
-```
-
-Shows classification scores :
-
-```
-model.plot_scores()
-Overall model performance
-	    accuracy 	f1 	        precision 	recall 	    roc_auc
-score 	0.864313 	0.860986 	0.859721 	0.864313 	{0: 0.9104387547348203}
-```
-
-![](docs/images/classification_scores_plot.png)
-
-### ModelExplainer
-
-This class is using [Shap](https://github.com/slundberg/shap/) library to get the feature importance.
-
-```
-from transparentai.explainer import ModelExplainer
-explainer = ModelExplainer(model=clf, X=X_test, model_type='tree')
-```
-
-Get the global feature importance : 
-
-```
-# I just take 100 rows for the example
-explainer.explain_global(X_test.sample(100))
-{'age': 0.04400247162436626,
- 'workclass': 0.012615442187332302,
- 'fnlwgt': 0.011500706212146071,
- 'education': 0.014303318875909592,
- 'education-num': 0.06320364016403923,
- 'marital-status': 0.04457869696787154,
- 'occupation': 0.025353718692010623,
- 'relationship': 0.06538595560703962,
- 'race': 0.0030357403950878343,
- 'gender': 0.008150837046393543,
- 'capital-gain': 0.05191285416804516,
- 'capital-loss': 0.004889414454684037,
- 'hours-per-week': 0.03416860048567794,
- 'native-country': 0.003552990714228435,
- 'age category': 0.013148817808960036}
-```
-
-Global feature importance plot :
-
-```
-explainer.plot_global_explain(top=10)
-```
-
-![](docs/images/global_feature_influence_plot.png)
-
-The variable `feature_names` is a mapping dictionary so that categorical
-variables that are encoded as number (e.g. 'gender': Male is 1 and Female 0)
-can retrieve the original values.
-
-```
-one_row = X.iloc[42]
-explainer.explain_local(one_row, feature_classes=feature_names)
-{'age=36': 0.001512160581860371,
- 'workclass=Private': -0.001553052083354487,
- 'fnlwgt=465326': 0.014316324086275927,
- 'education=HS-grad': -0.008492161121589561,
- 'education-num=9': -0.06452835138642059,
- 'marital-status=Married-civ-spouse': 0.028260101147975548,
- 'occupation=Farming-fishing': -0.09721002961961403,
- 'relationship=Husband': 0.04156683952625826,
- 'race=White': -2.3502936087425042e-05,
- 'gender=Male': 0.002139375823244336,
- 'capital-gain=0': -0.044484324557015495,
- 'capital-loss=0': -0.007543452374593471,
- 'hours-per-week=40': -0.014963517277665232,
- 'native-country=United-States': -0.0014164286240020375,
- 'age category=Adult': 0.004620017927818481}
-```
-
-Plot local explanation :
-```
-explainer.plot_local_explain(one_row, top=10, feature_classes=feature_names)
-```
-
-![](docs/images/local_feature_influence_plot.png)
+*****
 
 ## Contributing
 
@@ -252,13 +134,44 @@ See the [contributing file](CONTRIBUTING.md).
 
 *PRs accepted.*
 
+*****
+
 ## Credits and ressources
 
-See the [ressources file](RESSOURCES.md) where I explain why I created this tool and mainly I quote my different inspirations and ressources.
+### `fairness` submodule
+
+For this submodule, I have to say I was mainly inspired by one tool so all the credit has to be attributed to [AIF360 by IBM](http://aif360.mybluemix.net/).
+
+I used some of the metrics proposed in the tools (`Statistical Parity Difference`, `Equal Opportunity Difference`, `Average Odds Difference`, `Disparact Impact` and `Theil Index`).
+
+### `models.evaluation` submodule
+
+I used some metrics functin of the [`scikit-learn`](https://scikit-learn.org/stable/index.html) Python package.
+
+### `models.explainers` submodule
+
+I choose to used the [Shap](https://github.com/slundberg/shap) library because this tool was tested and aproved by a lot of people in the community, and even if I found some papers showing some problems (e.g. "Fooling LIME and SHAP: Adversarial Attacks on Post hoc Explanation Methods" [(Slack and al., November 2019)](https://arxiv.org/abs/1911.02508)), I decided to use it because if you want to biased Shap, you have to do it intentionally at the AI creation.
+
+### Plotting functions
+
+I was inspired by some graphics on [Kaggle](https://www.kaggle.com/). But mainly I use some code on [matplotlib website](https://matplotlib.org/) and the [Python graph gallery](https://python-graph-gallery.com/).
+
+### `utils.external` functions
+
+I used different packages that implement great features such as :
+
+1. [`energyusage`](https://github.com/responsibleproblemsolving/energy-usage) : A Python package that measures the environmental impact of computation.
+2. [`safety`](https://github.com/pyupio/safety) : Safety checks your installed dependencies for known security vulnerabilities.
+
+Again thanks to researchers and developers that contributed in this really important field, without them I don't think I'll be able to create this tool.
+
+*****
 
 ## Author
 
 This work is led by [Nathan Lauga](https://github.com/nathanlauga/), french Data Scientist.
+
+*****
 
 ## License
 
