@@ -1,11 +1,10 @@
 # TransparentAI
 *Is my AI ethic ?*
 
-
-TransparentAI is a toolbox in Python to answer the question "Is my AI ethic ?" based on the European Commission requierements.
-
 [![Documentation](https://readthedocs.org/projects/transparentai/badge/?version=latest)](http://transparentai.readthedocs.io/en/latest/?badge=latest)
 [![PyPI version](https://badge.fury.io/py/transparentai.svg)](https://badge.fury.io/py/transparentai)
+
+TransparentAI is a toolbox in Python to answer the question "Is my AI ethic ?" based on the European Commission requierements.
 
 ## Why this tool ?
 
@@ -23,13 +22,13 @@ Documentation is available here : [API Documentation](https://transparentai.read
 1. [Installation](#installation)
 2. [Compatible model and data type](#compatible-model-and-data-type)
 3. [Getting started](#getting-started)
-    - [Is my model biased ?](#)
-    - [How can I explain my model ?](#)
-    - [What's my model performance ?](#)
-    - [What is in my data ?](#)
-    - [How can I know is still good over time ?](#)
-    - [Is my model sustainable ?](#)
-    - [Do I use safe packages ?](#)
+    - [Is my model biased ?](#is-my-model-biased-)
+    - [How can I explain my model ?](#how-can-i-explain-my-model-)
+    - [What's my model performance ?](#whats-my-model-performance-)
+    - [What is in my data ?](#what-is-in-my-data-)
+    - [How can I know is still good over time ?](#how-can-i-know-is-still-good-over-time-)
+    - [Is my model sustainable ?](#is-my-model-sustainable-)
+    - [Do I use safe packages ?](#do-i-use-safe-packages-)
 4. [UE Commision requirements](#ue-commision-requirements)
 5. [Contributing](#contributing)
 6. [Credits and ressources](#credits-and-ressources)
@@ -57,8 +56,15 @@ python setup.py install
 
 **Version 0.2** :
 
-- Data : can only handle tabular dataset.
-- Model : can only handle classification and regression model.
+| Objects   | What the tool can handle                                              |
+| --------- | ----------------------------------------------------------------- |
+| **Data**  | can only handle `tabular` dataset (numpy array, pandas DataFrame) |
+| **Model** | can only handle `classification` and `regression` model           |
+
+**Coming for version 0.3** : 
+
+- Data : Explore Image dataset, Text dataset
+- Model : Clustering model
 
 *****
 
