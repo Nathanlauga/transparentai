@@ -12,7 +12,9 @@ Examples
 
 **You can find the `plot_local_explain_interact` function at the end of each notebook but without graphics because you need the notebook to be working**.
 
-![](../images/explainer_interactive_plot.gif)
+<div style="text-align:center;">
+<img src='../images/explainer_interactive_plot.gif'>
+</div>
 
 - [`models.explainers` binary classification example (adult dataset)](models.explainers_binary_classification_example_adult_dataset.ipynb)
 - [`models.explainers` multi label classification example (iris dataset)](models.explainers_multi_label_classification_example_iris_dataset.ipynb)
