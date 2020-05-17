@@ -45,6 +45,8 @@ You can find the `plot_local_explain_interact` function at the end of each noteb
 
 #### <span id='reports'>Generate a performance validation report with `utils.reports.generate_validation_report`</span>
 
+- [`utils.generate_validation_report` example for binary classifier](utils.generate_validation_report_example.ipynb)
+
 ----
 
 #### <span id='explainers'>Explain the local or global behavior of your model with `models.explainers.ModelExplainer`</span>
