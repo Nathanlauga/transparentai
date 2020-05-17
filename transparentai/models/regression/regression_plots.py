@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-import transparentai.models.regression as regression
+from ..regression import metrics as regression
 from transparentai import plots
 
 
