@@ -244,7 +244,19 @@ class ModelExplainer():
         return explainer
 
     def _generate_kwargs_interactive_dict(self, X):
-        """
+        """Generates a dictionnary of kwargs with feature_names
+        as key so it will be used with the widgets.interact function.
+
+        Parameters
+        ----------
+        X: array like
+            data (possibly training) to start the explainer
+
+        Returns
+        -------
+        dict:
+            Dictionnary with self.feature_names as keys and 
+            widget as values so that it can be used in the widgets.interact function
         """
         X = np.array(X)
 
@@ -265,7 +277,20 @@ class ModelExplainer():
         return kwargs
 
     def _get_kwargs_interactive(self, X):
-        """
+        """Preformats kwargs argument for the widgets.interact function.
+
+        Each widget is initialized with the current value.
+
+        Parameters
+        ----------
+        X: array like
+            Local row to explain
+
+        Returns
+        -------
+        dict:
+            Dictionnary with self.feature_names as keys and initialized
+            widget as values so that it can be used in the widgets.interact function
         """
         kwargs = {}
         style = {'description_width': 'initial'}
@@ -404,7 +429,7 @@ class ModelExplainer():
         Parameters
         ----------
         X: array like
-            Data to explain with column names as indexes
+            Local row to explain
         feature_classes: dict
             This dictionnary provides new values for categorical feature so
             that the feature can be more interpretable.
@@ -519,8 +544,8 @@ class ModelExplainer():
         
         Parameters
         ----------
-        X: pd.DataFrame or np.array
-            Data to explain
+        X: array like
+            Local row to explain
         values: pd.Series
             Feature importance with feature as indexes and 
             shap value as values
@@ -546,8 +571,8 @@ class ModelExplainer():
 
         Parameters
         ----------
-        X: pd.DataFrame or np.array
-            Data to explain
+        X: array like
+            Local row to explain
         feature_classes: dict
             This dictionnary provides new values for categorical feature so
             that the feature can be more interpretable.
@@ -584,14 +609,16 @@ class ModelExplainer():
 
         Parameters
         ----------
-        X: pd.DataFrame or np.array
-            Data to explain
+        X: array like
+            Local row to explain
         feature_classes: dict
             This dictionnary provides new values for categorical feature so
             that the feature can be more interpretable.
             dictionnary with features names as keys and for value
             a dictionnary with key, value pair representing current value
             and value to display.
+        visible_feat: list (default None)
+            List of feature to interact with
         num_class: int (default None)
             Class number for which we want to see the explanation
             if it's a binary classification then the value is 1

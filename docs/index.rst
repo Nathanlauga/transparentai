@@ -24,6 +24,7 @@ Install the library with pypi :
 
    installation
    getting-started
+   evaluation-metrics
 
 
 .. toctree::

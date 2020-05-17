@@ -3,233 +3,243 @@ Getting started with TransparentAI
 
 This page will show you some code to start with the TransparentAI library.
 
-This page will go through :
+In this section I created a binary classifier based on `Adult dataset`_. The following variables will be used :
 
-1. Start the AI
-2. Explore data
-3. Analyse data bias
-4. Analyse model performance
-5. Analyse model bias
-6. Explain local and global predictions
-7. Compare with new data (Monitoring)
+.. _Adult dataset: http://archive.ics.uci.edu/ml/datasets/Adult
 
-You can see details on the following notebook :
-`Adult dataset : TransparentAI full pipeline example`_
++----------------+----------------------------------+
+| variable       | description                      |
++================+==================================+
+| `data`         | Adult dataset as DataFrame       |
++----------------+----------------------------------+
+| `clf`          | Classifier model                 |
++----------------+----------------------------------+
+| `y_true`       | True labels for train set        |
++----------------+----------------------------------+
+| `y_true_valid` | True labels for valid set        |
++----------------+----------------------------------+
+| `y_pred`       | Predictions labels for train set |
++----------------+----------------------------------+
+| `y_pred_valid` | Predictions labels for valid set |
++----------------+----------------------------------+
+| `df_valid`     | Dataframe for valid set          |
++----------------+----------------------------------+
+| `X_train`      | Features for train set           |
++----------------+----------------------------------+
+| `X_valid`      | Features for valid set           |
++----------------+----------------------------------+
 
-.. _Adult dataset \: TransparentAI full pipeline example: https://github.com/Nathanlauga/transparentai/notebooks/example_adult_dataset_full_pipeline.ipynb
 
-Start the AI
-------------
-
->>> import transparentai.start as start
->>> start.how_can_i_start()
-How can I start
-This function is a helper to show some starting possibilities
-├── transparentai.start.quick_start() shows you questions about the project. If you complete it, at the end you will have answered questions about if your AI is viable.
-├── transparentai.start.external_link() shows you external references that can be more accurate to your AI.
-
->>> start.quick_start()
-
-Then it asks you **15 questions** about your project in three categories :
-Detail and goal, mdoel and metrics and Data.
-
-Explore your dataset
+Is my model biased ?
 --------------------
 
-Using the Adult dataset which is include in the library let's observe
-the data with some graphics.
-
->>> from transparentai.datasets import StructuredDataset, load_adult
->>> adult = load_adult()
-
-Create the StructuredDataset object :
-
->>> # target is not mandatory it just split data in the graphics for each target value
->>> dataset = StructuredDataset(df=adult, target='income')
-
-Then you can use differents plotting functions to have a better
-understanding of the dataset.
-
-To start I recommend the following :
-
->>> dataset.plot_dataset_overview() # Shows an overview of the data
->>> dataset.plot_missing_values() # Plots missing values
->>> dataset.plot_variables() # Plots each variable, one by one
->>> dataset.plot_numeric_var_relation() # Plots each numeric var pair
->>> dataset.plot_cat_and_num_variables() # Plots each numeric and categorical var pair
->>> dataset.plot_correlations() # Plots correlations
-
-But if you want to see a particular variable or variable combination
-you can use the following line of codes :
-
->>> dataset.plot_one_categorical_variable(var='income')
-
-.. image:: images/income_variable_plot.png
-
->>> dataset.plot_two_numeric_variables(var1='education-num', var2='hours-per-week', nrows=10000)
-
-.. image:: images/education-num_hours-per-week_variable_jointplot.png
-
->>> dataset.plot_one_cat_and_num_variables(var1='relationship', var2='age')
-
-.. image:: images/relationship_age_variable_boxplot.png
-
->>> dataset.plot_one_cat_and_num_variables(var1='income', var2='age')
-
-.. image:: images/income_age_variable_boxplot.png
-
-
-Analyse dataset bias
---------------------
-
-Import DatasetBiasMetric class.
-
->>> from transparentai.fairness import DatasetBiasMetric
-
-Define privileged_groups
-
->>> privileged_groups = {
-    'marital-status': ['Married-civ-spouse','Married-AF-spouse'],
-    'race': ['White'],
-    'gender': ['Male']
+>>> privileged_group = {
+    # For gender attribute Male peoples are considered to be privileged
+    'gender':['Male'],                
+    # For marital-status attribute Married peoples are considered to be privileged
+    'marital-status': lambda x: 'Married' in x,
+    # For race attribute White peoples are considered to be privileged
+    'race':['White']
 }
 
-Create the instance
+>>> from transparentai import fairness
+>>> fairness.model_bias(y_true_valid, y_pred_valid, df_valid, privileged_group)
+{
+    "gender": {
+        "statistical_parity_difference": -0.07283528047741014,
+        "disparate_impact": 0.4032473042703101,
+        "equal_opportunity_difference": -0.04900038770381182,
+        "average_odds_difference": -0.026173142849183567
+    },
+    "marital-status": {
+        "statistical_parity_difference": -0.11667610209029305,
+        "disparate_impact": 0.27371312304160633,
+        "equal_opportunity_difference": 0.08345535064884008,
+        "average_odds_difference": 0.03867329810319946
+    },
+    "race": {
+        "statistical_parity_difference": -0.0420778376239787,
+        "disparate_impact": 0.5964166117990216,
+        "equal_opportunity_difference": -0.0004408949904296522,
+        "average_odds_difference": -0.002870373184105955
+    }
+}
 
->>> dataset_bias = DatasetBiasMetric(dataset, privileged_groups, favorable_label='>50K')
 
-Retrieve the bias metrics as a pandas DataFrame
+This metrics can be not easy to understand so you can use the returns_text=True so that you can get ths insight :
 
->>> dataset_bias.get_bias_metrics()
- 		                Disparate impact 	Statistical parity difference
-attr 	        index 		
-age category 	>50K 	0.257312 	        -0.222479
-marital-status 	>50K 	0.143299 	        -0.382106
-race 	        >50K 	0.600592 	        -0.101445
-gender 	        >50K 	0.359655 	        -0.194516
-
-Plot one attribute bias.
-
->>> dataset_bias.plot_bias(attr='gender')
-
-.. image:: images/dataset_bias_metrics_plot.png
+>>> fairness_txt = fairness.model_bias(y_true_valid, y_pred_valid, df_valid, privileged_group, returns_text=True)
+>>> print(fairness_txt['gender'])
+The privileged group is predicted with the positive output 7.28% more often than the unprivileged group. This is considered to be fair.
+The privileged group is predicted with the positive output 2.48 times more often than the unprivileged group. This is considered to be not fair.
+For a person in the privileged group, the model predict a correct positive output 4.90% more often than a person in the unprivileged group. This is considered to be fair.
+For a person in the privileged group, the model predict a correct positive output or a correct negative output 2.62% more often than a person in the unprivileged group. This is considered to be fair.
+The model has 3 fair metrics over 4 (75%).
 
 
-Analyse model performance
--------------------------
+And if you like to get visual help use the `plot_bias` function :
 
->>> from transparentai.models import ClassificationModel
+>>> privileged_group = {'gender': ['Male']}
+>>> from transparentai import fairness
+>>> fairness.plot_bias(y_true_valid, y_pred_valid, df_valid, privileged_group, with_text=True)
 
-You need a trained classifier to use the ClassificationModel class.
-Then with compute_scores() function you will be able to access score.
+.. image:: ../images/fairness.plot_bias_binary_classifier.png
 
->>> model = ClassificationModel(model=clf)
->>> model.compute_scores(X=X_test, y=y_test, threshold=0.5)
 
-Shows classification scores :
+How can I explain my model ?
+----------------------------
 
->>> model.plot_scores()
-Overall model performance
-	    accuracy 	f1 	        precision 	recall 	    roc_auc
-score 	0.864313 	0.860986 	0.859721 	0.864313 	{0: 0.9104387547348203}
+>>> from transparentai.models import explainers
+>>> explainer = explainers.ModelExplainer(clf, X_train, model_type='tree')
 
-.. image:: images/classification_scores_plot.png
+>>> explainer.explain_global_influence(X_train, nsamples=1000)
+{
+    'age': 0.08075649984055841,
+    'fnlwgt': 0.05476459574744569,
+    'education-num': 0.08048316800088552,
+    'capital-gain': 0.06879137962639843,
+    'capital-loss': 0.018367250661071737,
+    'hours-per-week': 0.06009733425389803
+}
 
-Analyse model bias
+>>> explainer.plot_global_explain()
+
+.. image:: ../images/explainer.plot_global_explain_binary_classifier.png
+
+>>> explainer.plot_local_explain(X_valid.iloc[0])
+
+.. image:: ../images/explainer.plot_local_explain_binary_classifier.png
+
+What's my model performance ?
+-----------------------------
+
+>>> from transparentai.models import classification
+
+>>> # You can use custom function with lambda
+>>> metrics = ['accuracy', 'roc_auc', 'f1', 'recall', 'precision', lambda y_true, y_pred: sum(y_true-y_pred)]
+>>> classification.compute_metrics(y_true_valid, y_pred_valid, metrics)
+{
+    'accuracy': 0.812011415808413,
+    'roc_auc': 0.8272860034692258,
+    'f1': 0.5682530635508691,
+    'recall': 0.5244608100999474,
+    'precision': 0.6200248756218906,
+    'custom_1': 586
+}
+
+>>> classification.plot_performance(y_true, y_pred, y_true_valid, y_pred_valid)
+
+.. image:: ../images/classification.plot_performance_binary_classifier.png
+
+What is in my data ?
 --------------------
 
->>> from transparentai.fairness import ModelBiasMetric
+>>> from transparentai.datasets import variable
+>>> variable.plot_variable(data['age'])
 
-To use the ModelBiasMetric I recommend to analyse the bias on the
-test set so that the performance metrics are more accurate.
+.. image:: ../images/variable.plot_variable_age.png
 
-Here `privileged_groups` is the same than the variable at the
-**Analyse dataset bias** section.
+>>> variable.plot_variable(data['capital-loss'], legend=data['income'], ylog=True)
 
->>> dataset = StructuredDataset(df=adult_test, target=target)
->>> model_bias = ModelBiasMetric(dataset=dataset, preds=preds,
-                                privileged_groups=privileged_groups,
-                                favorable_label='>50K')
+.. image:: ../images/variable.plot_variable_capital_loss.png
 
->>> model_bias.get_bias_metrics()
- 	            Disparate impact 	Statistical parity difference 	Equal opportunity difference 	Average abs odds difference 	Theil index
-attr 	        index 					
-age category 	>50K 	0.239931 	    -0.192626 	    -0.086698 	    0.077004 	    0.107743
-marital-status 	>50K 	0.079472 	    -0.373522 	    -0.275016 	    0.226959 	    0.107743
-race 	        >50K 	0.516296 	    -0.104626 	    -0.043202 	    0.041003 	    0.107743
-gender 	        >50K 	0.302189 	    -0.182018 	    -0.105678 	    0.087605 	    0.107743
+>>> variable.plot_variable(data['workclass'])
 
->>> model_bias.plot_bias(attr='gender')
+.. image:: ../images/variable.plot_variable_workclass.png
 
-.. image:: images/model_bias_metrics_plot.png
+The `birthdate` column was generated based on the `age` column.
 
-Explain local and global predictions
-------------------------------------
+>>> variable.plot_variable(data['birthdate'], legend=data['income'])
 
->>> from transparentai.explainer import ModelExplainer
+.. image:: ../images/variable.plot_variable_birthdate.png
 
->>> explainer = ModelExplainer(model=clf, X=X_test, model_type='tree')
+How can I know the model is still good over time ?
+--------------------------------------------------
 
->>> # I just take 100 rows for the example
->>> explainer.explain_global(X_test.sample(100))
-{'age': 0.04400247162436626,
- 'workclass': 0.012615442187332302,
- 'fnlwgt': 0.011500706212146071,
- 'education': 0.014303318875909592,
- 'education-num': 0.06320364016403923,
- 'marital-status': 0.04457869696787154,
- 'occupation': 0.025353718692010623,
- 'relationship': 0.06538595560703962,
- 'race': 0.0030357403950878343,
- 'gender': 0.008150837046393543,
- 'capital-gain': 0.05191285416804516,
- 'capital-loss': 0.004889414454684037,
- 'hours-per-week': 0.03416860048567794,
- 'native-country': 0.003552990714228435,
- 'age category': 0.013148817808960036}
+`timestamp` variable was generated randomly, it represents the time of the prediction.
 
-Global feature importance plot :
+>>> from transparentai import monitoring
+>>> monitoring.plot_monitoring(y_true, y_pred, timestamp, interval='month', classification=True)
 
->>> explainer.plot_global_explain(top=10)
+.. image:: ../images/plot_monitoring_binary_classifier.png
 
-.. image:: images/global_feature_influence_plot.png
+Is my model sustainable ?
+-------------------------
 
-The variable `feature_names` is a mapping dictionary so that categorical
-variables that are encoded as number (e.g. 'gender': Male is 1 and Female 0)
-can retrieve the original values.
+>>> import transparentai.utils as utils
+>>> kWh, clf = utils.evaluate_kWh(clf.fit, X, Y, verbose=True)
+Location:                                                                 France
+Baseline wattage:                                                     4.79 watts
+Process wattage:                                                     18.45 watts
+--------------------------------------------------------------------------------
+-------------------------------  Final Readings  -------------------------------
+--------------------------------------------------------------------------------
+Average baseline wattage:                                             3.53 watts
+Average total wattage:                                               16.04 watts
+Average process wattage:                                             12.51 watts
+Process duration:                                                        0:00:07
+--------------------------------------------------------------------------------
+-------------------------------   Energy Data    -------------------------------
+--------------------------------------------------------------------------------
+                              Energy mix in France                              
+Coal:                                                                      3.12%
+Petroleum:                                                                16.06%
+Natural Gas:                                                              33.56%
+Low Carbon:                                                               47.26%
+--------------------------------------------------------------------------------
+-------------------------------    Emissions     -------------------------------
+--------------------------------------------------------------------------------
+Effective emission:                                              1.32e-05 kg CO2
+Equivalent miles driven:                                          5.39e-12 miles
+Equivalent minutes of 32-inch LCD TV watched:                   8.14e-03 minutes
+Percentage of CO2 used in a US household/day:                          4.33e-12%
+--------------------------------------------------------------------------------
+------------------------- Assumed Carbon Equivalencies -------------------------
+--------------------------------------------------------------------------------
+Coal:                                                      995.725971 kg CO2/MWh
+Petroleum:                                                816.6885263 kg CO2/MWh
+Natural gas:                                              743.8415916 kg CO2/MWh
+Low carbon:                                                         0 kg CO2/MWh
+--------------------------------------------------------------------------------
+-------------------------     Emissions Comparison     -------------------------
+--------------------------------------------------------------------------------
+                      Quantities below expressed in kg CO2                      
+        US                      Europe                  Global minus US/Europe
+Max:    Wyoming        2.85e-05 Kosovo         2.93e-05 Mongolia        2.86e-05
+Median: Tennessee      1.40e-05 Ukraine        2.04e-05 Korea, South    2.34e-05
+Min:    Vermont        8.00e-07 Iceland        5.26e-06 Bhutan          3.26e-06
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Process used:                                                       3.10e-05 kWh
 
->>> one_row = X.iloc[42]
->>> explainer.explain_local(one_row, feature_classes=feature_names)
-{'age=36': 0.001512160581860371,
- 'workclass=Private': -0.001553052083354487,
- 'fnlwgt=465326': 0.014316324086275927,
- 'education=HS-grad': -0.008492161121589561,
- 'education-num=9': -0.06452835138642059,
- 'marital-status=Married-civ-spouse': 0.028260101147975548,
- 'occupation=Farming-fishing': -0.09721002961961403,
- 'relationship=Husband': 0.04156683952625826,
- 'race=White': -2.3502936087425042e-05,
- 'gender=Male': 0.002139375823244336,
- 'capital-gain=0': -0.044484324557015495,
- 'capital-loss=0': -0.007543452374593471,
- 'hours-per-week=40': -0.014963517277665232,
- 'native-country=United-States': -0.0014164286240020375,
- 'age category=Adult': 0.004620017927818481}
 
->>> explainer.plot_local_explain(one_row, top=10, feature_classes=feature_names)
+Do I use safe packages ?
+------------------------
 
-.. image:: images/local_feature_influence_plot.png
+>>> import transparentai.utils as utils
+>>> utils.check_packages_security(full_report=True)
++==============================================================================+
+|                                                                              |
+|                               /$$$$$$            /$$                         |
+|                              /$$__  $$          | $$                         |
+|           /$$$$$$$  /$$$$$$ | $$  \__//$$$$$$  /$$$$$$   /$$   /$$           |
+|          /$$_____/ |____  $$| $$$$   /$$__  $$|_  $$_/  | $$  | $$           |
+|         |  $$$$$$   /$$$$$$$| $$_/  | $$$$$$$$  | $$    | $$  | $$           |
+|          \____  $$ /$$__  $$| $$    | $$_____/  | $$ /$$| $$  | $$           |
+|          /$$$$$$$/|  $$$$$$$| $$    |  $$$$$$$  |  $$$$/|  $$$$$$$           |
+|         |_______/  \_______/|__/     \_______/   \___/   \____  $$           |
+|                                                          /$$  | $$           |
+|                                                         |  $$$$$$/           |
+|  by pyup.io                                              \______/            |
+|                                                                              |
++==============================================================================+
+| REPORT                                                                       |
+| checked 77 packages, using default DB                                        |
++==============================================================================+
+| No known security vulnerabilities found.                                     |
++==============================================================================+
 
-Compare with new data (Monitoring)
-----------------------------------
 
->>> from transparentai.monitoring import Monitoring
 
-This class is a little more complicated than the others so
-I recommend that you take a look at the last part of the
-`Adult dataset : TransparentAI full pipeline example`_ notebook or
-at the dedicated notebook : `Example notebook : Monitoring with binary classification`_.
 
-.. _Adult dataset \: TransparentAI full pipeline example: https://github.com/Nathanlauga/transparentai/notebooks/example_adult_dataset_full_pipeline.ipynb
-.. _Example notebook \: Monitoring with binary classification: https://github.com/Nathanlauga/transparentai/notebooks/example_monitoring_binary_classification.ipynb
 
