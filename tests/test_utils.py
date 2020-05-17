@@ -26,12 +26,12 @@ class TestUtils(unittest.TestCase):
     def test_find_dtype(self):
         self.assertRaises(TypeError, utils.find_dtype)
         self.assertEqual(utils.find_dtype([1,2]),'number')
-        self.assertEqual(utils.find_dtype(['1','2']),'number')
-        self.assertEqual(utils.find_dtype([datetime.date(1958,5,12),datetime.date(1980,12,12)]),'datetime')
+        self.assertEqual(utils.find_dtype(['1','2']),'object')
+        self.assertEqual(utils.find_dtype([datetime.datetime(1958,5,12),datetime.datetime(1980,12,12)]),'datetime')
         self.assertEqual(utils.find_dtype(['blabla','2']),'object')
         self.assertEqual(utils.find_dtype(pd.DataFrame([1,2])),'number')
-        self.assertEqual(utils.find_dtype(pd.Series(['1','2'])),'number')
-        self.assertEqual(utils.find_dtype(pd.Series([datetime.date(1958,5,12),datetime.date(1980,12,12)])),'datetime')
+        self.assertEqual(utils.find_dtype(pd.Series(['1','2'])),'object')
+        self.assertEqual(utils.find_dtype(pd.Series([datetime.datetime(1958,5,12),datetime.datetime(1980,12,12)])),'datetime')
         self.assertEqual(utils.find_dtype(pd.DataFrame(['blabla','2'])),'object')
 
 

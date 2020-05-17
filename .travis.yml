@@ -1,0 +1,25 @@
+language: python
+os:
+- linux
+python:
+- '3.5'
+- '3.6'
+- '3.7'
+before_install:
+- python --version
+- pip install -U pip
+- pip install -U pytest
+install:
+- pip install -r requirements.txt
+- pip install .
+script: pytest
+deploy:
+  provider: pypi
+  user: __token__
+  password:
+    secure: TdlbNkmqLtIBjUVwItyD1HSxcDw6Jl2uR144o1KyAUR26z8fnZbJhp4N0w980q4mQBN+v41EJNtytv9eBfMigEg1jN47+QAIPoPJymW0561UErJSZ98EaQmzxZCqhNVmxYYgqM9sfAfXKU1EOINohN03cYn5PophxUH8lXo+FbVFq9m5SxnyWUEp4E3ud4AMMKURnSj8SZbqlBpywDe4hyXr4NKqvndjpex9B4OouRAnusAxVsKd9DSzss2TbrEpqthKmdSvS8nJA3H/opOKGs2pU/vgsHcikV+5R8B07O9jDMn2fMulW3vqyVVZnym07qoetv1xhsoc27BgQAlqVlmNsAUV7M3XUnFBRy1PVatXkRJ8rAr/yf8A7nnTBBVTt8jKQjHudDgVEQHp2OLcAy+8ZNZ/Orqoqw1akEGO0augCSQzZ5eYaPdqfVr38bOLP4NBoObJdgPnkpNplDM47Z+HqgGKSfoZITd6GcDWk6qm2pALgDDtGTDcrTcvp4b7vk6fHMRysmyD/+1SHltJTDBukxvjsKKsPrIpJZivmsEsQujf28lc+Awfb55PrkYP1l2KZ80XMMcAPNQ3nAmLK8NFJRdv6yP3qypsNTe2YylgKlCkyLHbPRHmTel2x2Js/fi+r2e2KdFxhhv4vi54/xqOqwxJ8eQ6zQ2bt5aa5Lo=
+  on:
+    tags: true
+  distributions: sdist
+  skip_cleanup: true
+  skip_existing: true

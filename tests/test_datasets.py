@@ -12,6 +12,7 @@ class TestFairness(unittest.TestCase):
                          ['Male', 52, np.nan],
                          ['Male', 10, '1945-05-28'],
                          ['Female', 25, '2002-03-12']], columns=['gender', 'age', 'date'])
+    data['date'] = pd.to_datetime(data['date'])
 
     def test_describe(self):
         self.assertRaises(TypeError, datasets.variable.describe)
@@ -31,7 +32,6 @@ class TestFairness(unittest.TestCase):
 
         desc = datasets.variable.describe(self.data['date'])
 
-        self.assertIn('mean', list(desc.keys()))
         self.assertEqual(desc['valid values'],4)
         self.assertEqual(desc['missing values'],1)
         self.assertEqual(desc['max'],'2002-03-12')

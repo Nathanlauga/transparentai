@@ -38,7 +38,7 @@ def find_dtype(arr, len_sample=1000):
         arr = pd.DataFrame(arr)
     elif type(arr) == pd.Series:
         arr = arr.to_frame()
-
+        
     n = len_sample if len(arr) > len_sample else len(arr)
     arr = arr.iloc[:n]
 
