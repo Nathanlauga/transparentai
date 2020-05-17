@@ -445,4 +445,4 @@ This project use a [MIT License](LICENSE).
 **Why ?**
 
 I believe that the code should be re-used for community projects and also inside private projects. 
-AI transparency needs to be available for everyone even it's a private AI! 
+AI transparency needs to be available for everyone even it's a private AI.
