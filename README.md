@@ -70,13 +70,21 @@ python setup.py install
 
 ## Getting started 
 
-Take a look on the [Getting started](https://transparentai.readthedocs.io/en/latest/getting-started.html) page of the documenation or you can search specific use cases in the [`examples/`](examples/) directory.
+**Take a look on the [Getting started](https://transparentai.readthedocs.io/en/latest/getting-started.html) page of the documentation or you can search specific use cases in the [`examples/`](examples/) directory.**
 
 In this section I created a binary classifier based on [Adult dataset](http://archive.ics.uci.edu/ml/datasets/Adult). The following variables will be used :
 
-| variable | description |
-| -------- | ----------- |
-| 
+| variable       | description                      |
+| -------------- | -------------------------------- |
+| `data`         | Adult dataset as DataFrame       |
+| `clf`          | Classifier model                 |
+| `y_true`       | True labels for train set        |
+| `y_true_valid` | True labels for valid set        |
+| `y_pred`       | Predictions labels for train set |
+| `y_pred_valid` | Predictions labels for valid set |
+| `df_valid`     | Dataframe for valid set          |
+| `X_train`      | Features for train set           |
+| `X_valid`      | Features for valid set           |
 
 
 ### Is my model biased ?
@@ -403,7 +411,7 @@ I used some of the metrics proposed in the tools (`Statistical Parity Difference
 
 ### `models.evaluation` submodule
 
-I used some metrics functin of the [`scikit-learn`](https://scikit-learn.org/stable/index.html) Python package.
+I used some metrics function of the [`scikit-learn`](https://scikit-learn.org/stable/index.html) Python package.
 
 ### `models.explainers` submodule
 
