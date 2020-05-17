@@ -27,6 +27,9 @@ def compute_metrics_groupby(y_true, y_pred, groupby, metrics, classification):
         DataFrame with groubpy values as indexes and 
         computed metrics as columns
     """
+    y_true = np.array(y_true)
+    y_pred = np.array(y_pred)
+
     res = list()
     for group in np.unique(groupby):
         cond = groupby == group
