@@ -161,19 +161,23 @@ def compute_prob_performance(y_true, y_prob, metrics):
 
     if len(y_prob.shape) > 1:
         n_classes = y_prob.shape[1]
-        if n_classes == 2:
-            n_classes = 1
+        if n_classes == 1:
+            n_classes = 2
     else:
-        n_classes = 1
+        n_classes = 2
 
     perf_prob = {}
     for m in metrics:
         perf_prob[m] = list()
         for c in range(n_classes):
-            if n_classes == 1:
+            # If binary classifier then default class is 1
+            if n_classes == 2:
                 c = 1
+                pred = y_prob
+            else:
+                pred = y_prob[:, c]
             y_true_c = np.array(y_true == c).astype(int)
-            score = compute_metrics(y_true_c, y_prob[:, c], [m])[m]
+            score = compute_metrics(y_true_c, pred, [m])[m]
             perf_prob[m].append(score)
 
     return perf_prob
@@ -203,13 +207,18 @@ def preprocess_scores(y_pred):
     if type(y_pred) in [list, pd.Series, pd.DataFrame]:
         y_pred = np.array(y_pred)
 
+    y_prob = y_pred
     if len(y_pred.shape) > 1:
         n_classes = y_pred.shape[1]
-        y_prob = y_pred
         y_pred = np.argmax(y_pred, axis=1)
     else:
-        y_prob = None
-        n_classes = 2
+        max, min, uniq = np.max(y_pred), np.min(y_pred), len(np.unique(y_pred))
+        # If List of predicted class 
+        if (max == int(max)) & (min == int(min)) & (uniq <= max+1):
+            n_classes = max
+        # Else : list of probabilities
+        else:
+            n_classes = 2
 
     return y_pred, y_prob, n_classes
 
