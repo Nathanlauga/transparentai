@@ -293,7 +293,8 @@ class ModelExplainer():
             widget as values so that it can be used in the widgets.interact function
         """
         kwargs = {}
-        style = {'description_width': 'initial'}
+        style  = {'description_width': '75%'}
+        layout = widgets.Layout(width='50%')
 
         for i,f in enumerate(self.feature_names):
             widget = self.kwargs_dict[f]['widget']
