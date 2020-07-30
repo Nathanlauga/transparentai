@@ -3,12 +3,6 @@
 
 This submodule contains utility functions for `transparentai` module.
 
-External functions
-------------------
-
-.. automodule:: transparentai.utils.external
-    :members:
-
 Reports functions
 ------------------
 

@@ -8,7 +8,7 @@ fh.close()
 
 setup(
     name='transparentai',
-    version='0.2.1',
+    version='0.2.2',
     description="Python tool to create or inspect a transparent and ethical AI.",
     license='MIT',
     author='Nathan LAUGA',

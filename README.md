@@ -253,9 +253,22 @@ monitoring.plot_monitoring(y_true, y_pred, timestamp, interval='month', classifi
 
 ### Is my model sustainable ?
 
+Estimate your training CO2 consumption.
+
 ```python
-import transparentai.utils as utils
-kWh, clf = utils.evaluate_kWh(clf.fit, X, Y, verbose=True)
+from transparentai import sustainable
+sustainable.estimate_co2(hours=24, location='France', watts=250)
+```
+Output:
+```
+3.18437946896484
+```
+
+Evaluate your training kWh consumption.
+
+```python
+from transparentai import sustainable
+kWh, clf = sustainable.evaluate_kWh(clf.fit, X, Y, verbose=True)
 ```
 Output:
 ```

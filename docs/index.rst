@@ -35,6 +35,8 @@ Install the library with pypi :
    modules/fairness
    modules/models
    modules/monitoring
+   modules/sustainable
+   modules/security
    modules/utils
    modules/plots
 

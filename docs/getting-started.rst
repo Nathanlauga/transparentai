@@ -166,8 +166,17 @@ How can I know the model is still good over time ?
 Is my model sustainable ?
 -------------------------
 
->>> import transparentai.utils as utils
->>> kWh, clf = utils.evaluate_kWh(clf.fit, X, Y, verbose=True)
+Estimate your training CO2 consumption.
+
+>>> from transparentai import sustainable
+>>> sustainable.estimate_co2(hours=24, location='France', watts=250)
+3.18437946896484
+
+
+Evaluate your training kWh consumption.
+
+>>> from transparentai import sustainable
+>>> kWh, clf = sustainable.evaluate_kWh(clf.fit, X, Y, verbose=True)
 Location:                                                                 France
 Baseline wattage:                                                     4.79 watts
 Process wattage:                                                     18.45 watts
